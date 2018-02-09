@@ -1,0 +1,7 @@
+menu.py
+keytoascii.py
+.idea/*
+*.iml
+venv/*
+__pycache__/*
+*.pyc
