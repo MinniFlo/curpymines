@@ -11,8 +11,10 @@ class MinefieldLogic:
         self.field_amount = self.max_y * self.max_x
         self.max_mine = int(self.field_amount * 0.15)
         self.field_list = [i for i in range(self.field_amount)]
+        self.rim_list = set([])
         self.field_matrix = []
         self.next_fields = set([])
+        self.render_list = set([])
 
     # The function witch fills the field_matrix with field-objects
     def build(self):
@@ -23,6 +25,10 @@ class MinefieldLogic:
             for x in range(self.max_x):
                 field = Field(y, x)
                 x_column.append(field)
+                cur_y, cur_x = field.get_foordinate()
+                if cur_y == 0 or cur_y == (self.max_y - 1) or cur_x == 0 or cur_x == (self.max_x - 1):
+                    cur_tuple = (cur_y, cur_x)
+                    self.rim_list.add(cur_tuple)
 
     def distribute_mines(self, st_y, st_x):
         mine_list = self.mine_list(st_y, st_x)
@@ -32,7 +38,6 @@ class MinefieldLogic:
                 if mine_list and pos_y * self.max_x + pos_x == mine_list[0]:
                     x.set_mine(True)
                     mine_list.pop(0)
-
         for y in self.field_matrix:
             for x in y:
                 if x.get_mine():
@@ -58,21 +63,22 @@ class MinefieldLogic:
 
     # The function witch calculates the rim of the field and the 9 fields where the start is
     def no_mines(self, st_y, st_x):
-        rim_list = []
+        temp_list = []
         for i in self.field_list:
             if i % self.max_x == 0 or (i + 1) % self.max_x == 0 or i < self.max_x or i > self.max_x * (self.max_y-1):
-                rim_list.append(i)
+                temp_list.append(i)
+        temp_list = set(temp_list)
         start = st_y * self.max_x + st_x
         start_fields = [start, start - 1, start + 1,
                         start + self.max_x, start + self.max_x + 1, start + self.max_x - 1,
                         start - self.max_x, start - self.max_x - 1, start - self.max_x + 1]
-        rim_list = set(rim_list)
         start_fields = set(start_fields)
-        no_mines = rim_list | start_fields
+        no_mines = temp_list | start_fields
         return no_mines
 
     # Is called on click of a field
     def click_field(self, y, x):
+        self.render_list = set([])
         if not self.field_matrix[y][x].get_open():
             if self.field_matrix[y][x].get_mine():
                 return False  # Todo!!1!11!
@@ -86,43 +92,45 @@ class MinefieldLogic:
         cur_field = self.field_matrix[y][x]
         if cur_field.get_number() != 0:
             cur_field.set_open(True)
+            self.render_list.add(cur_field)
         else:
             adjacent_list = self.adjacent_fields(y, x)
             cur_field.set_open(True)
+            self.render_list.add(cur_field)
             for i in adjacent_list:
                 i_field = self.tuple_in_matrix(i)
                 if not i_field.get_open():
                     self.next_fields.add(i_field)
 
-    def quality_of_life_click(self, y, x):
-        if 0 < self.field_matrix[y][x].get_number() < 9:
-            if self.count_flags(y, x) == self.field_matrix[y][x].get_number():
-                adj_list = self.adjacent_fields(y, x)
-                subs_list = set([])
-                for i in adj_list:
-                    i_field = self.tuple_in_matrix(i)
-                    if i_field.get_flag() or i_field.get_open:
-                        subs_list.add(i)
-                adj_list = adj_list - subs_list
-                for i in adj_list:
-                    cur_y, cur_x = i
-                    if self.field_matrix[cur_y][cur_x].get_mine:
-                        return False  # Todo!!11!11!
-                    else:
-                        self.check_field(cur_y, cur_x)
-                        self.check_next_fields()
-
     def check_next_fields(self):
         while self.next_fields:
-            open_fields = set([])
+            none_matching_fields = set([])
             for i in self.next_fields:
-                if i.get_open():
-                    open_fields.add(i)
-            self.next_fields = self.next_fields - open_fields
+                if i.get_open() or i.get_foordinate() in self.rim_list:
+                    none_matching_fields.add(i)
+            self.next_fields = self.next_fields - none_matching_fields
             if self.next_fields:
                 i_field = self.next_fields.pop()
                 y_i, x_i = i_field.get_foordinate()
                 self.check_field(y_i, x_i)
+
+    def quality_of_life_click(self, y, x):
+        if self.field_matrix[y][x].get_number() != 0 or self.field_matrix[y][x].get_number() != 9:
+            if self.count_flags(y, x) == self.field_matrix[y][x].get_number():
+                work_list = self.adjacent_fields(y, x)
+                subs_list = set([])
+                for i in work_list:
+                    i_field = self.tuple_in_matrix(i)
+                    if i_field.get_flag() or i_field.get_open:
+                        subs_list.add(i)
+                work_list = work_list - subs_list
+                for i in work_list:
+                    cur_y, cur_x = i
+                    if self.field_matrix[cur_y][cur_x].get_mine():
+                        return False  # Todo!!11!11!
+                    else:
+                        self.check_field(cur_y, cur_x)
+                        self.check_next_fields()
 
     # The function returns a list of all tuples of fields that surround a specified field
     def adjacent_fields(self, y, x):
@@ -164,6 +172,8 @@ def main():
     st_x = 1
     logic = MinefieldLogic(6, 6)
     logic.build()
+    print(logic.rim_list)
+    print(logic.field_matrix[1][1].get_foordinate())
 
     print('\nopen:')
     for y in logic.field_matrix:
@@ -187,6 +197,7 @@ def main():
             else:
                 print(str(field.get_number()), end='\t')
 
+'''
     print("with mines:")
     logic.distribute_mines(st_y, st_x)
     logic.click_field(st_y, st_x)
@@ -212,7 +223,7 @@ def main():
                 print('?', end='\t')
             else:
                 print(str(field.get_number()), end='\t')
-
+'''
 
 if __name__ == '__main__':
     main()

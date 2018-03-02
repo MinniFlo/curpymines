@@ -35,10 +35,12 @@ class MineWindow:
             else:
                 self.logic.click_field(self.curs_y, self.curs_x)
         elif key == 101:
-            if not self.logic.field_matrix[self.curs_y][self.curs_x].get_flag():
-                self.logic.field_matrix[self.curs_y][self.curs_x].set_flag(True)
+            cur_field = self.logic.field_matrix[self.curs_y][self.curs_x]
+            if not cur_field.get_flag():
+                cur_field.set_flag(True)
             else:
-                self.logic.field_matrix[self.curs_y][self.curs_x].set_flag(False)
+                cur_field.set_flag(False)
+            self.logic.render_list.add(cur_field)
         elif key == 27:
             self.run = False
 
@@ -47,16 +49,17 @@ class MineWindow:
         self.scr.box()
 
     def render(self):
-        for y in self.logic.field_matrix:
-            for x in y:
-                cur_y, cur_x = x.get_foordinate()
-                if x.get_open():
-                    if x.get_number() == 0:
-                        self.scr.addstr(cur_y, cur_x, '_')
-                    else:
-                        self.scr.addstr(cur_y, cur_x, str(x.get_number()))
-                elif x.get_flag():
-                    self.scr.addstr(cur_y, cur_x, '?')
+        for i in self.logic.render_list:
+            cur_y, cur_x = i.get_foordinate()
+            if i.get_open():
+                if i.get_number() == 0:
+                    self.scr.addstr(cur_y, cur_x, '_')
+                else:
+                    self.scr.addstr(cur_y, cur_x, str(i.get_number()))
+            elif i.get_flag():
+                self.scr.addstr(cur_y, cur_x, '?')
+            else:
+                self.scr.addstr(cur_y, cur_x, '+')
         self.scr.box()
         self.scr.move(self.curs_y, self.curs_x)
 
