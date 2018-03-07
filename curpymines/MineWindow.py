@@ -33,7 +33,10 @@ class MineWindow:
                 self.logic.click_field(self.curs_y, self.curs_x)
                 self.first = False
             else:
-                self.logic.click_field(self.curs_y, self.curs_x)
+                if not self.logic.field_matrix[self.curs_y][self.curs_x].get_open():
+                    self.logic.click_field(self.curs_y, self.curs_x)
+                else:
+                    self.logic.quality_of_life_click(self.curs_y, self.curs_x)
         elif key == 101:
             cur_field = self.logic.field_matrix[self.curs_y][self.curs_x]
             if not cur_field.get_flag():
@@ -45,9 +48,32 @@ class MineWindow:
             self.run = False
 
     def draw(self):
-        self.scr.bkgd('+')
+        for y in range(self.max_y):
+            for x in range(int(self.max_x/2)):
+                self.scr.addstr(y, x*2, '+')
         self.scr.box()
 
+    '''
+    def draw(self):
+        self.scr.bkgd('+')
+        self.scr.box()
+    '''
+
+    def render(self):
+        for y in self.logic.field_matrix:
+            for x in y:
+                cur_y, cur_x = x.get_foordinate()
+                if x.get_open():
+                    if x.get_number() == 0:
+                        self.scr.addstr(cur_y, cur_x, '_')
+                    else:
+                        self.scr.addstr(cur_y, cur_x, str(x.get_number()))
+                elif x.get_flag():
+                    self.scr.addstr(cur_y, cur_x, '?')
+            self.scr.box()
+            self.scr.move(self.curs_y, self.curs_x)
+
+    '''
     def render(self):
         for i in self.logic.render_list:
             cur_y, cur_x = i.get_foordinate()
@@ -58,10 +84,9 @@ class MineWindow:
                     self.scr.addstr(cur_y, cur_x, str(i.get_number()))
             elif i.get_flag():
                 self.scr.addstr(cur_y, cur_x, '?')
-            else:
-                self.scr.addstr(cur_y, cur_x, '+')
         self.scr.box()
         self.scr.move(self.curs_y, self.curs_x)
+    '''
 
     def while_running(self):
         curses.noecho()
