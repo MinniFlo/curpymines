@@ -7,10 +7,11 @@ class MineWindow:
     def __init__(self, scr):
         self.scr = scr
         self.max_y, self.max_x = self.scr.getmaxyx()
-        self.logic = MinefieldLogic(self.max_y, self.max_x)
+        x_range = int(self.max_x/2) + 1
+        self.logic = MinefieldLogic(self.max_y, x_range)
         self.run = True
         self.first = True
-        self.curs_y, self.curs_x = (1, 1)
+        self.curs_y, self.curs_x = (1, 2)
 
     def user_input(self):
         key = self.scr.getch()
@@ -22,23 +23,23 @@ class MineWindow:
             if self.curs_y < self.max_y - 2:
                 self.curs_y += 1
         elif key == 97 or key == 106:
-            if self.curs_x > 1:
-                self.curs_x -= 1
+            if self.curs_x > 2:
+                self.curs_x -= 2
         elif key == 100 or key == 108:
-            if self.curs_x < self.max_x - 2:
-                self.curs_x += 1
+            if self.curs_x < self.max_x - 3:
+                self.curs_x += 2
         elif key == 32:
             if self.first:
-                self.logic.distribute_mines(self.curs_y, self.curs_x)
-                self.logic.click_field(self.curs_y, self.curs_x)
+                self.logic.distribute_mines(self.curs_y, int(self.curs_x/2))
+                self.logic.click_field(self.curs_y, int(self.curs_x/2))
                 self.first = False
             else:
-                if not self.logic.field_matrix[self.curs_y][self.curs_x].get_open():
-                    self.logic.click_field(self.curs_y, self.curs_x)
+                if not self.logic.field_matrix[self.curs_y][int(self.curs_x/2)].get_open():
+                    self.logic.click_field(self.curs_y, int(self.curs_x/2))
                 else:
-                    self.logic.quality_of_life_click(self.curs_y, self.curs_x)
+                    self.logic.quality_of_life_click(self.curs_y, int(self.curs_x/2))
         elif key == 101:
-            cur_field = self.logic.field_matrix[self.curs_y][self.curs_x]
+            cur_field = self.logic.field_matrix[self.curs_y][int(self.curs_x/2)]
             if not cur_field.get_flag():
                 cur_field.set_flag(True)
             else:
@@ -65,11 +66,11 @@ class MineWindow:
                 cur_y, cur_x = x.get_foordinate()
                 if x.get_open():
                     if x.get_number() == 0:
-                        self.scr.addstr(cur_y, cur_x, '_')
+                        self.scr.addstr(cur_y, cur_x*2, '_')
                     else:
-                        self.scr.addstr(cur_y, cur_x, str(x.get_number()))
+                        self.scr.addstr(cur_y, cur_x*2, str(x.get_number()))
                 elif x.get_flag():
-                    self.scr.addstr(cur_y, cur_x, '?')
+                    self.scr.addstr(cur_y, cur_x*2, '?')
             self.scr.box()
             self.scr.move(self.curs_y, self.curs_x)
 
@@ -95,5 +96,4 @@ class MineWindow:
         self.scr.move(self.curs_y, self.curs_x)
         while self.run:
             self.user_input()
-            self.scr.clear()
             self.render()
