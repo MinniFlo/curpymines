@@ -53,7 +53,8 @@ class MinefieldLogic:
         calc_list = set([])
         for y in self.field_matrix:
             for x in y:
-                calc_list.add(x)
+                cur_tuple = x.get_foordinate()
+                calc_list.add(cur_tuple)
         no_mines = self.no_mines(st_y, st_x)
         help_mine_list = calc_list - no_mines
         help_mine_list = list(help_mine_list)
@@ -66,17 +67,9 @@ class MinefieldLogic:
 
     # The function witch calculates the rim of the field and the 9 fields where the start is
     def no_mines(self, st_y, st_x):
-        temp_list = []
-        for i in self.field_list:
-            if i % self.max_x == 0 or (i + 1) % self.max_x == 0 or i < self.max_x or i > self.max_x * (self.max_y-1):
-                temp_list.append(i)
-        temp_list = set(temp_list)
-        start = st_y * self.max_x + st_x
-        start_fields = [start, start - 1, start + 1,
-                        start + self.max_x, start + self.max_x + 1, start + self.max_x - 1,
-                        start - self.max_x, start - self.max_x - 1, start - self.max_x + 1]
-        start_fields = set(start_fields)
-        no_mines = temp_list | start_fields
+        start_fields = {(st_y, st_x), (st_y + 1, st_x), (st_y - 1, st_x), (st_y, st_x + 2), (st_y, st_x - 2),
+                        (st_y + 1, st_x + 2), (st_y + 1, st_x - 2), (st_y - 1, st_x + 2), (st_y - 1, st_x - 2)}
+        no_mines = self.rim_list | start_fields
         return no_mines
 
     # Is called on click of a field
@@ -169,11 +162,10 @@ class MinefieldLogic:
 
 
 def main():
-    st_y = 2
-    st_x = 4
+    st_y = 1
+    st_x = 2
     logic = MinefieldLogic(5, 9)
     logic.build()
-    print(logic.rim_list)
 
     print('\nopen:')
     for y in logic.field_matrix:
@@ -181,20 +173,10 @@ def main():
         for x in y:
             print(x.get_foordinate(), end='\t')
 
-    print('\n\nclosed:')
-    for y in logic.field_matrix:
-        print()
-        for x in y:
-            if not x.get_open():
-                print('?', end='\t')
-            else:
-                print(str(x.get_number()), end='\t')
-    print("\n")
 
-    print("with mines:")
+    print("\nwith mines:\n")
     logic.distribute_mines(st_y, st_x)
     logic.click_field(st_y, st_x)
-    print()
 
     print('\nopen:')
     for y in logic.field_matrix:
