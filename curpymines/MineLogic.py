@@ -9,9 +9,8 @@ class MinefieldLogic:
         self.max_y = max_y
         self.max_x = max_x
         self.x_fields = int(self.max_x/2) + 1
-        self.field_amount = (int(self.max_x/2) * self.max_y) + self.max_y
+        self.field_amount = self.x_fields * max_y
         self.max_mine = int(self.field_amount * 0.15)
-        self.field_list = [i for i in range(self.field_amount)]
         self.rim_list = set([])
         self.field_matrix = []
         self.next_fields = set([])
@@ -36,10 +35,9 @@ class MinefieldLogic:
         # sets mines
         for y in self.field_matrix:
             for x in y:
-                pos_y, pos_x = x.get_foordinate()
-                if mine_list and pos_y * self.x_fields + int(pos_x/2) + 1 == mine_list[0]:
+                cur_tuple = x.get_foordinate()
+                if mine_list and cur_tuple in mine_list:
                     x.set_mine(True)
-                    mine_list.pop(0)
         # sets numbers
         for y in self.field_matrix:
             for x in y:
@@ -52,16 +50,18 @@ class MinefieldLogic:
 
     # The function witch sets the position of the mines
     def mine_list(self, st_y, st_x):
-        calc_list = set(self.field_list)
+        calc_list = set([])
+        for y in self.field_matrix:
+            for x in y:
+                calc_list.add(x)
         no_mines = self.no_mines(st_y, st_x)
         help_mine_list = calc_list - no_mines
         help_mine_list = list(help_mine_list)
-        mine_list = []
+        mine_list = set([])
         for i in range(self.max_mine):
             rand = random.choice(help_mine_list)
-            mine_list.append(rand)
+            mine_list.add(rand)
             help_mine_list.remove(rand)
-        mine_list.sort()
         return mine_list
 
     # The function witch calculates the rim of the field and the 9 fields where the start is
