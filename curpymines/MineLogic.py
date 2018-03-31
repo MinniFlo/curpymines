@@ -74,6 +74,7 @@ class MinefieldLogic:
 
     # Is called on click of a field
     def click_field(self, y, x):
+        x = int(x/2)
         self.render_list = set([])
         if self.field_matrix[y][x].get_mine():
             return False  # Todo!!1!11!
@@ -132,7 +133,9 @@ class MinefieldLogic:
 
     # Maps a tuple of y and x to a field object from field_matrix
     def tuple_in_matrix(self, tupple):
+        print("tuple: " + str(tupple))
         y, x = tupple
+        x = int(x/2)
         return self.field_matrix[y][x]
 
     # Counts the mines around on field
