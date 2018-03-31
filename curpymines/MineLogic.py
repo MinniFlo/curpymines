@@ -8,7 +8,8 @@ class MinefieldLogic:
     def __init__(self, max_y, max_x):
         self.max_y = max_y
         self.max_x = max_x
-        self.field_amount = self.max_y * self.max_x
+        self.x_fields = int(self.max_x/2) + 1
+        self.field_amount = (int(self.max_x/2) * self.max_y) + self.max_y
         self.max_mine = int(self.field_amount * 0.15)
         self.field_list = [i for i in range(self.field_amount)]
         self.rim_list = set([])
@@ -18,12 +19,11 @@ class MinefieldLogic:
 
     # The function witch fills the field_matrix with field-objects
     def build(self):
-
         for y in range(self.max_y):
             x_column = []
             self.field_matrix.append(x_column)
-            for x in range(self.max_x):
-                field = Field(y, x)
+            for x in range(self.x_fields):
+                field = Field(y, x*2)
                 x_column.append(field)
                 cur_y, cur_x = field.get_foordinate()
                 if cur_y == 0 or cur_y == (self.max_y - 1) or cur_x == 0 or cur_x == (self.max_x - 1):
@@ -32,12 +32,15 @@ class MinefieldLogic:
 
     def distribute_mines(self, st_y, st_x):
         mine_list = self.mine_list(st_y, st_x)
+        print("minelist: " + str(mine_list))
+        # sets mines
         for y in self.field_matrix:
             for x in y:
                 pos_y, pos_x = x.get_foordinate()
-                if mine_list and pos_y * self.max_x + pos_x == mine_list[0]:
+                if mine_list and pos_y * self.x_fields + int(pos_x/2) + 1 == mine_list[0]:
                     x.set_mine(True)
                     mine_list.pop(0)
+        # sets numbers
         for y in self.field_matrix:
             for x in y:
                 if x.get_mine():
@@ -84,7 +87,7 @@ class MinefieldLogic:
         self.check_field(y, x)
         self.check_next_fields()
 
-    # Checks the fields around the field that is called in click_field
+    # Checks the fields around the field that is called in click_field and opens the field
     def check_field(self, y, x):
         cur_field = self.field_matrix[y][x]
         if cur_field.get_number() != 0:
@@ -131,7 +134,7 @@ class MinefieldLogic:
 
     # The function returns a list of all tuples of fields that surround a specified field
     def adjacent_fields(self, y, x):
-        adjacent_list = {(y, x+1), (y, x-1), (y+1, x), (y+1, x+1), (y+1, x-1), (y-1, x), (y-1, x+1), (y-1, x-1)}
+        adjacent_list = {(y, x+2), (y, x-2), (y+1, x), (y+1, x+2), (y+1, x-2), (y-1, x), (y-1, x+2), (y-1, x-2)}
         return set([x for x in adjacent_list if self.in_range(x)])
 
     # Maps a tuple of y and x to a field object from field_matrix
@@ -142,6 +145,7 @@ class MinefieldLogic:
     # Counts the mines around on field
     def count_mines(self, y, x):
         adj_list = self.adjacent_fields(y, x)
+        print("adj_list (" + str(y) + ", " + str(x) + "): " + str(adj_list))
         mine_count = 0
         for i in adj_list:
             i_field = self.tuple_in_matrix(i)
@@ -165,62 +169,51 @@ class MinefieldLogic:
 
 
 def main():
-    st_y = 1
-    st_x = 1
-    logic = MinefieldLogic(6, 6)
+    st_y = 2
+    st_x = 4
+    logic = MinefieldLogic(5, 9)
     logic.build()
     print(logic.rim_list)
-    print(logic.field_matrix[1][1].get_foordinate())
 
     print('\nopen:')
     for y in logic.field_matrix:
         print()
         for x in y:
-            y_val, x_val = x.foordinate
-            field = logic.field_matrix[y_val][x_val]
-            if field.get_mine():
-                print('+', end='\t')
-            else:
-                print(str(field.get_number()), end='\t')
+            print(x.get_foordinate(), end='\t')
 
     print('\n\nclosed:')
     for y in logic.field_matrix:
         print()
         for x in y:
-            y_val, x_val = x.foordinate
-            field = logic.field_matrix[y_val][x_val]
-            if not field.get_open():
+            if not x.get_open():
                 print('?', end='\t')
             else:
-                print(str(field.get_number()), end='\t')
+                print(str(x.get_number()), end='\t')
+    print("\n")
 
-'''
     print("with mines:")
     logic.distribute_mines(st_y, st_x)
     logic.click_field(st_y, st_x)
+    print()
 
     print('\nopen:')
     for y in logic.field_matrix:
         print()
         for x in y:
-            y_val, x_val = x.foordinate
-            field = logic.field_matrix[y_val][x_val]
-            if field.get_mine():
+            if x.get_mine():
                 print('+', end='\t')
             else:
-                print(str(field.get_number()), end='\t')
+                print(str(x.get_number()), end='\t')
 
     print('\n\nclosed:')
     for y in logic.field_matrix:
         print()
         for x in y:
-            y_val, x_val = x.foordinate
-            field = logic.field_matrix[y_val][x_val]
-            if not field.get_open():
+            if not x.get_open():
                 print('?', end='\t')
             else:
-                print(str(field.get_number()), end='\t')
-'''
+                print(str(x.get_number()), end='\t')
+
 
 if __name__ == '__main__':
     main()

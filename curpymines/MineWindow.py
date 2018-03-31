@@ -7,8 +7,7 @@ class MineWindow:
     def __init__(self, scr):
         self.scr = scr
         self.max_y, self.max_x = self.scr.getmaxyx()
-        x_range = int(self.max_x/2) + 1
-        self.logic = MinefieldLogic(self.max_y, x_range)
+        self.logic = MinefieldLogic(self.max_y, self.max_x)
         self.run = True
         self.first = True
         self.curs_y, self.curs_x = (1, 2)
@@ -30,16 +29,16 @@ class MineWindow:
                 self.curs_x += 2
         elif key == 32:
             if self.first:
-                self.logic.distribute_mines(self.curs_y, int(self.curs_x/2))
-                self.logic.click_field(self.curs_y, int(self.curs_x/2))
+                self.logic.distribute_mines(self.curs_y, self.curs_x)
+                self.logic.click_field(self.curs_y, self.curs_x)
                 self.first = False
             else:
-                if not self.logic.field_matrix[self.curs_y][int(self.curs_x/2)].get_open():
-                    self.logic.click_field(self.curs_y, int(self.curs_x/2))
+                if not self.logic.field_matrix[self.curs_y][self.curs_x].get_open():
+                    self.logic.click_field(self.curs_y, self.curs_x)
                 else:
-                    self.logic.quality_of_life_click(self.curs_y, int(self.curs_x/2))
+                    self.logic.quality_of_life_click(self.curs_y, self.curs_x)
         elif key == 101:
-            cur_field = self.logic.field_matrix[self.curs_y][int(self.curs_x/2)]
+            cur_field = self.logic.field_matrix[self.curs_y][self.curs_x]
             if not cur_field.get_flag():
                 cur_field.set_flag(True)
             else:
@@ -66,11 +65,11 @@ class MineWindow:
                 cur_y, cur_x = x.get_foordinate()
                 if x.get_open():
                     if x.get_number() == 0:
-                        self.scr.addstr(cur_y, cur_x*2, '_')
+                        self.scr.addstr(cur_y, cur_x, '_')
                     else:
-                        self.scr.addstr(cur_y, cur_x*2, str(x.get_number()))
+                        self.scr.addstr(cur_y, cur_x, str(x.get_number()))
                 elif x.get_flag():
-                    self.scr.addstr(cur_y, cur_x*2, '?')
+                    self.scr.addstr(cur_y, cur_x, '?')
             self.scr.box()
             self.scr.move(self.curs_y, self.curs_x)
 
