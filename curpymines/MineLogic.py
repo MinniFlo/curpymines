@@ -74,16 +74,17 @@ class MinefieldLogic:
 
     # Is called on click of a field
     def click_field(self, y, x):
-        x = int(x/2)
+        x_index = int(x/2)
         self.render_list = set([])
-        if self.field_matrix[y][x].get_mine():
+        if self.field_matrix[y][x_index].get_mine():
             return False  # Todo!!1!11!
         self.check_field(y, x)
         self.check_next_fields()
 
     # Checks the fields around the field that is called in click_field and opens the field
     def check_field(self, y, x):
-        cur_field = self.field_matrix[y][x]
+        x_index = int(x / 2)
+        cur_field = self.field_matrix[y][x_index]
         if cur_field.get_number() != 0:
             cur_field.set_open(True)
             # self.render_list.add(cur_field)
@@ -133,7 +134,6 @@ class MinefieldLogic:
 
     # Maps a tuple of y and x to a field object from field_matrix
     def tuple_in_matrix(self, tupple):
-        print("tuple: " + str(tupple))
         y, x = tupple
         x = int(x/2)
         return self.field_matrix[y][x]
@@ -141,7 +141,6 @@ class MinefieldLogic:
     # Counts the mines around on field
     def count_mines(self, y, x):
         adj_list = self.adjacent_fields(y, x)
-        print("adj_list (" + str(y) + ", " + str(x) + "): " + str(adj_list))
         mine_count = 0
         for i in adj_list:
             i_field = self.tuple_in_matrix(i)
@@ -165,9 +164,9 @@ class MinefieldLogic:
 
 
 def main():
-    st_y = 1
-    st_x = 2
-    logic = MinefieldLogic(5, 9)
+    st_y = 2
+    st_x = 4
+    logic = MinefieldLogic(7, 15)
     logic.build()
 
     print('\nopen:')
