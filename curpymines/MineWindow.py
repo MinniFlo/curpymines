@@ -43,7 +43,7 @@ class MineWindow:
                 cur_field.set_flag(True)
             else:
                 cur_field.set_flag(False)
-            self.logic.render_list.add(cur_field)
+            # self.logic.render_list.add(cur_field)
         elif key == 27:
             self.run = False
 
@@ -53,25 +53,19 @@ class MineWindow:
                 self.scr.addstr(y, x*2, '+')
         self.scr.box()
 
-    '''
-    def draw(self):
-        self.scr.bkgd('+')
-        self.scr.box()
-    '''
-
     def render(self):
         for y in self.logic.field_matrix:
             for x in y:
                 cur_y, cur_x = x.get_foordinate()
                 if x.get_open():
                     if x.get_number() == 0:
-                        self.scr.addstr(cur_y, cur_x, '_')
+                        self.scr.addstr(cur_y, cur_x, ' ')
                     else:
                         self.scr.addstr(cur_y, cur_x, str(x.get_number()))
                 elif x.get_flag():
                     self.scr.addstr(cur_y, cur_x, '?')
-            self.scr.box()
-            self.scr.move(self.curs_y, self.curs_x)
+        self.scr.box()
+        self.scr.move(self.curs_y, self.curs_x)
 
     '''
     def render(self):
