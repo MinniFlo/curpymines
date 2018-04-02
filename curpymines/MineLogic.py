@@ -82,7 +82,7 @@ class MinefieldLogic:
 
     # Checks the fields around the field that is called in click_field and opens the field
     def check_field(self, y, x):
-        x_index = int(x / 2)
+        x_index = int(x/2)
         cur_field = self.field_matrix[y][x_index]
         if cur_field.get_number() != 0:
             cur_field.set_open(True)
@@ -109,8 +109,9 @@ class MinefieldLogic:
                 self.check_field(y_i, x_i)
 
     def quality_of_life_click(self, y, x):
-        if self.field_matrix[y][x].get_number() != 0 or self.field_matrix[y][x].get_number() != 9:
-            if self.count_flags(y, x) == self.field_matrix[y][x].get_number():
+        x_index = int(x / 2)
+        if self.field_matrix[y][x_index].get_number() != 0 or self.field_matrix[y][x_index].get_number() != 9:
+            if self.count_flags(y, x) == self.field_matrix[y][x_index].get_number():
                 work_list = self.adjacent_fields(y, x)
                 subs_list = set([])
                 for i in work_list:
@@ -120,7 +121,8 @@ class MinefieldLogic:
                 work_list = work_list - subs_list
                 for i in work_list:
                     cur_y, cur_x = i
-                    if self.field_matrix[cur_y][cur_x].get_mine():
+                    cur_x_index = int(cur_x/2)
+                    if self.field_matrix[cur_y][cur_x_index].get_mine():
                         return False  # Todo!!11!11!
                     else:
                         self.check_field(cur_y, cur_x)
