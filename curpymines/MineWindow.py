@@ -14,7 +14,7 @@ class MineWindow:
 
     def user_input(self):
         key = self.scr.getch()
-
+        x_index = int(self.curs_x / 2)
         if key == 105 or key == 119:
             if self.curs_y > 1:
                 self.curs_y -= 1
@@ -33,12 +33,12 @@ class MineWindow:
                 self.logic.click_field(self.curs_y, self.curs_x)
                 self.first = False
             else:
-                if not self.logic.field_matrix[self.curs_y][self.curs_x].get_open():
+                if not self.logic.field_matrix[self.curs_y][x_index].get_open():
                     self.logic.click_field(self.curs_y, self.curs_x)
                 else:
                     self.logic.quality_of_life_click(self.curs_y, self.curs_x)
         elif key == 101:
-            cur_field = self.logic.field_matrix[self.curs_y][self.curs_x]
+            cur_field = self.logic.field_matrix[self.curs_y][x_index]
             if not cur_field.get_flag():
                 cur_field.set_flag(True)
             else:

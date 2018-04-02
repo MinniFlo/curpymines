@@ -31,7 +31,6 @@ class MinefieldLogic:
 
     def distribute_mines(self, st_y, st_x):
         mine_list = self.mine_list(st_y, st_x)
-        print("minelist: " + str(mine_list))
         # sets mines
         for y in self.field_matrix:
             for x in y:
@@ -163,6 +162,7 @@ class MinefieldLogic:
         return 0 <= y <= (self.max_y-1) and 0 <= x <= (self.max_x-1)
 
 
+'''
 def main():
     st_y = 2
     st_x = 4
@@ -174,7 +174,6 @@ def main():
         print()
         for x in y:
             print(x.get_foordinate(), end='\t')
-
 
     print("\nwith mines:\n")
     logic.distribute_mines(st_y, st_x)
@@ -201,3 +200,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+'''
