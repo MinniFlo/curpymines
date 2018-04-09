@@ -38,7 +38,6 @@ class MineWindow:
                 else:
                     self.logic.quality_of_life_click(self.curs_y, self.curs_x)
         elif key == 101:
-            self.logic.render_list.clear()
             cur_field = self.logic.field_matrix[self.curs_y][x_index]
             if not cur_field.get_flag():
                 cur_field.set_flag(True)
@@ -55,18 +54,6 @@ class MineWindow:
         self.scr.box()
 
     def render(self):
-        '''
-        for y in self.logic.field_matrix:
-            for x in y:
-                cur_y, cur_x = x.get_foordinate()
-                if x.get_open():
-                    if x.get_number() == 0:
-                        self.scr.addstr(cur_y, cur_x, ' ')
-                    else:
-                        self.scr.addstr(cur_y, cur_x, str(x.get_number()))
-                elif x.get_flag():
-                    self.scr.addstr(cur_y, cur_x, '?')
-        '''
         for cur_field in self.logic.render_list:
             cur_y, cur_x = cur_field.get_foordinate()
             if cur_field.get_open():
@@ -81,6 +68,7 @@ class MineWindow:
                     self.scr.addstr(cur_y, cur_x, '+')
         self.scr.box()
         self.scr.move(self.curs_y, self.curs_x)
+        self.logic.render_list.clear()
 
     def while_running(self):
         curses.noecho()

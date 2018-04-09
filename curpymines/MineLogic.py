@@ -73,7 +73,6 @@ class MinefieldLogic:
 
     # Is called on click of a field
     def click_field(self, y, x):
-        self.render_list.clear()
         x_index = int(x/2)
         if not self.field_matrix[y][x_index].get_flag():
             self.render_list = set([])
@@ -111,7 +110,6 @@ class MinefieldLogic:
                 self.check_field(y_i, x_i)
 
     def quality_of_life_click(self, y, x):
-        self.render_list.clear()
         x_index = int(x / 2)
         cur_field = self.field_matrix[y][x_index]
         if cur_field.get_number() != 0 and cur_field.get_number() != 9:
@@ -166,44 +164,3 @@ class MinefieldLogic:
     def in_range(self, tupple):
         y, x = tupple
         return 0 <= y <= (self.max_y-1) and 0 <= x <= (self.max_x-1)
-
-
-'''
-def main():
-    st_y = 2
-    st_x = 4
-    logic = MinefieldLogic(7, 15)
-    logic.build()
-
-    print('\nopen:')
-    for y in logic.field_matrix:
-        print()
-        for x in y:
-            print(x.get_foordinate(), end='\t')
-
-    print("\nwith mines:\n")
-    logic.distribute_mines(st_y, st_x)
-    logic.click_field(st_y, st_x)
-
-    print('\nopen:')
-    for y in logic.field_matrix:
-        print()
-        for x in y:
-            if x.get_mine():
-                print('+', end='\t')
-            else:
-                print(str(x.get_number()), end='\t')
-
-    print('\n\nclosed:')
-    for y in logic.field_matrix:
-        print()
-        for x in y:
-            if not x.get_open():
-                print('?', end='\t')
-            else:
-                print(str(x.get_number()), end='\t')
-
-
-if __name__ == '__main__':
-    main()
-'''
