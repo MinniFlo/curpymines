@@ -5,3 +5,5 @@ keytoascii.py
 venv/*
 __pycache__/*
 *.pyc
+colortest.py
+
