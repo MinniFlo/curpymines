@@ -1,3 +1,6 @@
+from curpymines.Colors import Colors
+
+
 class Field:
 
     def __init__(self, y, x):
