@@ -60,7 +60,7 @@ class MineWindow:
                 if cur_field.get_number() == 0:
                     self.scr.addstr(cur_y, cur_x, ' ')
                 else:
-                    self.scr.addstr(cur_y, cur_x, str(cur_field.get_number()))
+                    self.scr.addstr(cur_y, cur_x, str(cur_field.get_number()), cur_field.get_color())
             else:
                 if cur_field.get_flag():
                     self.scr.addstr(cur_y, cur_x, '?')

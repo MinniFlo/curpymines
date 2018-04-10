@@ -10,7 +10,7 @@ class MinefieldLogic:
         self.max_x = max_x
         self.x_fields = int(self.max_x/2) + 1
         self.field_amount = self.x_fields * max_y
-        self.max_mine = int(self.field_amount * 0.15)
+        self.max_mine = int(self.field_amount * 0.2)
         self.rim_list = set([])
         self.field_matrix = []
         self.next_fields = set([])
