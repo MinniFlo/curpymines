@@ -15,9 +15,11 @@ class MinefieldLogic:
         self.field_matrix = []
         self.next_fields = set([])
         self.render_list = set([])
+        self.loose = False
 
     # The function witch fills the field_matrix with field-objects
     def build(self):
+        self.loose = False
         for y in range(self.max_y):
             x_column = []
             self.field_matrix.append(x_column)
@@ -75,11 +77,11 @@ class MinefieldLogic:
     def click_field(self, y, x):
         x_index = int(x/2)
         if not self.field_matrix[y][x_index].get_flag():
-            self.render_list = set([])
-            if self.field_matrix[y][x_index].get_mine():
-                return False  # Todo!!1!11!
-            self.check_field(y, x)
-            self.check_next_fields()
+            if not self.field_matrix[y][x_index].get_mine():
+                self.check_field(y, x)
+                self.check_next_fields()
+            else:
+                self.loose = True
 
     # Checks the fields around the field that is called in click_field and opens the field
     def check_field(self, y, x):
@@ -116,7 +118,7 @@ class MinefieldLogic:
             if self.count_flags(y, x) == cur_field.get_number():
                 work_list = self.adjacent_fields(y, x)
                 subs_list = set([])
-                for i in work_list:   
+                for i in work_list:
                     i_field = self.tuple_in_matrix(i)
                     if i_field.get_flag() or i_field.get_open():
                         subs_list.add(i)
@@ -124,11 +126,11 @@ class MinefieldLogic:
                 for i in work_list:
                     cur_y, cur_x = i
                     cur_x_index = int(cur_x/2)
-                    if self.field_matrix[cur_y][cur_x_index].get_mine():
-                        return False  # Todo!!11!11!
-                    else:
+                    if not self.field_matrix[cur_y][cur_x_index].get_mine():
                         self.check_field(cur_y, cur_x)
                         self.check_next_fields()
+                    else:
+                        self.loose = True
 
     # The function returns a list of all tuples of fields that surround a specified field
     def adjacent_fields(self, y, x):
