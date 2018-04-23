@@ -112,11 +112,11 @@ class MinefieldLogic:
     def quality_of_life_click(self, y, x):
         x_index = int(x / 2)
         cur_field = self.field_matrix[y][x_index]
-        if cur_field.get_number() != 0 and cur_field.get_number() != 9:
+        if cur_field.get_number() != 0:
             if self.count_flags(y, x) == cur_field.get_number():
                 work_list = self.adjacent_fields(y, x)
                 subs_list = set([])
-                for i in work_list:
+                for i in work_list:   
                     i_field = self.tuple_in_matrix(i)
                     if i_field.get_flag() or i_field.get_open():
                         subs_list.add(i)

@@ -1,5 +1,7 @@
 from .MineLogic import MinefieldLogic
+from curpymines.Colors import Colors
 import curses
+import time
 
 
 class MineWindow:
@@ -10,7 +12,8 @@ class MineWindow:
         self.logic = MinefieldLogic(self.max_y, self.max_x)
         self.run = True
         self.first = True
-        self.curs_y, self.curs_x = (1, 2)
+        self.curs_y, self.curs_x = (4, 8)
+        self.color = Colors()
 
     def user_input(self):
         key = self.scr.getch()
@@ -45,6 +48,8 @@ class MineWindow:
                 cur_field.set_flag(False)
             self.logic.render_list.add(cur_field)
         elif key == 27:
+            self.end_game()
+            self.scr.getch()
             self.run = False
 
     def draw(self):
@@ -64,12 +69,35 @@ class MineWindow:
                                     curses.color_pair(cur_field.get_number()))
             else:
                 if cur_field.get_flag():
-                    self.scr.addstr(cur_y, cur_x, '?')
+                    self.scr.addstr(cur_y, cur_x, '?', curses.color_pair(6))
                 else:
                     self.scr.addstr(cur_y, cur_x, '+')
         self.scr.box()
         self.scr.move(self.curs_y, self.curs_x)
         self.logic.render_list.clear()
+
+    def end_game(self):
+        self.scr.clear()
+        for y in self.logic.field_matrix:
+            for x in y:
+                cur_y, cur_x = x.get_foordinate()
+                if (cur_y, cur_x) in self.logic.rim_list:
+                    continue
+                if x.get_number() == 0:
+                    self.scr.addstr(cur_y, cur_x, ' ')
+                elif x.get_flag():
+                    if x.get_mine():
+                        self.scr.addstr(cur_y, cur_x, '?', curses.color_pair(6))
+                    else:
+                        self.scr.addstr(cur_y, cur_x, '?', curses.color_pair(11))
+                elif x.get_number() == 9:
+                        self.scr.addstr(cur_y, cur_x, '+', curses.color_pair(9))
+                else:
+                    self.scr.addstr(cur_y, cur_x, str(x.get_number()), curses.color_pair(x.get_number()))
+        self.scr.addstr(self.curs_y, self.curs_x, 'x', curses.color_pair(10))
+        self.scr.move(self.curs_y, self.curs_x)
+        self.scr.refresh()
+        self.scr.box()
 
     def while_running(self):
         curses.noecho()

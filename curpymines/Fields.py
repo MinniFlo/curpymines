@@ -1,4 +1,3 @@
-from curpymines.Colors import Colors
 
 
 class Field:
@@ -9,7 +8,7 @@ class Field:
         self.open = False
         self.flag = False
         self.number = 0
-        self.color = Colors()
+
 
     def get_mine(self):
         return self.mine
