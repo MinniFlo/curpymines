@@ -42,11 +42,12 @@ class MineWindow:
                     self.logic.quality_of_life_click(self.curs_y, self.curs_x)
         elif key == 101:
             cur_field = self.logic.field_matrix[self.curs_y][x_index]
-            if not cur_field.get_flag():
-                cur_field.set_flag(True)
-            else:
-                cur_field.set_flag(False)
-            self.logic.render_list.add(cur_field)
+            if not cur_field.get_open():
+                if not cur_field.get_flag():
+                    cur_field.set_flag(True)
+                else:
+                    cur_field.set_flag(False)
+                self.logic.render_list.add(cur_field)
         elif key == 27:
             self.run = False
 
