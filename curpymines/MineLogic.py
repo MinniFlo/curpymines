@@ -1,4 +1,5 @@
 import random
+import sys
 
 from curpymines.Fields import Field
 
@@ -117,25 +118,38 @@ class MinefieldLogic:
         if cur_field.get_number() != 0:
             if self.count_flags(y, x) == cur_field.get_number():
                 work_list = self.adjacent_fields(y, x)
-                subs_list = set([])
-                for i in work_list:
+                for i in set(work_list):
                     i_field = self.tuple_in_matrix(i)
                     if i_field.get_flag() or i_field.get_open():
-                        subs_list.add(i)
-                work_list = work_list - subs_list
+                        work_list.remove(i)
+                    else:
+                        with open("xd.txt", 'a') as myfile:
+                            myfile.write("isOpen or hasFlag {} \n".format(i) +
+                                         "isOpen: {} \n".format(i_field.get_open()) +
+                                         "hasFlag: {} \n".format(i_field.get_flag()))
                 for i in work_list:
                     cur_y, cur_x = i
-                    cur_x_index = int(cur_x/2)
-                    if not self.field_matrix[cur_y][cur_x_index].get_mine():
+                    j_field = self.tuple_in_matrix(i)
+                    if not j_field.get_mine():
                         self.check_field(cur_y, cur_x)
                         self.check_next_fields()
                     else:
                         self.loose = True
+                with open("xd.txt", 'a') as myfile:
+                    myfile.write("ok\n")
+            else:
+                with open("xd.txt", 'a') as myfile:
+                    myfile.write("flags != numbers ({}, {}) \n".format(y, x) +
+                                 "flags: {} \n".format(self.count_flags(y, x)) +
+                                 "fieldnum: {} \n".format(cur_field.get_number()))
+        else:
+            with open("xd.txt", 'a') as myfile:
+                myfile.write("lol ({}, {}) \n".format(y, x))
 
     # The function returns a list of all tuples of fields that surround a specified field
     def adjacent_fields(self, y, x):
         adjacent_list = {(y, x+2), (y, x-2), (y+1, x), (y+1, x+2), (y+1, x-2), (y-1, x), (y-1, x+2), (y-1, x-2)}
-        return set([x for x in adjacent_list if self.in_range(x)])
+        return {x for x in adjacent_list if self.in_range(x)}
 
     # Maps a tuple of y and x to a field object from field_matrix
     def tuple_in_matrix(self, tupple):
@@ -165,4 +179,4 @@ class MinefieldLogic:
     # logic that checks if field ist in the window
     def in_range(self, tupple):
         y, x = tupple
-        return 0 <= y <= (self.max_y-1) and 0 <= x <= (self.max_x-1)
+        return 1 <= y <= (self.max_y-2) and 2 <= x <= (self.max_x-3)
