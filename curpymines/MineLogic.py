@@ -176,6 +176,15 @@ class MinefieldLogic:
                 flag_count += 1
         return flag_count
 
+    def flag_field(self, y, x):
+        cur_field = self.field_matrix[y][x]
+        if not cur_field.get_open():
+            if not cur_field.get_flag():
+                cur_field.set_flag(True)
+            else:
+                cur_field.set_flag(False)
+            self.render_list.add(cur_field)
+
     # logic that checks if field ist in the window
     def in_range(self, tupple):
         y, x = tupple
