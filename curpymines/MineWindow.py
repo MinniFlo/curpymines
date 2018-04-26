@@ -69,8 +69,12 @@ class MineWindow:
                     else:
                         self.scr.addstr(cur_y, cur_x, '+')
             self.scr.box()
-            self.scr.move(self.curs_y, self.curs_x)
             self.logic.render_list.clear()
+            self.logic.check_win()
+            if self.logic.win:
+                self.scr.addstr(0, int(self.max_x/2 - 3), 'win ^.^')
+            self.scr.move(self.curs_y, self.curs_x)
+
 
     def end_game(self):
         self.scr.clear()

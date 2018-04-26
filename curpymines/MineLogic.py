@@ -1,5 +1,5 @@
 import random
-import sys
+
 
 from curpymines.Fields import Field
 
@@ -11,12 +11,14 @@ class MinefieldLogic:
         self.max_x = max_x
         self.x_fields = int(self.max_x/2) + 1
         self.field_amount = self.x_fields * max_y
-        self.max_mine = int(self.field_amount * 0.2)
+        self.max_mine = int(self.field_amount * 0.02)
         self.rim_list = set([])
         self.field_matrix = []
         self.next_fields = set([])
         self.render_list = set([])
         self.loose = False
+        self.win_list = set()
+        self.win = False
 
     # The function witch fills the field_matrix with field-objects
     def build(self):
@@ -91,10 +93,12 @@ class MinefieldLogic:
         if cur_field.get_number() != 0:
             cur_field.set_open(True)
             self.render_list.add(cur_field)
+            self.win_list.add(cur_field)
         else:
             adjacent_list = self.adjacent_fields(y, x)
             cur_field.set_open(True)
             self.render_list.add(cur_field)
+            self.win_list.add(cur_field)
             for i in adjacent_list:
                 i_field = self.tuple_in_matrix(i)
                 if not i_field.get_open():
@@ -185,7 +189,12 @@ class MinefieldLogic:
                 cur_field.set_flag(False)
             self.render_list.add(cur_field)
 
+    def check_win(self):
+        if (self.field_amount - len(self.rim_list) - self.max_mine) == len(self.win_list):
+            self.win = True
+
     # logic that checks if field ist in the window
     def in_range(self, tupple):
         y, x = tupple
         return 1 <= y <= (self.max_y-2) and 2 <= x <= (self.max_x-3)
+
