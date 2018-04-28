@@ -130,7 +130,6 @@ class MineWindow:
         self.scr.box()
         self.scr.move(self.curs_y, self.curs_x)
 
-
     def while_running(self):
         curses.noecho()
         self.logic.build()
