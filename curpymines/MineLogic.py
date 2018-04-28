@@ -14,6 +14,7 @@ class MinefieldLogic:
         self.max_mine = int(self.field_amount * 0.2)
         self.rim_list = set([])
         self.field_matrix = []
+        self.previous_matrix = []
         self.next_fields = set([])
         self.render_list = set([])
         self.loose = False

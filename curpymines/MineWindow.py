@@ -18,6 +18,8 @@ class MineWindow:
     def user_input(self):
         key = self.scr.getch()
         x_index = int(self.curs_x / 2)
+        if not self.logic.loose:
+            self.logic.previous_matrix = self.logic.field_matrix
         if key == 105 or key == 119:
             if self.curs_y > 1:
                 self.curs_y -= 1
@@ -41,7 +43,13 @@ class MineWindow:
                 else:
                     self.logic.quality_of_life_click(self.curs_y, self.curs_x)
         elif key == 101:
-            self.logic.flag_field(self.curs_y, x_index)
+            if not self.logic.loose:
+                self.logic.flag_field(self.curs_y, x_index)
+        elif key == 263:
+            if self.logic.loose:
+                self.logic.loose = False
+                self.logic.field_matrix = self.logic.previous_matrix
+                self.reset_render()
         elif key == 27:
             self.run = False
 
@@ -77,7 +85,6 @@ class MineWindow:
             self.scr.move(self.curs_y, self.curs_x)
 
     def end_game(self):
-        self.scr.clear()
         for y in self.logic.field_matrix:
             for x in y:
                 cur_y, cur_x = x.get_foordinate()
@@ -102,6 +109,27 @@ class MineWindow:
         self.scr.move(self.curs_y, self.curs_x)
         self.scr.refresh()
         self.scr.box()
+
+    def reset_render(self):
+        for y in self.logic.field_matrix:
+            for x in y:
+                cur_y, cur_x = x.get_foordinate()
+                if (cur_y, cur_x) in self.logic.rim_list:
+                    continue
+                if x.get_open():
+                    if x.get_number() == 0:
+                        self.scr.addstr(cur_y, cur_x, ' ')
+                    else:
+                        self.scr.addstr(cur_y, cur_x, str(x.get_number()),
+                                        curses.color_pair(x.get_number()))
+                else:
+                    if x.get_flag():
+                        self.scr.addstr(cur_y, cur_x, '?', curses.color_pair(6))
+                    else:
+                        self.scr.addstr(cur_y, cur_x, '+')
+        self.scr.box()
+        self.scr.move(self.curs_y, self.curs_x)
+
 
     def while_running(self):
         curses.noecho()
