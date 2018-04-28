@@ -1,7 +1,7 @@
 from .MineLogic import MinefieldLogic
 from curpymines.Colors import Colors
 import curses
-import time
+
 
 
 class MineWindow:
@@ -71,10 +71,10 @@ class MineWindow:
             self.scr.box()
             self.logic.render_list.clear()
             self.logic.check_win()
+            self.scr.addstr(self.max_y - 1, 2, 'Mines left: {}'.format(self.logic.flag_count))
             if self.logic.win:
                 self.scr.addstr(0, int(self.max_x/2 - 3), 'win ^.^')
             self.scr.move(self.curs_y, self.curs_x)
-
 
     def end_game(self):
         self.scr.clear()

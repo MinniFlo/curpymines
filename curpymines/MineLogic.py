@@ -11,7 +11,7 @@ class MinefieldLogic:
         self.max_x = max_x
         self.x_fields = int(self.max_x/2) + 1
         self.field_amount = self.x_fields * max_y
-        self.max_mine = int(self.field_amount * 0.02)
+        self.max_mine = int(self.field_amount * 0.2)
         self.rim_list = set([])
         self.field_matrix = []
         self.next_fields = set([])
@@ -19,6 +19,8 @@ class MinefieldLogic:
         self.loose = False
         self.win_list = set()
         self.win = False
+        self.flag_count = self.max_mine
+
 
     # The function witch fills the field_matrix with field-objects
     def build(self):
@@ -185,8 +187,10 @@ class MinefieldLogic:
         if not cur_field.get_open():
             if not cur_field.get_flag():
                 cur_field.set_flag(True)
+                self.flag_count -= 1
             else:
                 cur_field.set_flag(False)
+                self.flag_count += 1
             self.render_list.add(cur_field)
 
     def check_win(self):
