@@ -21,6 +21,7 @@ class MinefieldLogic:
         self.win_list = set()
         self.win = False
         self.flag_count = self.max_mine
+        self.cheat = False
 
 
     # The function witch fills the field_matrix with field-objects
@@ -182,7 +183,7 @@ class MinefieldLogic:
             if i_field.get_flag():
                 flag_count += 1
         return flag_count
-
+from curpymines import MineWindow
     def flag_field(self, y, x):
         cur_field = self.field_matrix[y][x]
         if not cur_field.get_open():

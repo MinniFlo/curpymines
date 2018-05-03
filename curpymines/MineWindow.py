@@ -48,6 +48,7 @@ class MineWindow:
         elif key == 263:
             if self.logic.loose:
                 self.logic.loose = False
+                self.logic.cheat = True
                 self.logic.field_matrix = self.logic.previous_matrix
                 self.reset_render()
         elif key == 27:
@@ -58,6 +59,7 @@ class MineWindow:
             for x in range(int(self.max_x/2)):
                 self.scr.addstr(y, x*2, '+')
         self.scr.box()
+        self.scr.move(self.curs_y, self.curs_x)
 
     def render(self):
         if self.logic.loose:
@@ -79,7 +81,7 @@ class MineWindow:
             self.scr.box()
             self.logic.render_list.clear()
             self.logic.check_win()
-            self.scr.addstr(self.max_y - 1, 2, 'Mines left: {}'.format(self.logic.flag_count))
+
             if self.logic.win:
                 self.scr.addstr(0, int(self.max_x/2 - 3), 'win ^.^')
             self.scr.move(self.curs_y, self.curs_x)
