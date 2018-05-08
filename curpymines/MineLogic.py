@@ -1,4 +1,5 @@
 import random
+import time
 
 
 from curpymines.Fields import Field
@@ -17,11 +18,13 @@ class MinefieldLogic:
         self.previous_matrix = []
         self.next_fields = set([])
         self.render_list = set([])
+        self.first = True
         self.loose = False
         self.win_list = set()
         self.win = False
         self.flag_count = self.max_mine
         self.cheat = False
+        self.start_time = 0
 
     # The function witch fills the field_matrix with field-objects
     def build(self):
@@ -38,6 +41,7 @@ class MinefieldLogic:
                     self.rim_list.add(cur_tuple)
 
     def distribute_mines(self, st_y, st_x):
+        self.start_time = time.time()
         mine_list = self.mine_list(st_y, st_x)
         # sets mines
         for y in self.field_matrix:
@@ -54,6 +58,7 @@ class MinefieldLogic:
                     cur_y, cur_x = x.get_foordinate()
                     mine_count = self.count_mines(cur_y, cur_x)
                     x.set_number(mine_count)
+        self.first = False
 
     # The function witch sets the position of the mines
     def mine_list(self, st_y, st_x):
@@ -188,3 +193,16 @@ class MinefieldLogic:
     def in_range(self, tupple):
         y, x = tupple
         return 1 <= y <= (self.max_y-2) and 2 <= x <= (self.max_x-3)
+
+    def calc_time(self):
+        cur_time = time.time()
+        sum_time = int(cur_time - self.start_time)
+        minutes = int(sum_time / 60)
+        seconds = sum_time % 60
+        if seconds < 10:
+            seconds = "0{}".format(seconds)
+        if minutes < 10:
+            minutes = "0{}".format(minutes)
+
+        return "{}:{}".format(minutes, seconds)
+

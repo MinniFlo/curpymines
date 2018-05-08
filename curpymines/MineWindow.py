@@ -9,7 +9,6 @@ class MineWindow:
         self.max_y, self.max_x = self.scr.getmaxyx()
         self.logic = logic
         self.run = True
-        self.first = True
         self.curs_y, self.curs_x = (4, 8)
         self.color = Colors()
 
@@ -31,10 +30,9 @@ class MineWindow:
             if self.curs_x < self.max_x - 3:
                 self.curs_x += 2
         elif key == 32:
-            if self.first:
+            if self.logic.first:
                 self.logic.distribute_mines(self.curs_y, self.curs_x)
                 self.logic.click_field(self.curs_y, self.curs_x)
-                self.first = False
             else:
                 if not self.logic.field_matrix[self.curs_y][x_index].get_open():
                     self.logic.click_field(self.curs_y, self.curs_x)

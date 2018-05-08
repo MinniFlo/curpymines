@@ -1,6 +1,7 @@
 from curpymines.MineWindow import MineWindow
 from curpymines.StatusWindow import StatusWindow
 from curpymines.MineLogic import MinefieldLogic
+import _thread
 import curses
 
 
