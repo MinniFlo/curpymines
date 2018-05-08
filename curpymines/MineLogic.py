@@ -23,7 +23,6 @@ class MinefieldLogic:
         self.flag_count = self.max_mine
         self.cheat = False
 
-
     # The function witch fills the field_matrix with field-objects
     def build(self):
         self.loose = False
@@ -130,11 +129,6 @@ class MinefieldLogic:
                     i_field = self.tuple_in_matrix(i)
                     if i_field.get_flag() or i_field.get_open():
                         work_list.remove(i)
-                    else:
-                        with open("xd.txt", 'a') as myfile:
-                            myfile.write("isOpen or hasFlag {} \n".format(i) +
-                                         "isOpen: {} \n".format(i_field.get_open()) +
-                                         "hasFlag: {} \n".format(i_field.get_flag()))
                 for i in work_list:
                     cur_y, cur_x = i
                     j_field = self.tuple_in_matrix(i)
@@ -143,16 +137,6 @@ class MinefieldLogic:
                         self.check_next_fields()
                     else:
                         self.loose = True
-                with open("xd.txt", 'a') as myfile:
-                    myfile.write("ok\n")
-            else:
-                with open("xd.txt", 'a') as myfile:
-                    myfile.write("flags != numbers ({}, {}) \n".format(y, x) +
-                                 "flags: {} \n".format(self.count_flags(y, x)) +
-                                 "fieldnum: {} \n".format(cur_field.get_number()))
-        else:
-            with open("xd.txt", 'a') as myfile:
-                myfile.write("lol ({}, {}) \n".format(y, x))
 
     # The function returns a list of all tuples of fields that surround a specified field
     def adjacent_fields(self, y, x):
@@ -183,7 +167,8 @@ class MinefieldLogic:
             if i_field.get_flag():
                 flag_count += 1
         return flag_count
-from curpymines import MineWindow
+
+    # from curpymines import MineWindow
     def flag_field(self, y, x):
         cur_field = self.field_matrix[y][x]
         if not cur_field.get_open():
@@ -203,4 +188,3 @@ from curpymines import MineWindow
     def in_range(self, tupple):
         y, x = tupple
         return 1 <= y <= (self.max_y-2) and 2 <= x <= (self.max_x-3)
-

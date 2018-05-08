@@ -1,15 +1,13 @@
-from .MineLogic import MinefieldLogic
 from curpymines.Colors import Colors
 import curses
 
 
-
 class MineWindow:
 
-    def __init__(self, scr):
+    def __init__(self, scr, logic):
         self.scr = scr
         self.max_y, self.max_x = self.scr.getmaxyx()
-        self.logic = MinefieldLogic(self.max_y, self.max_x)
+        self.logic = logic
         self.run = True
         self.first = True
         self.curs_y, self.curs_x = (4, 8)
@@ -45,7 +43,9 @@ class MineWindow:
         elif key == 101:
             if not self.logic.loose:
                 self.logic.flag_field(self.curs_y, x_index)
-        elif key == 263:
+        elif key == 114:
+            with open("xd.txt", 'a') as myfile:
+                myfile.write("key erkannt")
             if self.logic.loose:
                 self.logic.loose = False
                 self.logic.cheat = True
@@ -83,7 +83,10 @@ class MineWindow:
             self.logic.check_win()
 
             if self.logic.win:
-                self.scr.addstr(0, int(self.max_x/2 - 3), 'win ^.^')
+                if not self.logic.cheat:
+                    self.scr.addstr(0, int(self.max_x/2 - 3), 'win ^.^')
+                else:
+                    self.scr.addstr(0, int(self.max_x/2 - 5), 'cheater >.>')
             self.scr.move(self.curs_y, self.curs_x)
 
     def end_game(self):

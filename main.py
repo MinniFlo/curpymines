@@ -6,7 +6,7 @@ from curpymines import WindowManager
 
 
 def main(stdscr):
-    mine_field = MineWindow.MineWindow(stdscr)
+    # mine_field = MineWindow.MineWindow(stdscr)
     # mine_field.while_running()
     window_manager = WindowManager.WindowManager()
     window_manager.setup()

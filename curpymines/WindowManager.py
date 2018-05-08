@@ -7,14 +7,14 @@ import curses
 class WindowManager:
 
     def __init__(self):
-        self.y_size = 29
+        self.y_size = 14
         self.x_size = 59
         self.y_pos = 0
         self.x_pos = 0
         self.m_win = curses.newwin(self.y_size, self.x_size, self.y_pos, self.x_pos)
         self.s_win = curses.newwin(2, self.x_size, self.y_size + 1, self.x_pos)
         self.logic = MinefieldLogic(self.y_size, self.x_size)
-        self.mine_win = MineWindow(self.m_win)
+        self.mine_win = MineWindow(self.m_win, self.logic)
         self.status_window = StatusWindow(self.s_win, self.logic)
 
     '''
