@@ -11,9 +11,9 @@ class MineWindow:
         self.run = True
         self.curs_y, self.curs_x = (int(self.max_y/2), int((self.max_x+2)*0.33))
         self.color = Colors()
-        self.closed_field = '+'
+        self.closed_field = '*'
         self.flag_field = '?'
-        self.explode_field = '*'
+        self.explode_field = 'x'
 
     def user_input(self):
         key = self.scr.getch()
