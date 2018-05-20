@@ -9,8 +9,11 @@ class MineWindow:
         self.max_y, self.max_x = self.scr.getmaxyx()
         self.logic = logic
         self.run = True
-        self.curs_y, self.curs_x = (4, 8)
+        self.curs_y, self.curs_x = (int(self.max_y/2), int((self.max_x+2)*0.33))
         self.color = Colors()
+        self.closed_field = '+'
+        self.flag_field = '?'
+        self.explode_field = '*'
 
     def user_input(self):
         key = self.scr.getch()
@@ -55,7 +58,7 @@ class MineWindow:
     def draw(self):
         for y in range(self.max_y):
             for x in range(int(self.max_x/2)):
-                self.scr.addstr(y, x*2, '+')
+                self.scr.addstr(y, x*2, self.closed_field)
         self.scr.box()
         self.scr.move(self.curs_y, self.curs_x)
 
@@ -73,9 +76,9 @@ class MineWindow:
                                         curses.color_pair(cur_field.get_number()))
                 else:
                     if cur_field.get_flag():
-                        self.scr.addstr(cur_y, cur_x, '?', curses.color_pair(6))
+                        self.scr.addstr(cur_y, cur_x, self.flag_field, curses.color_pair(6))
                     else:
-                        self.scr.addstr(cur_y, cur_x, '+')
+                        self.scr.addstr(cur_y, cur_x, self.closed_field)
             self.scr.box()
             self.logic.render_list.clear()
             self.logic.check_win()
@@ -97,16 +100,16 @@ class MineWindow:
                     self.scr.addstr(cur_y, cur_x, ' ')
                 elif x.get_flag():
                     if x.get_mine():
-                        self.scr.addstr(cur_y, cur_x, '?', curses.color_pair(6))
+                        self.scr.addstr(cur_y, cur_x, self.flag_field, curses.color_pair(6))
                     else:
-                        self.scr.addstr(cur_y, cur_x, '?', curses.color_pair(11))
+                        self.scr.addstr(cur_y, cur_x, self.flag_field, curses.color_pair(11))
                 elif x.get_number() == 9:
-                        self.scr.addstr(cur_y, cur_x, '+', curses.color_pair(9))
+                        self.scr.addstr(cur_y, cur_x, self.closed_field, curses.color_pair(9))
                 else:
                     self.scr.addstr(cur_y, cur_x, str(x.get_number()), curses.color_pair(x.get_number()))
         curs_field = self.logic.tuple_in_matrix((self.curs_y, self.curs_x))
         if curs_field.get_mine():
-            self.scr.addstr(self.curs_y, self.curs_x, 'x', curses.color_pair(10))
+            self.scr.addstr(self.curs_y, self.curs_x, self.explode_field, curses.color_pair(10))
         else:
             self.scr.addstr(self.curs_y, self.curs_x, str(curs_field.get_number()), curses.color_pair(10))
         self.scr.move(self.curs_y, self.curs_x)
@@ -127,9 +130,9 @@ class MineWindow:
                                         curses.color_pair(x.get_number()))
                 else:
                     if x.get_flag():
-                        self.scr.addstr(cur_y, cur_x, '?', curses.color_pair(6))
+                        self.scr.addstr(cur_y, cur_x, self.flag_field, curses.color_pair(6))
                     else:
-                        self.scr.addstr(cur_y, cur_x, '+')
+                        self.scr.addstr(cur_y, cur_x, self.closed_field)
         self.scr.box()
         self.scr.move(self.curs_y, self.curs_x)
 

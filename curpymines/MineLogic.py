@@ -166,12 +166,12 @@ class MinefieldLogic:
 
     def count_flags(self, y, x):
         adj_list = self.adjacent_fields(y, x)
-        flag_count = 0
+        flags = 0
         for i in adj_list:
             i_field = self.tuple_in_matrix(i)
             if i_field.get_flag():
-                flag_count += 1
-        return flag_count
+                flags += 1
+        return flags
 
     # from curpymines import MineWindow
     def flag_field(self, y, x):
