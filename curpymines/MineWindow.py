@@ -18,6 +18,7 @@ class MineWindow:
     def user_input(self):
         key = self.scr.getch()
         x_index = int(self.curs_x / 2)
+        self.logic.render_list.add(self.logic.field_matrix[self.curs_y][x_index])
         if not self.logic.loose:
             self.logic.previous_matrix = self.logic.field_matrix
         if key == 105 or key == 119:
@@ -45,8 +46,6 @@ class MineWindow:
             if not self.logic.loose:
                 self.logic.flag_field(self.curs_y, x_index)
         elif key == 114:
-            with open("xd.txt", 'a') as myfile:
-                myfile.write("key erkannt")
             if self.logic.loose:
                 self.logic.loose = False
                 self.logic.cheat = True
@@ -54,13 +53,16 @@ class MineWindow:
                 self.reset_render()
         elif key == 27:
             self.run = False
+        after_index = int(self.curs_x/2)
+        self.logic.render_list.add(self.logic.field_matrix[self.curs_y][after_index])
 
     def draw(self):
         for y in range(self.max_y):
             for x in range(int(self.max_x/2)):
                 self.scr.addstr(y, x*2, self.closed_field)
         self.scr.box()
-        self.scr.move(self.curs_y, self.curs_x)
+        self.scr.addstr(self.curs_y, self.curs_x, self.closed_field, curses.A_REVERSE)
+        self.logic.render_list.add(self.logic.field_matrix[self.curs_y][int(self.curs_x/2)])
 
     def render(self):
         if self.logic.loose:
@@ -68,17 +70,21 @@ class MineWindow:
         else:
             for cur_field in self.logic.render_list:
                 cur_y, cur_x = cur_field.get_foordinate()
+                if not (cur_y, cur_x) == (self.curs_y, self.curs_x):
+                    style = curses.A_NORMAL
+                else:
+                    style = curses.A_REVERSE
                 if cur_field.get_open():
                     if cur_field.get_number() == 0:
-                        self.scr.addstr(cur_y, cur_x, ' ')
+                        self.scr.addstr(cur_y, cur_x, ' ', style)
                     else:
                         self.scr.addstr(cur_y, cur_x, str(cur_field.get_number()),
-                                        curses.color_pair(cur_field.get_number()))
+                                        curses.color_pair(cur_field.get_number()) | style)
                 else:
                     if cur_field.get_flag():
-                        self.scr.addstr(cur_y, cur_x, self.flag_field, curses.color_pair(6))
+                        self.scr.addstr(cur_y, cur_x, self.flag_field, curses.color_pair(6) | style)
                     else:
-                        self.scr.addstr(cur_y, cur_x, self.closed_field)
+                        self.scr.addstr(cur_y, cur_x, self.closed_field, style)
             self.scr.box()
             self.logic.render_list.clear()
             self.logic.check_win()
@@ -88,7 +94,6 @@ class MineWindow:
                     self.scr.addstr(0, int(self.max_x/2 - 3), 'win ^.^')
                 else:
                     self.scr.addstr(0, int(self.max_x/2 - 5), 'cheater >.>')
-            self.scr.move(self.curs_y, self.curs_x)
 
     def end_game(self):
         for y in self.logic.field_matrix:
@@ -136,11 +141,8 @@ class MineWindow:
         self.scr.box()
         self.scr.move(self.curs_y, self.curs_x)
 
-    def while_running(self):
-        curses.noecho()
-        self.logic.build()
-        self.draw()
-        self.scr.move(self.curs_y, self.curs_x)
+    def mine_window_render(self):
         while self.run:
             self.user_input()
             self.render()
+
