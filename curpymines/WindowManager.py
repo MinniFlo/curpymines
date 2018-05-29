@@ -19,12 +19,14 @@ class WindowManager:
         self.status_win = StatusWindow(self.s_win, self.logic)
         self.mine_thread = threading.Thread(target=self.mine_win.mine_window_render)
         self.status_thread = threading.Thread(target=self.status_win.render)
+        self.active_window = self.mine_win
 
     '''
     def ms_win_setup(self, y, x, y_pos, x_pos):
         self.m_win = curses.newwin(y, x, y_pos, x_pos)
         self.s_win = curses.newwin(2, x, y_pos + y + 1, x_pos)
     '''
+
     def setup(self):
         curses.noecho()
         curses.curs_set(0)
@@ -41,6 +43,9 @@ class WindowManager:
     def render_threads(self):
         self.status_thread.start()
         self.mine_thread.start()
+
+    def user_input(self):
+        pass
 
 
 

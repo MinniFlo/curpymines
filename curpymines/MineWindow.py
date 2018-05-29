@@ -7,20 +7,19 @@ class MineWindow:
     def __init__(self, scr, logic):
         self.scr = scr
         self.max_y, self.max_x = self.scr.getmaxyx()
+
         self.logic = logic
         self.run = True
         self.curs_y, self.curs_x = (int(self.max_y/2), int((self.max_x+2)*0.33))
         self.color = Colors()
+        self.x_index = int(self.curs_x / 2)
         self.closed_field = '*'
         self.flag_field = '?'
         self.explode_field = 'x'
 
     def user_input(self):
         key = self.scr.getch()
-        x_index = int(self.curs_x / 2)
-        self.logic.render_list.add(self.logic.field_matrix[self.curs_y][x_index])
-        if not self.logic.loose:
-            self.logic.previous_matrix = self.logic.field_matrix
+        self.pre_input_action()
         if key == 105 or key == 119:
             if self.curs_y > 1:
                 self.curs_y -= 1
@@ -38,13 +37,13 @@ class MineWindow:
                 self.logic.distribute_mines(self.curs_y, self.curs_x)
                 self.logic.click_field(self.curs_y, self.curs_x)
             else:
-                if not self.logic.field_matrix[self.curs_y][x_index].get_open():
+                if not self.logic.field_matrix[self.curs_y][self.x_index].get_open():
                     self.logic.click_field(self.curs_y, self.curs_x)
                 else:
                     self.logic.quality_of_life_click(self.curs_y, self.curs_x)
         elif key == 101:
             if not self.logic.loose:
-                self.logic.flag_field(self.curs_y, x_index)
+                self.logic.flag_field(self.curs_y, self.x_index)
         elif key == 114:
             if self.logic.loose:
                 self.logic.loose = False
@@ -53,8 +52,7 @@ class MineWindow:
                 self.reset_render()
         elif key == 27:
             self.run = False
-        after_index = int(self.curs_x/2)
-        self.logic.render_list.add(self.logic.field_matrix[self.curs_y][after_index])
+        self.after_input_action()
 
     def draw(self):
         for y in range(self.max_y):
@@ -62,7 +60,7 @@ class MineWindow:
                 self.scr.addstr(y, x*2, self.closed_field)
         self.scr.box()
         self.scr.addstr(self.curs_y, self.curs_x, self.closed_field, curses.A_REVERSE)
-        self.logic.render_list.add(self.logic.field_matrix[self.curs_y][int(self.curs_x/2)])
+        self.logic.render_list.add(self.logic.field_matrix[self.curs_y][self.x_index])
 
     def render(self):
         if self.logic.loose:
@@ -146,3 +144,69 @@ class MineWindow:
             self.user_input()
             self.render()
 
+    def update_index(self):
+        self.x_index = int(self.curs_x / 2)
+        
+    def pre_input_action(self):
+        self.logic.render_list.add(self.logic.field_matrix[self.curs_y][self.x_index])
+        if not self.logic.loose:
+            self.logic.previous_matrix = self.logic.field_matrix
+            
+    def after_input_action(self):
+        after_index = int(self.curs_x/2)
+        self.logic.render_list.add(self.logic.field_matrix[self.curs_y][after_index])
+        
+    def up_input(self):
+        self.pre_input_action()
+        if self.curs_y > 1:
+            self.curs_y -= 1
+        self.after_input_action()
+        
+    def left_input(self):
+        self.pre_input_action()
+        if self.curs_y < self.max_y - 2:
+            self.curs_y += 1
+        self.after_input_action()
+
+    def right_input(self):
+        self.pre_input_action()
+        if self.curs_x > 2:
+            self.curs_x -= 2
+        self.after_input_action()
+
+    def down_input(self):
+        self.pre_input_action()
+        if self.curs_x < self.max_x - 3:
+            self.curs_x += 2
+        self.after_input_action()
+        
+    def click_input(self):
+        self.update_index()
+        self.pre_input_action()
+        if self.logic.first:
+            self.logic.distribute_mines(self.curs_y, self.curs_x)
+            self.logic.click_field(self.curs_y, self.curs_x)
+        else:
+            if not self.logic.field_matrix[self.curs_y][self.x_index].get_open():
+                self.logic.click_field(self.curs_y, self.curs_x)
+            else:
+                self.logic.quality_of_life_click(self.curs_y, self.curs_x)
+
+    def flag_input(self):
+        self.update_index()
+        self.pre_input_action()
+        if not self.logic.loose:
+            self.logic.flag_field(self.curs_y, self.x_index)
+
+    def reset_input(self):
+        self.pre_input_action()
+        if self.logic.loose:
+            self.logic.loose = False
+            self.logic.cheat = True
+            self.logic.field_matrix = self.logic.previous_matrix
+            self.reset_render()
+
+    def exit_input(self):
+        self.update_index()
+        self.pre_input_action()
+        self.run = False
