@@ -110,7 +110,7 @@ class MineWindow:
                         self.scr.addstr(cur_y, cur_x, self.closed_field, curses.color_pair(9))
                 else:
                     self.scr.addstr(cur_y, cur_x, str(x.get_number()), curses.color_pair(x.get_number()))
-        curs_field = self.logic.tuple_in_matrix((self.curs_y, self.curs_x))
+        curs_field = self.logic.tuple_in_matrix((selfy1.curs_y, self.curs_x))
         if curs_field.get_mine():
             self.scr.addstr(self.curs_y, self.curs_x, self.explode_field, curses.color_pair(10))
         else:
@@ -155,7 +155,7 @@ class MineWindow:
     def after_input_action(self):
         after_index = int(self.curs_x/2)
         self.logic.render_list.add(self.logic.field_matrix[self.curs_y][after_index])
-        
+
     def up_input(self):
         self.pre_input_action()
         if self.curs_y > 1:
