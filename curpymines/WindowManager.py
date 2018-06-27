@@ -1,8 +1,12 @@
+from os import system
+
 from curpymines.MineWindow import MineWindow
 from curpymines.StatusWindow import StatusWindow
 from curpymines.MineLogic import MinefieldLogic
 import threading
+import time
 import curses
+from curpymines.SuperWin import SuperWin
 
 
 class WindowManager:
@@ -13,39 +17,72 @@ class WindowManager:
         self.y_pos = 0
         self.x_pos = 0
         self.m_win = curses.newwin(self.y_size, self.x_size, self.y_pos, self.x_pos)
-        self.s_win = curses.newwin(2, self.x_size, self.y_size, self.x_pos,)
+        self.s_win = curses.newwin(2, self.x_size, self.y_size, self.x_pos, )
         self.logic = MinefieldLogic(self.y_size, self.x_size)
         self.mine_win = MineWindow(self.m_win, self.logic)
         self.status_win = StatusWindow(self.s_win, self.logic)
-        self.mine_thread = threading.Thread(target=self.mine_win.mine_window_render)
+        self.mine_thread = threading.Thread(target=self.render_mine_win)
         self.status_thread = threading.Thread(target=self.status_win.render)
-        self.active_window = self.mine_win
-
-    '''
-    def ms_win_setup(self, y, x, y_pos, x_pos):
-        self.m_win = curses.newwin(y, x, y_pos, x_pos)
-        self.s_win = curses.newwin(2, x, y_pos + y + 1, x_pos)
-    '''
+        self.win_stack = []
+        self.active_win = None
+        self.active_win_obj = None
+        self.input_map = {(119, 107, 259): SuperWin.up_input, (97, 104, 260): SuperWin.left_input,
+                          (100, 108, 261): SuperWin.right_input, (115, 106, 258): SuperWin.down_input,
+                          (32, 10): SuperWin.click_input, (101, 102): SuperWin.flag_input,
+                          (114, 111): SuperWin.reset_input, (27, 113): SuperWin.exit_input}
 
     def setup(self):
         curses.noecho()
         curses.curs_set(0)
+        self.m_win.nodelay(True)
+        self.init_stack()
         self.m_win.keypad(True)
         self.logic.build()
         self.mine_win.draw()
 
     def render_all(self):
         while self.mine_win.run:
-            # self.status_win.render()
-            self.mine_win.user_input()
-            self.mine_win.render()
+            self.status_win.render()
+            self.render_mine_window()
+            time.sleep(0.01)
 
     def render_threads(self):
-        self.status_thread.start()
         self.mine_thread.start()
+        self.status_thread.start()
+        self.status_thread.join()
+        self.mine_thread.join()
 
     def user_input(self):
-        pass
+        cur_key = self.active_win.getch()
+        if cur_key == -1:
+            pass
+        for tup in self.input_map.keys():
+            for key in tup:
+                if cur_key == key:
+                    self.input_map[tup](self.active_win_obj)
+                    break
+            else:
+                continue
+            break
 
+    def render_mine_window(self):
+        self.user_input()
+        self.mine_win.render()
 
+    def render_mine_win(self):
+        while self.mine_win.run:
+            self.user_input()
+            self.mine_win.render()
 
+    def push_win_stack(self, win, win_obj):
+        self.win_stack.insert(0, (win, win_obj))
+
+    def pop_win_stack(self):
+        self.win_stack.pop(0)
+
+    def refresh_stack(self):
+        self.active_win, self.active_win_obj = self.win_stack[0]
+
+    def init_stack(self):
+        self.push_win_stack(self.m_win, self.mine_win)
+        self.refresh_stack()

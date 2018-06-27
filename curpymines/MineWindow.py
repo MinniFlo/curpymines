@@ -1,13 +1,13 @@
 from curpymines.Colors import Colors
 import curses
+from curpymines.SuperWin import SuperWin
 
 
-class MineWindow:
+class MineWindow(SuperWin):
 
     def __init__(self, scr, logic):
         self.scr = scr
         self.max_y, self.max_x = self.scr.getmaxyx()
-
         self.logic = logic
         self.run = True
         self.curs_y, self.curs_x = (int(self.max_y/2), int((self.max_x+2)*0.33))
@@ -16,43 +16,6 @@ class MineWindow:
         self.closed_field = '*'
         self.flag_field = '?'
         self.explode_field = 'x'
-
-    def user_input(self):
-        key = self.scr.getch()
-        self.pre_input_action()
-        if key == 105 or key == 119:
-            if self.curs_y > 1:
-                self.curs_y -= 1
-        elif key == 115 or key == 10:
-            if self.curs_y < self.max_y - 2:
-                self.curs_y += 1
-        elif key == 97 or key == 106:
-            if self.curs_x > 2:
-                self.curs_x -= 2
-        elif key == 100 or key == 108:
-            if self.curs_x < self.max_x - 3:
-                self.curs_x += 2
-        elif key == 32:
-            if self.logic.first:
-                self.logic.distribute_mines(self.curs_y, self.curs_x)
-                self.logic.click_field(self.curs_y, self.curs_x)
-            else:
-                if not self.logic.field_matrix[self.curs_y][self.x_index].get_open():
-                    self.logic.click_field(self.curs_y, self.curs_x)
-                else:
-                    self.logic.quality_of_life_click(self.curs_y, self.curs_x)
-        elif key == 101:
-            if not self.logic.loose:
-                self.logic.flag_field(self.curs_y, self.x_index)
-        elif key == 114:
-            if self.logic.loose:
-                self.logic.loose = False
-                self.logic.cheat = True
-                self.logic.field_matrix = self.logic.previous_matrix
-                self.reset_render()
-        elif key == 27:
-            self.run = False
-        self.after_input_action()
 
     def draw(self):
         for y in range(self.max_y):
@@ -110,7 +73,7 @@ class MineWindow:
                         self.scr.addstr(cur_y, cur_x, self.closed_field, curses.color_pair(9))
                 else:
                     self.scr.addstr(cur_y, cur_x, str(x.get_number()), curses.color_pair(x.get_number()))
-        curs_field = self.logic.tuple_in_matrix((selfy1.curs_y, self.curs_x))
+        curs_field = self.logic.tuple_in_matrix((self.curs_y, self.curs_x))
         if curs_field.get_mine():
             self.scr.addstr(self.curs_y, self.curs_x, self.explode_field, curses.color_pair(10))
         else:
@@ -139,15 +102,11 @@ class MineWindow:
         self.scr.box()
         self.scr.move(self.curs_y, self.curs_x)
 
-    def mine_window_render(self):
-        while self.run:
-            self.user_input()
-            self.render()
-
     def update_index(self):
         self.x_index = int(self.curs_x / 2)
         
     def pre_input_action(self):
+        self.update_index()
         self.logic.render_list.add(self.logic.field_matrix[self.curs_y][self.x_index])
         if not self.logic.loose:
             self.logic.previous_matrix = self.logic.field_matrix
@@ -161,27 +120,27 @@ class MineWindow:
         if self.curs_y > 1:
             self.curs_y -= 1
         self.after_input_action()
-        
-    def left_input(self):
-        self.pre_input_action()
-        if self.curs_y < self.max_y - 2:
-            self.curs_y += 1
-        self.after_input_action()
 
-    def right_input(self):
+    def left_input(self):
         self.pre_input_action()
         if self.curs_x > 2:
             self.curs_x -= 2
-        self.after_input_action()
+        self.pre_input_action()
 
-    def down_input(self):
+    def right_input(self):
         self.pre_input_action()
         if self.curs_x < self.max_x - 3:
             self.curs_x += 2
-        self.after_input_action()
-        
+        self.pre_input_action()
+
+    def down_input(self):
+        self.pre_input_action()
+        if self.curs_y < self.max_y - 2:
+            self.curs_y += 1
+        self.pre_input_action()
+
+
     def click_input(self):
-        self.update_index()
         self.pre_input_action()
         if self.logic.first:
             self.logic.distribute_mines(self.curs_y, self.curs_x)
@@ -193,7 +152,6 @@ class MineWindow:
                 self.logic.quality_of_life_click(self.curs_y, self.curs_x)
 
     def flag_input(self):
-        self.update_index()
         self.pre_input_action()
         if not self.logic.loose:
             self.logic.flag_field(self.curs_y, self.x_index)
@@ -207,6 +165,4 @@ class MineWindow:
             self.reset_render()
 
     def exit_input(self):
-        self.update_index()
-        self.pre_input_action()
         self.run = False
