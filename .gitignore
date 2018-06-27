@@ -1,9 +1,9 @@
 menu.py
 keytoascii.py
-.idea/*
+curpymines/.idea/*
 *.iml
 venv/*
 __pycache__/*
 *.pyc
-colortest.py
+test.py
 xd.txt
