@@ -1,9 +1,6 @@
-from os import system
-
 from curpymines.MineWindow import MineWindow
 from curpymines.StatusWindow import StatusWindow
 from curpymines.MineLogic import MinefieldLogic
-import threading
 import time
 import curses
 from curpymines.SuperWin import SuperWin
@@ -21,8 +18,6 @@ class WindowManager:
         self.logic = MinefieldLogic(self.y_size, self.x_size)
         self.mine_win = MineWindow(self.m_win, self.logic)
         self.status_win = StatusWindow(self.s_win, self.logic)
-        self.mine_thread = threading.Thread(target=self.render_mine_win)
-        self.status_thread = threading.Thread(target=self.status_win.render)
         self.win_stack = []
         self.active_win = None
         self.active_win_obj = None
@@ -43,19 +38,13 @@ class WindowManager:
     def render_all(self):
         while self.mine_win.run:
             self.status_win.render()
-            self.render_mine_window()
-            time.sleep(0.01)
-
-    def render_threads(self):
-        self.mine_thread.start()
-        self.status_thread.start()
-        self.status_thread.join()
-        self.mine_thread.join()
+            self.user_input()
+            self.active_win_obj.render()
 
     def user_input(self):
         cur_key = self.active_win.getch()
         if cur_key == -1:
-            pass
+            time.sleep(0.01)
         for tup in self.input_map.keys():
             for key in tup:
                 if cur_key == key:
@@ -64,15 +53,6 @@ class WindowManager:
             else:
                 continue
             break
-
-    def render_mine_window(self):
-        self.user_input()
-        self.mine_win.render()
-
-    def render_mine_win(self):
-        while self.mine_win.run:
-            self.user_input()
-            self.mine_win.render()
 
     def push_win_stack(self, win, win_obj):
         self.win_stack.insert(0, (win, win_obj))

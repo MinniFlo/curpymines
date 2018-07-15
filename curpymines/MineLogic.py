@@ -12,7 +12,7 @@ class MinefieldLogic:
         self.max_x = max_x
         self.x_fields = int(self.max_x/2) + 1
         self.field_amount = self.x_fields * max_y
-        self.max_mine = int(self.field_amount * 0.2)
+        self.max_mine = int(self.field_amount * 0.16)
         self.rim_list = set([])
         self.field_matrix = []
         self.previous_matrix = []
@@ -173,7 +173,6 @@ class MinefieldLogic:
                 flags += 1
         return flags
 
-    # from curpymines import MineWindow
     def flag_field(self, y, x):
         cur_field = self.field_matrix[y][x]
         if not cur_field.get_open():
@@ -184,6 +183,9 @@ class MinefieldLogic:
                 cur_field.set_flag(False)
                 self.flag_count += 1
             self.render_list.add(cur_field)
+
+    def format_flag_num(self):
+        return "{}".format(str(self.flag_count).rjust(2, "0"))
 
     def check_win(self):
         if (self.field_amount - len(self.rim_list) - self.max_mine) == len(self.win_list):
@@ -199,10 +201,6 @@ class MinefieldLogic:
         sum_time = int(cur_time - self.start_time)
         minutes = int(sum_time / 60)
         seconds = sum_time % 60
-        if seconds < 10:
-            seconds = "0{}".format(seconds)
-        if minutes < 10:
-            minutes = "0{}".format(minutes)
-
+        minutes = "{}".format(str(minutes).rjust(2, "0"))
+        seconds = "{}".format(str(seconds).rjust(2, "0"))
         return "{}:{}".format(minutes, seconds)
-

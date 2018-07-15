@@ -1,5 +1,3 @@
-import time
-
 
 class StatusWindow:
 
@@ -9,15 +7,18 @@ class StatusWindow:
         self.logic = logic
 
     def render(self):
-        if self.logic.flag_count >= 10:
-            self.scr.addstr(0, 2, 'Mines left: {}'.format(self.logic.flag_count))
-        else:
-            self.scr.addstr(0, 2, 'Mines left: 0{}'.format(self.logic.flag_count))
+        self.scr.addstr(0, 2, 'Mines left: {}'.format(self.logic.format_flag_num()))
 
-        if not self.logic.first:
-            self.scr.addstr(0, self.max_x - 7, self.logic.calc_time())
+        if self.logic.cheat:
+            self.scr.addstr(0, self.max_x - 14, "cheatcount: ")
         else:
-            self.scr.addstr(0, self.max_x - 7, '00:00')
-        self.scr.refresh()
+            if self.logic.loose:
+                self.scr.addstr(0, self.max_x - 7, self.logic.calc_time())
+            else:
+                if not self.logic.first:
+                    self.scr.addstr(0, self.max_x - 7, self.logic.calc_time())
+                else:
+                    self.scr.addstr(0, self.max_x - 7, '00:00')
+                self.scr.refresh()
 
 
