@@ -12,19 +12,21 @@ class MinefieldLogic:
         self.max_x = max_x
         self.x_fields = int(self.max_x/2) + 1
         self.field_amount = self.x_fields * max_y
-        self.max_mine = int(self.field_amount * 0.16)
+        self.max_mine = int(self.field_amount * 0.17)
         self.rim_list = set([])
         self.field_matrix = []
         self.previous_matrix = []
         self.next_fields = set([])
         self.render_list = set([])
+        self.win_list = set()
         self.first = True
         self.loose = False
-        self.win_list = set()
         self.win = False
-        self.flag_count = self.max_mine
         self.cheat = False
+        self.flag_count = self.max_mine
         self.start_time = 0
+        self.current_time = ""
+        self.cheat_count = 0
 
     # The function witch fills the field_matrix with field-objects
     def build(self):
@@ -203,4 +205,12 @@ class MinefieldLogic:
         seconds = sum_time % 60
         minutes = "{}".format(str(minutes).rjust(2, "0"))
         seconds = "{}".format(str(seconds).rjust(2, "0"))
-        return "{}:{}".format(minutes, seconds)
+        self.current_time = "{}:{}".format(minutes, seconds)
+        return self.current_time
+
+    def format_cheat_num(self):
+        if self.cheat_count < 100:
+            return "{}".format(str(self.cheat_count).rjust(2, "0"))
+        return "> 9000"
+
+

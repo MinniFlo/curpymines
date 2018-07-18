@@ -139,7 +139,6 @@ class MineWindow(SuperWin):
             self.curs_y += 1
         self.pre_input_action()
 
-
     def click_input(self):
         self.pre_input_action()
         if self.logic.first:
@@ -163,6 +162,7 @@ class MineWindow(SuperWin):
             self.logic.cheat = True
             self.logic.field_matrix = self.logic.previous_matrix
             self.reset_render()
+            self.logic.cheat_count += 1
 
     def exit_input(self):
         self.run = False
