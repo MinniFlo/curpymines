@@ -5,7 +5,7 @@ from curpymines import WindowManager
 
 
 def main(stdscr):
-    window_manager = WindowManager.WindowManager()
+    window_manager = WindowManager.WindowManager(stdscr)
     window_manager.setup()
     window_manager.render_all()
     # window_manager.render_threads()
