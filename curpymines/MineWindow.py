@@ -1,15 +1,17 @@
 from curpymines.Colors import Colors
 import curses
 from curpymines.SuperWin import SuperWin
+from curpymines.StatusWindow import StatusWindow
 
 
 class MineWindow(SuperWin):
 
-    def __init__(self, scr, logic):
+    def __init__(self, scr, manager):
         self.scr = scr
         self.max_y, self.max_x = self.scr.getmaxyx()
-        self.logic = logic
-        self.run = True
+        self.manager = manager
+        self.logic = self.manager.logic
+        self.status = StatusWindow(self.manager.s_win, self.logic)
         self.curs_y, self.curs_x = (int(self.max_y/2), int((self.max_x+2)*0.33))
         self.color = Colors()
         self.x_index = int(self.curs_x / 2)
@@ -25,7 +27,7 @@ class MineWindow(SuperWin):
         self.scr.addstr(self.curs_y, self.curs_x, self.closed_field, curses.A_REVERSE)
         self.logic.render_list.add(self.logic.field_matrix[self.curs_y][self.x_index])
 
-    def render(self):
+    def render_mine_win(self):
         if self.logic.loose:
             self.end_game()
         else:
@@ -102,6 +104,10 @@ class MineWindow(SuperWin):
         self.scr.box()
         self.scr.move(self.curs_y, self.curs_x)
 
+    def render(self):
+        self.render_mine_win()
+        self.status.render()
+
     def update_index(self):
         self.x_index = int(self.curs_x / 2)
         
@@ -165,4 +171,4 @@ class MineWindow(SuperWin):
             self.logic.cheat_count += 1
 
     def exit_input(self):
-        self.run = False
+        self.manager.run_game = False

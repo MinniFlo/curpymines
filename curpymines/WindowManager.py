@@ -1,6 +1,6 @@
 from curpymines.MineWindow import MineWindow
-from curpymines.StatusWindow import StatusWindow
 from curpymines.MineLogic import MinefieldLogic
+from curpymines.PauseWin import PauseWin
 import time
 import curses
 from curpymines.SuperWin import SuperWin
@@ -14,17 +14,19 @@ class WindowManager:
         self.y_pos = 0
         self.x_pos = 0
         self.m_win = curses.newwin(self.y_size, self.x_size, self.y_pos, self.x_pos)
-        self.s_win = curses.newwin(2, self.x_size, self.y_size, self.x_pos, )
+        self.s_win = curses.newwin(2, self.x_size, self.y_size, self.x_pos)
+        self.p_win = curses.newwin(6, 9, int(self.y_size / 2), int(self.x_size / 2) - 4)
         self.logic = MinefieldLogic(self.y_size, self.x_size)
-        self.mine_win = MineWindow(self.m_win, self.logic)
-        self.status_win = StatusWindow(self.s_win, self.logic)
+        self.mine_win = MineWindow(self.m_win, self)
+        self.pause_win = PauseWin(self.p_win, self)
         self.win_stack = []
         self.active_win = None
         self.active_win_obj = None
         self.input_map = {(119, 107, 259): SuperWin.up_input, (97, 104, 260): SuperWin.left_input,
                           (100, 108, 261): SuperWin.right_input, (115, 106, 258): SuperWin.down_input,
                           (32, 10): SuperWin.click_input, (101, 102): SuperWin.flag_input,
-                          (114, 111): SuperWin.reset_input, (27, 113): SuperWin.exit_input}
+                          (114, 111): SuperWin.reset_input, (27, 113, 112): SuperWin.exit_input}
+        self.run_game = True
 
     def setup(self):
         curses.noecho()
@@ -36,8 +38,8 @@ class WindowManager:
         self.mine_win.draw()
 
     def render_all(self):
-        while self.mine_win.run:
-            self.status_win.render()
+        self.mine_win.status.render()
+        while self.run_game:
             self.user_input()
             self.active_win_obj.render()
 
