@@ -1,7 +1,7 @@
-from curpymines.Colors import Colors
+from Colors import Colors
 import curses
-from curpymines.SuperWin import SuperWin
-from curpymines.StatusWindow import StatusWindow
+from SuperWin import SuperWin
+from StatusWindow import StatusWindow
 
 
 class MineWindow(SuperWin):

@@ -1,9 +1,9 @@
-from curpymines.MineWindow import MineWindow
-from curpymines.MineLogic import MinefieldLogic
-from curpymines.PauseWin import PauseWin
+from MineWindow import MineWindow
+from MineLogic import MinefieldLogic
+from PauseWin import PauseWin
 import time
 import curses
-from curpymines.SuperWin import SuperWin
+from SuperWin import SuperWin
 
 
 class WindowManager:
@@ -34,6 +34,7 @@ class WindowManager:
         curses.curs_set(0)
         self.m_win.nodelay(True)
         self.m_win.keypad(True)
+        self.p_win.keypad(True)
         self.game_setup()
 
     def game_setup(self):
@@ -62,6 +63,7 @@ class WindowManager:
 
     def restart(self):
         self.scr.clear()
+        self.s_win.clear()
         self.logic = MinefieldLogic(self.y_size, self.x_size)
         self.mine_win = MineWindow(self.m_win, self)
         self.game_setup()

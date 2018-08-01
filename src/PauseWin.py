@@ -1,4 +1,4 @@
-from curpymines.SuperWin import SuperWin
+from SuperWin import SuperWin
 import curses
 
 
@@ -11,6 +11,7 @@ class PauseWin(SuperWin):
         self.menu_map = {0: self.resume, 1: self.restart, 2: self.options, 3: self.exit}
         self.menu_str_list = ["resume", "restart", "options", "exit"]
         self.menu_index = 0
+
 
     def render(self):
         for i in range(4):

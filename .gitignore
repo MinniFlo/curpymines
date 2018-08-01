@@ -2,6 +2,7 @@ menu.py
 keytoascii.py
 curpymines/.idea/*
 .idea/*
+**/.idea/*
 *.iml
 venv/*
 __pycache__/*

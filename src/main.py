@@ -1,11 +1,12 @@
-
+#!/bin/python
 import curses
 import os
-from curpymines import WindowManager
+
+from WindowManager import WindowManager
 
 
 def main(stdscr):
-    window_manager = WindowManager.WindowManager(stdscr)
+    window_manager = WindowManager(stdscr)
     window_manager.setup()
     window_manager.render_all()
     # window_manager.render_threads()

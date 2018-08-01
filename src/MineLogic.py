@@ -2,7 +2,7 @@ import random
 import time
 
 
-from curpymines.Fields import Field
+from Fields import Field
 
 
 class MinefieldLogic:
