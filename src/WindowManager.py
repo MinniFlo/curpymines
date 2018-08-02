@@ -4,14 +4,15 @@ from PauseWin import PauseWin
 import time
 import curses
 from SuperWin import SuperWin
+import argparse
 
 
 class WindowManager:
 
-    def __init__(self, scr):
+    def __init__(self, scr, y_size, x_size):
         self.scr = scr
-        self.y_size = 15
-        self.x_size = 59
+        self.y_size = y_size
+        self.x_size = x_size
         self.y_pos = 0
         self.x_pos = 0
         self.m_win = curses.newwin(self.y_size, self.x_size, self.y_pos, self.x_pos)
@@ -29,6 +30,7 @@ class WindowManager:
                           (114, 111): SuperWin.reset_input, (27, 113, 112): SuperWin.exit_input}
         self.run_game = True
 
+
     def setup(self):
         curses.noecho()
         curses.curs_set(0)
@@ -41,6 +43,8 @@ class WindowManager:
         self.init_stack()
         self.logic.build()
         self.mine_win.draw()
+
+
 
     def render_all(self):
         self.mine_win.status.render()

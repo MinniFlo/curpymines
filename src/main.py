@@ -2,11 +2,13 @@
 import curses
 import os
 
-from WindowManager import WindowManager
+from GameSetup import GameSetup
 
 
 def main(stdscr):
-    window_manager = WindowManager(stdscr)
+    setuper = GameSetup(stdscr)
+    setuper.args_stuff()
+    window_manager = setuper.create_manager()
     window_manager.setup()
     window_manager.render_all()
     # window_manager.render_threads()

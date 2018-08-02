@@ -122,44 +122,50 @@ class MineWindow(SuperWin):
         self.logic.render_list.add(self.logic.field_matrix[self.curs_y][after_index])
 
     def up_input(self):
-        self.pre_input_action()
-        if self.curs_y > 1:
-            self.curs_y -= 1
-        self.after_input_action()
+        if not (self.logic.loose or self.logic.win):
+            self.pre_input_action()
+            if self.curs_y > 1:
+                self.curs_y -= 1
+            self.after_input_action()
 
     def left_input(self):
-        self.pre_input_action()
-        if self.curs_x > 2:
-            self.curs_x -= 2
-        self.pre_input_action()
+        if not (self.logic.loose or self.logic.win):
+            self.pre_input_action()
+            if self.curs_x > 2:
+                self.curs_x -= 2
+            self.pre_input_action()
 
     def right_input(self):
-        self.pre_input_action()
-        if self.curs_x < self.max_x - 3:
-            self.curs_x += 2
-        self.pre_input_action()
+        if not (self.logic.loose or self.logic.win):
+            self.pre_input_action()
+            if self.curs_x < self.max_x - 3:
+                self.curs_x += 2
+            self.pre_input_action()
 
     def down_input(self):
-        self.pre_input_action()
-        if self.curs_y < self.max_y - 2:
-            self.curs_y += 1
-        self.pre_input_action()
+        if not (self.logic.loose or self.logic.win):
+            self.pre_input_action()
+            if self.curs_y < self.max_y - 2:
+                self.curs_y += 1
+            self.pre_input_action()
 
     def click_input(self):
-        self.pre_input_action()
-        if self.logic.first:
-            self.logic.distribute_mines(self.curs_y, self.curs_x)
-            self.logic.click_field(self.curs_y, self.curs_x)
-        else:
-            if not self.logic.field_matrix[self.curs_y][self.x_index].get_open():
+        if not (self.logic.loose or self.logic.win):
+            self.pre_input_action()
+            if self.logic.first:
+                self.logic.distribute_mines(self.curs_y, self.curs_x)
                 self.logic.click_field(self.curs_y, self.curs_x)
             else:
-                self.logic.quality_of_life_click(self.curs_y, self.curs_x)
+                if not self.logic.field_matrix[self.curs_y][self.x_index].get_open():
+                    self.logic.click_field(self.curs_y, self.curs_x)
+                else:
+                    self.logic.quality_of_life_click(self.curs_y, self.curs_x)
 
     def flag_input(self):
-        self.pre_input_action()
-        if not self.logic.loose:
-            self.logic.flag_field(self.curs_y, self.x_index)
+        if not (self.logic.loose or self.logic.win):
+            self.pre_input_action()
+            if not self.logic.loose:
+                self.logic.flag_field(self.curs_y, self.x_index)
 
     def reset_input(self):
         self.pre_input_action()

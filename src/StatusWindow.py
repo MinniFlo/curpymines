@@ -14,7 +14,7 @@ class StatusWindow:
             cheat_string = 'cheatcount: {}'.format(self.logic.format_cheat_num())
             self.scr.addstr(0, self.max_x - len(cheat_string) - 2, cheat_string)
         else:
-            if self.logic.loose:
+            if self.logic.loose or self.logic.win:
                 endtime_string = self.logic.current_time
                 self.scr.addstr(0, self.max_x - len(endtime_string) - 2, endtime_string)
             else:
