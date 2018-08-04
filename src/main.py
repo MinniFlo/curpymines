@@ -1,12 +1,14 @@
 #!/bin/python
 import curses
 import os
+import argparse
 
 from GameSetup import GameSetup
 
 
 def main(stdscr):
-    setuper = GameSetup(stdscr)
+    parser = argparse.ArgumentParser('does stuff')
+    setuper = GameSetup(stdscr, parser)
     setuper.args_stuff()
     window_manager = setuper.create_manager()
     window_manager.setup()

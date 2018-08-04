@@ -12,9 +12,9 @@ class MineWindow(SuperWin):
         self.manager = manager
         self.logic = self.manager.logic
         self.status = StatusWindow(self.manager.s_win, self.logic)
-        self.curs_y, self.curs_x = (int(self.max_y/2), int((self.max_x+2)*0.33))
+        self.curs_y, self.curs_x = (self.max_y // 2, self.max_x // 2)
         self.color = Colors()
-        self.x_index = int(self.curs_x / 2)
+        self.x_index = self.curs_x // 2
         self.closed_field = '*'
         self.flag_field = '?'
         self.explode_field = 'x'

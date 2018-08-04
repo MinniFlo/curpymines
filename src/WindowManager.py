@@ -4,13 +4,11 @@ from PauseWin import PauseWin
 import time
 import curses
 from SuperWin import SuperWin
-import argparse
 
 
 class WindowManager:
 
-    def __init__(self, scr, y_size, x_size):
-        self.scr = scr
+    def __init__(self, y_size, x_size):
         self.y_size = y_size
         self.x_size = x_size
         self.y_pos = 0
@@ -66,7 +64,7 @@ class WindowManager:
             break
 
     def restart(self):
-        self.scr.clear()
+        self.m_win.clear()
         self.s_win.clear()
         self.logic = MinefieldLogic(self.y_size, self.x_size)
         self.mine_win = MineWindow(self.m_win, self)

@@ -10,7 +10,7 @@ class MinefieldLogic:
     def __init__(self, max_y, max_x):
         self.max_y = max_y
         self.max_x = max_x
-        self.x_fields = int(self.max_x/2) + 1
+        self.x_fields = self.max_x//2 + 1
         self.field_amount = self.x_fields * max_y
         self.mine_percent = 0.17
         self.max_mine = int(self.field_amount * self.mine_percent)
@@ -99,7 +99,7 @@ class MinefieldLogic:
 
     # Checks the fields around the field that is called in click_field and opens the field
     def check_field(self, y, x):
-        x_index = int(x/2)
+        x_index = x // 2
         cur_field = self.field_matrix[y][x_index]
         if cur_field.get_number() != 0:
             cur_field.set_open(True)
@@ -128,7 +128,7 @@ class MinefieldLogic:
                 self.check_field(y_i, x_i)
 
     def quality_of_life_click(self, y, x):
-        x_index = int(x / 2)
+        x_index = x // 2
         cur_field = self.field_matrix[y][x_index]
         if cur_field.get_number() != 0:
             if self.count_flags(y, x) == cur_field.get_number():
@@ -154,7 +154,7 @@ class MinefieldLogic:
     # Maps a tuple of y and x to a field object from field_matrix
     def tuple_in_matrix(self, tupple):
         y, x = tupple
-        x = int(x/2)
+        x = x // 2
         return self.field_matrix[y][x]
 
     # Counts the mines around on field
@@ -202,7 +202,7 @@ class MinefieldLogic:
     def calc_time(self):
         cur_time = time.time()
         sum_time = int(cur_time - self.start_time)
-        minutes = int(sum_time / 60)
+        minutes = sum_time // 60
         seconds = sum_time % 60
         minutes = "{}".format(str(minutes).rjust(2, "0"))
         seconds = "{}".format(str(seconds).rjust(2, "0"))
