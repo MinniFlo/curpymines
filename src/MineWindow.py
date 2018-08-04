@@ -12,7 +12,7 @@ class MineWindow(SuperWin):
         self.manager = manager
         self.logic = self.manager.logic
         self.status = StatusWindow(self.manager.s_win, self.logic)
-        self.curs_y, self.curs_x = (self.max_y // 2, self.max_x // 2)
+        self.curs_y, self.curs_x = (self.max_y // 2 - 1, 2)
         self.color = Colors()
         self.x_index = self.curs_x // 2
         self.closed_field = '*'
@@ -23,6 +23,7 @@ class MineWindow(SuperWin):
         for y in range(self.max_y):
             for x in range(int(self.max_x/2)):
                 self.scr.addstr(y, x*2, self.closed_field)
+        self.curs_x = self.x_start()
         self.scr.box()
         self.scr.addstr(self.curs_y, self.curs_x, self.closed_field, curses.A_REVERSE)
         self.logic.render_list.add(self.logic.field_matrix[self.curs_y][self.x_index])
@@ -103,6 +104,12 @@ class MineWindow(SuperWin):
                         self.scr.addstr(cur_y, cur_x, self.closed_field)
         self.scr.box()
         self.scr.move(self.curs_y, self.curs_x)
+
+    def x_start(self):
+        x_start = int(self.max_x * 0.36)
+        if x_start % 2 != 0:
+            return x_start - 1
+        return x_start
 
     def render(self):
         self.render_mine_win()

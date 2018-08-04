@@ -7,12 +7,12 @@ from Fields import Field
 
 class MinefieldLogic:
 
-    def __init__(self, max_y, max_x):
+    def __init__(self, max_y, max_x, difficulty):
         self.max_y = max_y
         self.max_x = max_x
-        self.x_fields = self.max_x//2 + 1
+        self.x_fields = self.max_x // 2 + 1
         self.field_amount = self.x_fields * max_y
-        self.mine_percent = 0.17
+        self.mine_percent = difficulty
         self.max_mine = int(self.field_amount * self.mine_percent)
         self.rim_list = set([])
         self.field_matrix = []
@@ -36,7 +36,7 @@ class MinefieldLogic:
             x_column = []
             self.field_matrix.append(x_column)
             for x in range(self.x_fields):
-                field = Field(y, x*2)
+                field = Field(y, x * 2)
                 x_column.append(field)
                 cur_y, cur_x = field.get_foordinate()
                 if cur_y == 0 or cur_y == (self.max_y - 1) or cur_x == 0 or cur_x == (self.max_x - 1):
@@ -89,7 +89,7 @@ class MinefieldLogic:
 
     # Is called on click of a field
     def click_field(self, y, x):
-        x_index = int(x/2)
+        x_index = x // 2
         if not self.field_matrix[y][x_index].get_flag():
             if not self.field_matrix[y][x_index].get_mine():
                 self.check_field(y, x)

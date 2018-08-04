@@ -8,7 +8,7 @@ from SuperWin import SuperWin
 
 class WindowManager:
 
-    def __init__(self, y_size, x_size):
+    def __init__(self, y_size, x_size, difficulty):
         self.y_size = y_size
         self.x_size = x_size
         self.y_pos = 0
@@ -16,7 +16,7 @@ class WindowManager:
         self.m_win = curses.newwin(self.y_size, self.x_size, self.y_pos, self.x_pos)
         self.s_win = curses.newwin(2, self.x_size, self.y_size, self.x_pos)
         self.p_win = curses.newwin(6, 11, int(self.y_size / 2) - 2, int(self.x_size / 2) - 5)
-        self.logic = MinefieldLogic(self.y_size, self.x_size)
+        self.logic = MinefieldLogic(self.y_size, self.x_size, difficulty)
         self.mine_win = MineWindow(self.m_win, self)
         self.pause_win = PauseWin(self.p_win, self)
         self.win_stack = []
