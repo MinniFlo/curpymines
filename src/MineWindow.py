@@ -6,12 +6,12 @@ from StatusWindow import StatusWindow
 
 class MineWindow(SuperWin):
 
-    def __init__(self, scr, manager):
+    def __init__(self, scr, manager, small):
         self.scr = scr
         self.max_y, self.max_x = self.scr.getmaxyx()
         self.manager = manager
         self.logic = self.manager.logic
-        self.status = StatusWindow(self.manager.s_win, self.logic)
+        self.status = StatusWindow(self.manager.s_win, self.logic, small)
         self.curs_y, self.curs_x = (self.max_y // 2 - 1, 2)
         self.color = Colors()
         self.x_index = self.curs_x // 2
@@ -55,9 +55,9 @@ class MineWindow(SuperWin):
 
             if self.logic.win:
                 if not self.logic.cheat:
-                    self.scr.addstr(0, int(self.max_x/2 - 3), 'win ^.^')
+                    self.scr.addstr(0, int(self.max_x/2 - 4), ' win ^.^ ')
                 else:
-                    self.scr.addstr(0, int(self.max_x/2 - 5), 'cheater >.>')
+                    self.scr.addstr(0, int(self.max_x/2 - 6), ' cheater >.> ')
 
     def end_game(self):
         for y in self.logic.field_matrix:

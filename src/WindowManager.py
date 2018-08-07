@@ -8,16 +8,19 @@ from SuperWin import SuperWin
 
 class WindowManager:
 
-    def __init__(self, y_size, x_size, difficulty):
+    def __init__(self, y_size, x_size, difficulty, max_mine_digit, small):
         self.y_size = y_size
         self.x_size = x_size
         self.y_pos = 0
         self.x_pos = 0
+        self.difficulty = difficulty
+        self.max_mine_digit = max_mine_digit
+        self.small = small
         self.m_win = curses.newwin(self.y_size, self.x_size, self.y_pos, self.x_pos)
-        self.s_win = curses.newwin(2, self.x_size, self.y_size, self.x_pos)
+        self.s_win = curses.newwin(2, self.x_size, self.y_size , self.x_pos)
         self.p_win = curses.newwin(6, 11, int(self.y_size / 2) - 2, int(self.x_size / 2) - 5)
-        self.logic = MinefieldLogic(self.y_size, self.x_size, difficulty)
-        self.mine_win = MineWindow(self.m_win, self)
+        self.logic = MinefieldLogic(self.y_size, self.x_size, difficulty, max_mine_digit)
+        self.mine_win = MineWindow(self.m_win, self, self.small)
         self.pause_win = PauseWin(self.p_win, self)
         self.win_stack = []
         self.active_win = None
@@ -66,8 +69,8 @@ class WindowManager:
     def restart(self):
         self.m_win.clear()
         self.s_win.clear()
-        self.logic = MinefieldLogic(self.y_size, self.x_size)
-        self.mine_win = MineWindow(self.m_win, self)
+        self.logic = MinefieldLogic(self.y_size, self.x_size, self.difficulty, self.max_mine_digit)
+        self.mine_win = MineWindow(self.m_win, self, self.small)
         self.game_setup()
 
     def push_win_stack(self, win, win_obj):

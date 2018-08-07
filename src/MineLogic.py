@@ -7,13 +7,13 @@ from Fields import Field
 
 class MinefieldLogic:
 
-    def __init__(self, max_y, max_x, difficulty):
+    def __init__(self, max_y, max_x, difficulty, max_mine_digit):
         self.max_y = max_y
         self.max_x = max_x
         self.x_fields = self.max_x // 2 + 1
         self.field_amount = self.x_fields * max_y
         self.mine_percent = difficulty
-        self.max_mine = int(self.field_amount * self.mine_percent)
+        self.max_mine = int((self.field_amount - 9) * self.mine_percent)
         self.rim_list = set([])
         self.field_matrix = []
         self.previous_matrix = []
@@ -28,6 +28,7 @@ class MinefieldLogic:
         self.start_time = 0
         self.current_time = ""
         self.cheat_count = 0
+        self.max_mine_digit = max_mine_digit
 
     # The function witch fills the field_matrix with field-objects
     def build(self):
@@ -188,7 +189,7 @@ class MinefieldLogic:
             self.render_list.add(cur_field)
 
     def format_flag_num(self):
-        return "{}".format(str(self.flag_count).rjust(2, "0"))
+        return "{}".format(str(self.flag_count).rjust(self.max_mine_digit, "0"))
 
     def check_win(self):
         if (self.field_amount - len(self.rim_list) - self.max_mine) == len(self.win_list):
