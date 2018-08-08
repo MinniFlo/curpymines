@@ -18,7 +18,7 @@ class WindowManager:
         self.small = small
         self.m_win = curses.newwin(self.y_size, self.x_size, self.y_pos, self.x_pos)
         self.s_win = curses.newwin(2, self.x_size, self.y_size , self.x_pos)
-        self.p_win = curses.newwin(6, 11, int(self.y_size / 2) - 2, int(self.x_size / 2) - 5)
+        self.p_win = curses.newwin(6, 13, self.y_pos, self.y_pos)
         self.logic = MinefieldLogic(self.y_size, self.x_size, difficulty, max_mine_digit)
         self.mine_win = MineWindow(self.m_win, self, self.small)
         self.pause_win = PauseWin(self.p_win, self)

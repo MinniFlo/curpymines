@@ -9,7 +9,8 @@ class PauseWin(SuperWin):
         self.manager = manager
         self.logic = self.manager.logic
         self.menu_map = {0: self.resume, 1: self.restart, 2: self.options, 3: self.exit}
-        self.menu_str_list = ["resume", "restart", "options", "exit"]
+        self.menu_str_list = ["resume".ljust(7, ' ').center(9, ' '), "restart".center(9, ' '), "options".center(9, ' '),
+                              "exit".ljust(7, ' ').center(9, ' ')]
         self.menu_index = 0
 
 
@@ -19,7 +20,8 @@ class PauseWin(SuperWin):
                 self.win.addstr(i+1, 2, self.menu_str_list[i], curses.A_REVERSE)
             else:
                 self.win.addstr(i+1, 2, self.menu_str_list[i])
-        self.win.box()
+        self.win.border(curses.ACS_VLINE, curses.ACS_VLINE, curses.ACS_HLINE, curses.ACS_HLINE,
+                        curses.ACS_ULCORNER, curses.ACS_TTEE, curses.ACS_LTEE, curses.ACS_LRCORNER)
 
     def resume(self):
         self.manager.pop_win_stack()
