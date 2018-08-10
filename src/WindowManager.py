@@ -1,6 +1,7 @@
 from MineWindow import MineWindow
 from MineLogic import MinefieldLogic
 from PauseWin import PauseWin
+from OptionWin import OptionWin
 import time
 import curses
 from SuperWin import SuperWin
@@ -18,10 +19,12 @@ class WindowManager:
         self.small = small
         self.m_win = curses.newwin(self.y_size, self.x_size, self.y_pos, self.x_pos)
         self.s_win = curses.newwin(2, self.x_size, self.y_size , self.x_pos)
-        self.p_win = curses.newwin(6, 13, self.y_pos, self.y_pos)
+        self.p_win = curses.newwin(6, 13, self.y_pos, self.x_pos)
+        self.o_win = curses.newwin(4, 16, self.y_pos,self.x_pos)
         self.logic = MinefieldLogic(self.y_size, self.x_size, difficulty, max_mine_digit)
         self.mine_win = MineWindow(self.m_win, self, self.small)
         self.pause_win = PauseWin(self.p_win, self)
+        self.option_win = OptionWin(self.o_win, self)
         self.win_stack = []
         self.active_win = None
         self.active_win_obj = None
@@ -30,7 +33,6 @@ class WindowManager:
                           (32, 10): SuperWin.click_input, (101, 102): SuperWin.flag_input,
                           (114, 111): SuperWin.reset_input, (27, 113, 112): SuperWin.exit_input}
         self.run_game = True
-
 
     def setup(self):
         curses.noecho()
