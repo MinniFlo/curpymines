@@ -32,6 +32,7 @@ class PauseWin(SuperWin):
     def options(self):
         self.manager.push_win_stack(self.manager.o_win, self.manager.option_win)
 
+
     def exit(self):
         self.manager.run_game = False
 

@@ -9,7 +9,7 @@ class OptionWin(SuperWin):
         self.manager = manager
         self.logic = self.manager.logic
         self.menu_map = {0: self.difficulty, 1: self.resume}
-        self.menu_str_list = ["difficulty".center(12, ' '), "exit".ljust(10, ' ').center(12, ' ')]
+        self.menu_str_list = ["difficulty".center(12, ' '), "back".ljust(10, ' ').center(12, ' ')]
         self.menu_index = 0
 
     def render(self):
@@ -29,10 +29,10 @@ class OptionWin(SuperWin):
         self.manager.pop_win_stack()
 
     def up_input(self):
-        self.menu_index = (self.menu_index - 1) % 4
+        self.menu_index = (self.menu_index - 1) % 2
 
     def down_input(self):
-        self.menu_index = (self.menu_index + 1) % 4
+        self.menu_index = (self.menu_index + 1) % 2
 
     def click_input(self):
         self.menu_map[self.menu_index]()

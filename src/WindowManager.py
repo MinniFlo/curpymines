@@ -40,14 +40,13 @@ class WindowManager:
         self.m_win.nodelay(True)
         self.m_win.keypad(True)
         self.p_win.keypad(True)
+        self.o_win.keypad(True)
         self.game_setup()
 
     def game_setup(self):
         self.init_stack()
         self.logic.build()
         self.mine_win.draw()
-
-
 
     def render_all(self):
         self.mine_win.status.render()
@@ -76,16 +75,28 @@ class WindowManager:
         self.game_setup()
 
     def push_win_stack(self, win, win_obj):
+        old_win, _ = self.win_stack[0]
+        if old_win != self.m_win:
+            old_win.clear()
+            old_win.refresh()
+        self.mine_win.render()
+        self.m_win.refresh()
+
         self.win_stack.insert(0, (win, win_obj))
         self.refresh_win_vars()
 
     def pop_win_stack(self):
-        self.win_stack.pop(0)
+        pop_win, _ = self.win_stack.pop(0)
         self.refresh_win_vars()
+
+        pop_win.erase()
+        pop_win.refresh()
+        self.mine_win.render()
+        self.m_win.refresh()
 
     def init_stack(self):
         self.win_stack.clear()
-        self.push_win_stack(self.m_win, self.mine_win)
+        self.win_stack.insert(0, (self.m_win, self.mine_win))
         self.refresh_win_vars()
 
     def refresh_win_vars(self):
