@@ -186,4 +186,5 @@ class MineWindow(SuperWin):
             self.logic.cheat_count += 1
 
     def exit_input(self):
+        self.logic.pause = True
         self.manager.push_win_stack(self.manager.p_win, self.pause_win)

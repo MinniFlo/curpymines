@@ -24,9 +24,11 @@ class MinefieldLogic:
         self.loose = False
         self.win = False
         self.cheat = False
+        self.pause = False
         self.flag_count = self.max_mine
         self.start_time = 0
-        self.current_time = ""
+        self.sum_time = 0
+        self.current_time_str = ""
         self.cheat_count = 0
         self.max_mine_digit = max_mine_digit
 
@@ -203,12 +205,13 @@ class MinefieldLogic:
     def calc_time(self):
         cur_time = time.time()
         sum_time = int(cur_time - self.start_time)
+        self.sum_time = sum_time
         minutes = sum_time // 60
         seconds = sum_time % 60
         minutes = "{}".format(str(minutes).rjust(2, "0"))
         seconds = "{}".format(str(seconds).rjust(2, "0"))
-        self.current_time = "{}:{}".format(minutes, seconds)
-        return self.current_time
+        self.current_time_str = "{}:{}".format(minutes, seconds)
+        return self.current_time_str
 
     def format_cheat_num(self):
         if self.cheat_count < 100:
