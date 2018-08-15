@@ -1,9 +1,9 @@
-import argparse
 import curses
 import sys
 import os
 
 from WindowManager import WindowManager
+from MineLogic import MinefieldLogic
 
 
 class GameSetup:
@@ -13,11 +13,16 @@ class GameSetup:
         self.args = args
         self.y_size = 15
         self.x_size = 59
+        self.y_pos, self.x_pos = 0, 0
         self.difficulty = 0.17
         self.difficulty_map = {1: 0.11, 2: 0.14, 3: 0.17, 4: 0.20, 5: 0.23}
         self.max_mine_digit = 2
         self.small = False
-
+        self.m_win = curses.newwin(self.y_size, self.x_size, self.y_pos, self.x_pos)
+        self.s_win = curses.newwin(2, self.x_size, self.y_size, self.x_pos)
+        self.p_win = curses.newwin(6, 13, self.y_pos, self.x_pos)
+        self.o_win = curses.newwin(4, 16, self.y_pos, self.x_pos)
+        self.logic = MinefieldLogic(self.y_size, self.x_size, self.difficulty, self.max_mine_digit)
 
     def args_stuff(self):
         full_y, full_x = self.scr.getmaxyx()
@@ -64,6 +69,26 @@ class GameSetup:
         # sets the padding for the "mines left: ..." in the status window
         self.max_mine_digit = len(str(int(((self.x_size // 2 + 1) * self.y_size - 9) * self.difficulty)))
 
+        self.create_wins()
+        self.create_logic()
 
     def create_manager(self):
-        return WindowManager(self.y_size, self.x_size, self.difficulty, self.max_mine_digit, self.small)
+        return WindowManager(self)
+
+    def create_wins(self):
+        self.m_win = curses.newwin(self.y_size, self.x_size, self.y_pos, self.x_pos)
+        self.s_win = curses.newwin(2, self.x_size, self.y_size, self.x_pos)
+        self.p_win = curses.newwin(6, 13, self.y_pos, self.x_pos)
+        self.o_win = curses.newwin(4, 16, self.y_pos, self.x_pos)
+
+    def create_logic(self):
+        self.logic = MinefieldLogic(self.y_size, self.x_size, self.difficulty, self.max_mine_digit)
+        return self.logic
+
+    def curses_setup(self):
+        curses.noecho()
+        curses.curs_set(0)
+        self.m_win.nodelay(True)
+        self.m_win.keypad(True)
+        self.p_win.keypad(True)
+        self.o_win.keypad(True)

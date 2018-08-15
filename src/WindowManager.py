@@ -9,20 +9,14 @@ from SuperWin import SuperWin
 
 class WindowManager:
 
-    def __init__(self, y_size, x_size, difficulty, max_mine_digit, small):
-        self.y_size = y_size
-        self.x_size = x_size
-        self.y_pos = 0
-        self.x_pos = 0
-        self.difficulty = difficulty
-        self.max_mine_digit = max_mine_digit
-        self.small = small
-        self.m_win = curses.newwin(self.y_size, self.x_size, self.y_pos, self.x_pos)
-        self.s_win = curses.newwin(2, self.x_size, self.y_size , self.x_pos)
-        self.p_win = curses.newwin(6, 13, self.y_pos, self.x_pos)
-        self.o_win = curses.newwin(4, 16, self.y_pos,self.x_pos)
-        self.logic = MinefieldLogic(self.y_size, self.x_size, difficulty, max_mine_digit)
-        self.mine_win = MineWindow(self.m_win, self, self.small)
+    def __init__(self, game_setuper):
+        self.game_setuper = game_setuper
+        self.logic = self.game_setuper.logic
+        self.m_win = game_setuper.m_win
+        self.s_win = game_setuper.s_win
+        self.p_win = game_setuper.p_win
+        self.o_win = game_setuper.o_win
+        self.mine_win = MineWindow(self.m_win, self.logic, self.game_setuper.small, self)
         self.pause_win = PauseWin(self.p_win, self)
         self.option_win = OptionWin(self.o_win, self)
         self.win_stack = []
@@ -33,17 +27,9 @@ class WindowManager:
                           (32, 10): SuperWin.click_input, (101, 102): SuperWin.flag_input,
                           (114, 111): SuperWin.reset_input, (27, 113, 112): SuperWin.exit_input}
         self.run_game = True
-
-    def setup(self):
-        curses.noecho()
-        curses.curs_set(0)
-        self.m_win.nodelay(True)
-        self.m_win.keypad(True)
-        self.p_win.keypad(True)
-        self.o_win.keypad(True)
-        self.game_setup()
-
+        
     def game_setup(self):
+
         self.init_stack()
         self.logic.build()
         self.mine_win.draw()
@@ -70,8 +56,8 @@ class WindowManager:
     def restart(self):
         self.m_win.clear()
         self.s_win.clear()
-        self.logic = MinefieldLogic(self.y_size, self.x_size, self.difficulty, self.max_mine_digit)
-        self.mine_win = MineWindow(self.m_win, self, self.small)
+        self.logic = self.game_setuper.create_logic
+        self.mine_win = MineWindow(self.m_win, self, self.logic, self.game_setuper.small)
         self.game_setup()
 
     def push_win_stack(self, win, win_obj):

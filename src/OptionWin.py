@@ -7,7 +7,6 @@ class OptionWin(SuperWin):
     def __init__(self, win, manager):
         self.win = win
         self.manager = manager
-        self.logic = self.manager.logic
         self.menu_map = {0: self.difficulty, 1: self.resume}
         self.menu_str_list = ["difficulty".center(12, ' '), "back".ljust(10, ' ').center(12, ' ')]
         self.menu_index = 0

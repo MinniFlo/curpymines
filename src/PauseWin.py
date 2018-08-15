@@ -7,7 +7,6 @@ class PauseWin(SuperWin):
     def __init__(self, win, manager):
         self.win = win
         self.manager = manager
-        self.logic = self.manager.logic
         self.menu_map = {0: self.resume, 1: self.restart, 2: self.options, 3: self.exit}
         self.menu_str_list = ["resume".ljust(7, ' ').center(9, ' '), "restart".center(9, ' '), "options".center(9, ' '),
                               "exit".ljust(7, ' ').center(9, ' ')]

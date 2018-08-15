@@ -15,8 +15,9 @@ def main(stdscr):
     args = parser.parse_args()
     setuper = GameSetup(stdscr, args)
     setuper.args_stuff()
+    setuper.curses_setup()
     window_manager = setuper.create_manager()
-    window_manager.setup()
+    window_manager.game_setup()
     window_manager.render_all()
 
 

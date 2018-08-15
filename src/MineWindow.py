@@ -6,11 +6,11 @@ from StatusWindow import StatusWindow
 
 class MineWindow(SuperWin):
 
-    def __init__(self, scr, manager, small):
+    def __init__(self, scr, logic, small, manager):
         self.scr = scr
         self.max_y, self.max_x = self.scr.getmaxyx()
         self.manager = manager
-        self.logic = self.manager.logic
+        self.logic = logic
         self.status = StatusWindow(self.manager.s_win, self.logic, small)
         self.curs_y, self.curs_x = (self.max_y // 2 - 1, 2)
         self.color = Colors()
