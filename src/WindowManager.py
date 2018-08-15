@@ -1,9 +1,5 @@
 from MineWindow import MineWindow
-from MineLogic import MinefieldLogic
-from PauseWin import PauseWin
-from OptionWin import OptionWin
 import time
-import curses
 from SuperWin import SuperWin
 
 
@@ -17,8 +13,6 @@ class WindowManager:
         self.p_win = game_setuper.p_win
         self.o_win = game_setuper.o_win
         self.mine_win = MineWindow(self.m_win, self.logic, self.game_setuper.small, self)
-        self.pause_win = PauseWin(self.p_win, self)
-        self.option_win = OptionWin(self.o_win, self)
         self.win_stack = []
         self.active_win = None
         self.active_win_obj = None

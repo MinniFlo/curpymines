@@ -2,16 +2,18 @@ from Colors import Colors
 import curses
 from SuperWin import SuperWin
 from StatusWindow import StatusWindow
+from PauseWin import PauseWin
 
 
 class MineWindow(SuperWin):
 
     def __init__(self, scr, logic, small, manager):
         self.scr = scr
-        self.max_y, self.max_x = self.scr.getmaxyx()
         self.manager = manager
         self.logic = logic
         self.status = StatusWindow(self.manager.s_win, self.logic, small)
+        self.pause_win = PauseWin(self.manager.p_win, self.manager)
+        self.max_y, self.max_x = self.scr.getmaxyx()
         self.curs_y, self.curs_x = (self.max_y // 2 - 1, 2)
         self.color = Colors()
         self.x_index = self.curs_x // 2
@@ -184,4 +186,4 @@ class MineWindow(SuperWin):
             self.logic.cheat_count += 1
 
     def exit_input(self):
-        self.manager.push_win_stack(self.manager.p_win, self.manager.pause_win)
+        self.manager.push_win_stack(self.manager.p_win, self.pause_win)

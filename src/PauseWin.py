@@ -1,4 +1,5 @@
 from SuperWin import SuperWin
+from OptionWin import OptionWin
 import curses
 
 
@@ -11,6 +12,7 @@ class PauseWin(SuperWin):
         self.menu_str_list = ["resume".ljust(7, ' ').center(9, ' '), "restart".center(9, ' '), "options".center(9, ' '),
                               "exit".ljust(7, ' ').center(9, ' ')]
         self.menu_index = 0
+        self.option_win = OptionWin(self.manager.o_win, self.manager)
 
     def render(self):
         for i in range(4):
@@ -29,8 +31,7 @@ class PauseWin(SuperWin):
         self.manager.restart()
 
     def options(self):
-        self.manager.push_win_stack(self.manager.o_win, self.manager.option_win)
-
+        self.manager.push_win_stack(self.manager.o_win, self.option_win)
 
     def exit(self):
         self.manager.run_game = False
