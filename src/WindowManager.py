@@ -24,7 +24,6 @@ class WindowManager:
         self.run_game = True
         
     def game_setup(self):
-
         self.init_stack()
         self.logic.build()
         self.mine_win.draw()
@@ -51,8 +50,8 @@ class WindowManager:
     def restart(self):
         self.m_win.clear()
         self.s_win.clear()
-        self.logic = self.game_setuper.create_logic
-        self.mine_win = MineWindow(self.m_win, self, self.logic, self.game_setuper.small)
+        self.logic = self.game_setuper.create_logic()
+        self.mine_win = MineWindow(self.m_win, self.logic, self.game_setuper.small, self)
         self.game_setup()
 
     def push_win_stack(self, win, win_obj):

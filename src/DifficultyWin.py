@@ -7,7 +7,9 @@ class DifficultyWin(SuperWin):
     def __init__(self, win, manager):
         self.win = win
         self.manager = manager
-        self.menu_str_list = ["very easy", "easy", "normal", "hard", "insane", "back"]
+        self.menu_str_list = ["very easy".center(11, ' '), "easy".ljust(9, ' ').center(11, ' '),
+                              "normal".ljust(9, ' ').center(11, ' '), "hard".ljust(9, ' ').center(11, ' '),
+                              "insane".ljust(9, ' ').center(11, ' '), "back".ljust(9, ' ').center(11, ' ')]
         self.menu_index = 0
 
     def render(self):
