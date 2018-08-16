@@ -1,20 +1,17 @@
 from SuperWin import SuperWin
-from DifficultyWin import DifficultyWin
 import curses
 
 
-class OptionWin(SuperWin):
+class DifficultyWin(SuperWin):
 
     def __init__(self, win, manager):
         self.win = win
         self.manager = manager
-        self.menu_map = {0: self.difficulty, 1: self.back}
-        self.menu_str_list = ["difficulty".center(12, ' '), "back".ljust(10, ' ').center(12, ' ')]
+        self.menu_str_list = ["very easy", "easy", "normal", "hard", "insane", "back"]
         self.menu_index = 0
-        self.difficulty_win = DifficultyWin(manager.d_win, manager)
 
     def render(self):
-        for i in range(2):
+        for i in range(6):
             if i == self.menu_index:
                 self.win.addstr(i + 1, 2, self.menu_str_list[i], curses.A_REVERSE)
             else:
@@ -23,24 +20,26 @@ class OptionWin(SuperWin):
             self.win.border(curses.ACS_VLINE, curses.ACS_VLINE, curses.ACS_HLINE, curses.ACS_HLINE,
                             curses.ACS_ULCORNER, curses.ACS_TTEE, curses.ACS_LTEE, curses.ACS_LRCORNER)
 
-    def difficulty(self):
-        self.manager.push_win_stack(self.manager.d_win, self.difficulty_win)
+    def difficulty_change(self):
+        return self.manager.game_setuper.difficulty_map[self.menu_index + 1]
 
     def back(self):
         self.manager.pop_win_stack()
 
     def up_input(self):
-        self.menu_index = (self.menu_index - 1) % 2
+        self.menu_index = (self.menu_index - 1) % 6
 
     def down_input(self):
-        self.menu_index = (self.menu_index + 1) % 2
+        self.menu_index = (self.menu_index + 1) % 6
 
     def click_input(self):
-        self.menu_map[self.menu_index]()
+        if self.menu_index <= 4:
+            self.manager.game_setuper.difficulty = self.difficulty_change()
+        else:
+            self.back()
 
     def exit_input(self):
         self.back()
-
 
     def flag_input(self):
         pass
@@ -53,4 +52,3 @@ class OptionWin(SuperWin):
 
     def right_input(self):
         pass
-
