@@ -13,6 +13,7 @@ class WindowManager:
         self.p_win = game_setuper.p_win
         self.o_win = game_setuper.o_win
         self.d_win = game_setuper.d_win
+        self.v_win = game_setuper.v_win
         self.mine_win = MineWindow(self.m_win, self.logic, self.game_setuper.small, self)
         self.win_stack = []
         self.active_win = None

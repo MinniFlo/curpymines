@@ -1,5 +1,6 @@
 from SuperWin import SuperWin
 import curses
+from VerificationsWin import VerificationsWin
 
 
 class DifficultyWin(SuperWin):
@@ -11,6 +12,7 @@ class DifficultyWin(SuperWin):
                               "normal".ljust(9, ' ').center(11, ' '), "hard".ljust(9, ' ').center(11, ' '),
                               "insane".ljust(9, ' ').center(11, ' '), "back".ljust(9, ' ').center(11, ' ')]
         self.menu_index = 0
+        self.verifications_win = VerificationsWin(manager.v_win, manager)
 
     def render(self):
         for i in range(6):
@@ -37,6 +39,7 @@ class DifficultyWin(SuperWin):
     def click_input(self):
         if self.menu_index <= 4:
             self.manager.game_setuper.difficulty = self.difficulty_change()
+            self.manager.push_win_stack(self.manager.v_win, self.verifications_win)
         else:
             self.back()
 

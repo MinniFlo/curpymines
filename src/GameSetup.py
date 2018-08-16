@@ -23,6 +23,7 @@ class GameSetup:
         self.p_win = curses.newwin(6, 13, self.y_pos, self.x_pos)
         self.o_win = curses.newwin(4, 16, self.y_pos, self.x_pos)
         self.d_win = curses.newwin(8, 13, self.y_pos, self.x_pos)
+        self.v_win = curses.newwin(6, 14, (self.y_size // 2) - 4, (self.x_size // 2) - 6)
         self.logic = MinefieldLogic(self.y_size, self.x_size, self.difficulty, self.max_mine_digit)
 
     def args_stuff(self):
@@ -82,6 +83,8 @@ class GameSetup:
         self.p_win = curses.newwin(6, 13, self.y_pos, self.x_pos)
         self.o_win = curses.newwin(4, 16, self.y_pos, self.x_pos)
         self.d_win = curses.newwin(8, 15, self.y_pos, self.x_pos)
+        self.v_win = curses.newwin(6, 14, (self.y_size // 2) - 4, (self.x_size // 2) - 6)
+
 
     def create_logic(self):
         self.logic = MinefieldLogic(self.y_size, self.x_size, self.difficulty, self.max_mine_digit)
@@ -95,3 +98,4 @@ class GameSetup:
         self.p_win.keypad(True)
         self.o_win.keypad(True)
         self.d_win.keypad(True)
+        self.v_win.keypad(True)
