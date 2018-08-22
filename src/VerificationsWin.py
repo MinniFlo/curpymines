@@ -8,7 +8,7 @@ class VerificationsWin(SuperWin):
         self.win = win
         self.manager = manager
         self.menu_map = {0: self.yes, 1: self.no}
-        self.menu_str_list = ["yes", "ney"]
+        self.menu_str_list = ["yes", "no"]
         self.menu_index = 0
         self.line_str = "{}{}".format(chr(9500).ljust(13, chr(9472)), chr(9508))
 

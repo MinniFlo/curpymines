@@ -8,6 +8,7 @@ class DifficultyWin(SuperWin):
     def __init__(self, win, manager):
         self.win = win
         self.manager = manager
+        self.logic = manager.logic
         self.menu_str_list = ["very easy".center(11, ' '), "easy".ljust(9, ' ').center(11, ' '),
                               "normal".ljust(9, ' ').center(11, ' '), "hard".ljust(9, ' ').center(11, ' '),
                               "insane".ljust(9, ' ').center(11, ' '), "back".ljust(9, ' ').center(11, ' ')]
@@ -39,7 +40,11 @@ class DifficultyWin(SuperWin):
     def click_input(self):
         if self.menu_index <= 4:
             self.manager.game_setuper.difficulty = self.difficulty_change()
-            self.manager.push_win_stack(self.manager.v_win, self.verifications_win)
+            if self.logic.first or self.logic.win or self.logic.loose:
+                self.manager.restart()
+            else:
+
+                self.manager.push_win_stack(self.manager.v_win, self.verifications_win)
         else:
             self.back()
 
