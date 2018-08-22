@@ -37,26 +37,30 @@ class GameSetup:
             else:
                 self.x_size = full_x - 1
             if full_y < 6 or full_x < 21:
-                os.system('echo test')
+                curses.endwin()
+                os.system('echo terminal is to small')
                 sys.exit()
 
         # sets the new x value
         if self.args.x_axis is not None:
             self.x_size = self.args.x_axis * 2 + 3
             if self.x_size > full_x:
-                os.system('echo test')
+                curses.endwin()
+                os.system('echo terminal ist to small for the given x-value!')
                 sys.exit()
 
         # sets the new y value
         if self.args.y_axis is not None:
             self.y_size = self.args.y_axis + 2
             if self.y_size + 1 > full_y:
-                os.system('echo test')
+                curses.endwin()
+                os.system('echo terminal ist to small for the given y-value!')
                 sys.exit()
             if self.x_size < 37:
                 self.y_size = self.args.y_axis + 3
                 if self.y_size + 1 > full_y:
-                    os.system('echo test')
+                    curses.endwin()
+                    os.system('echo terminal ist to small for the given y-value!')
                     sys.exit()
 
         # sets the difficulty
