@@ -15,7 +15,7 @@ class GameSetup:
         self.y_size = 15
         self.x_size = 59
         self.y_pos, self.x_pos = 0, 0
-        self.difficulty = 0.17
+        self.difficulty = 3
         self.difficulty_map = {1: 0.11, 2: 0.14, 3: 0.17, 4: 0.20, 5: 0.23}
         self.max_mine_digit = 2
         self.small = False
@@ -25,7 +25,8 @@ class GameSetup:
         self.o_win = curses.newwin(4, 16, self.y_pos, self.x_pos)
         self.d_win = curses.newwin(8, 13, self.y_pos, self.x_pos)
         self.v_win = curses.newwin(6, 14, (self.y_size // 2) - 4, (self.x_size // 2) - 6)
-        self.logic = MinefieldLogic(self.y_size, self.x_size, self.difficulty, self.max_mine_digit)
+        self.logic = MinefieldLogic(self.y_size, self.x_size, self.difficulty_map[self.difficulty], self.max_mine_digit)
+        self.context = Context(self.logic, (self.y_size, self.x_size), self.difficulty, self.difficulty_map, self.small)
 
     def args_stuff(self):
         full_y, full_x = self.scr.getmaxyx()
@@ -66,7 +67,7 @@ class GameSetup:
 
         # sets the difficulty
         if self.args.difficulty is not None:
-            self.difficulty = self.difficulty_map[self.args.difficulty]
+            self.difficulty = self.args.difficulty
 
         # sets the flag for the alternative status window render
         if self.x_size < 37:
@@ -74,7 +75,8 @@ class GameSetup:
             self.y_size -= 1
 
         # sets the padding for the "mines left: ..." in the status window
-        self.max_mine_digit = len(str(int(((self.x_size // 2 + 1) * self.y_size - 9) * self.difficulty)))
+        self.max_mine_digit = len(str(int(((self.x_size // 2 + 1) * self.y_size - 9) *
+                                          self.difficulty_map[self.difficulty])))
 
         self.create_new_game()
         self.update_context()

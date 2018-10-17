@@ -10,6 +10,7 @@ class DifficultyWin(SuperWin):
         self.manager = manager
         self.context = context
         self.logic = self.context.logic
+        self.difficulty = context.difficulty
         self.menu_str_list = ["very easy".center(11, ' '), "easy".ljust(9, ' ').center(11, ' '),
                               "normal".ljust(9, ' ').center(11, ' '), "hard".ljust(9, ' ').center(11, ' '),
                               "insane".ljust(9, ' ').center(11, ' '), "back".ljust(9, ' ').center(11, ' ')]
@@ -18,10 +19,13 @@ class DifficultyWin(SuperWin):
 
     def render(self):
         for i in range(6):
+            color_atr = curses.color_pair(0)
+            if self.difficulty - 1 == i:
+                color_atr = curses.color_pair(6)
             if i == self.menu_index:
-                self.win.addstr(i + 1, 2, self.menu_str_list[i], curses.A_REVERSE)
+                self.win.addstr(i + 1, 2, self.menu_str_list[i], curses.A_REVERSE | color_atr)
             else:
-                self.win.addstr(i + 1, 2, self.menu_str_list[i])
+                self.win.addstr(i + 1, 2, self.menu_str_list[i], color_atr)
 
             self.win.border(curses.ACS_VLINE, curses.ACS_VLINE, curses.ACS_HLINE, curses.ACS_HLINE,
                             curses.ACS_ULCORNER, curses.ACS_TTEE, curses.ACS_LTEE, curses.ACS_LRCORNER)
