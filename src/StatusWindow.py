@@ -1,11 +1,12 @@
 
 class StatusWindow:
 
-    def __init__(self, scr, logic, small):
+    def __init__(self, scr, context):
         self.scr = scr
         _, self.max_x = self.scr.getmaxyx()
-        self.logic = logic
-        self.small = small
+        self.context = context
+        self.logic = context.logic
+        self.small = context.small
 
     def render(self):
         if not self.logic.pause:

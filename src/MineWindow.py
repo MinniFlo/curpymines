@@ -7,12 +7,13 @@ from PauseWin import PauseWin
 
 class MineWindow(SuperWin):
 
-    def __init__(self, scr, logic, small, manager):
+    def __init__(self, scr, context, manager):
         self.scr = scr
         self.manager = manager
-        self.logic = logic
-        self.status = StatusWindow(self.manager.s_win, self.logic, small)
-        self.pause_win = PauseWin(self.manager.p_win, self.manager)
+        self.context = context
+        self.logic = self.context.logic
+        self.status = StatusWindow(self.manager.s_win, self.context)
+        self.pause_win = PauseWin(self.manager.p_win, self.manager, self.context)
         self.max_y, self.max_x = self.scr.getmaxyx()
         self.curs_y, self.curs_x = (self.max_y // 2 - 1, 2)
         self.color = Colors()

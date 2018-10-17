@@ -6,15 +6,16 @@ import time
 
 class PauseWin(SuperWin):
 
-    def __init__(self, win, manager):
+    def __init__(self, win, manager, context):
         self.win = win
         self.manager = manager
-        self.logic = manager.logic
+        self.context = context
+        self.logic = self.context.logic
         self.menu_map = {0: self.resume, 1: self.restart, 2: self.options, 3: self.exit}
         self.menu_str_list = ["resume".ljust(7, ' ').center(9, ' '), "restart".center(9, ' '), "options".center(9, ' '),
                               "exit".ljust(7, ' ').center(9, ' ')]
         self.menu_index = 0
-        self.option_win = OptionWin(self.manager.o_win, self.manager)
+        self.option_win = OptionWin(self.manager.o_win, self.manager, self.context)
 
     def render(self):
         for i in range(4):

@@ -5,13 +5,14 @@ import curses
 
 class OptionWin(SuperWin):
 
-    def __init__(self, win, manager):
+    def __init__(self, win, manager, context):
         self.win = win
         self.manager = manager
+        self.context = context
         self.menu_map = {0: self.difficulty, 1: self.back}
         self.menu_str_list = ["difficulty".center(12, ' '), "back".ljust(10, ' ').center(12, ' ')]
         self.menu_index = 0
-        self.difficulty_win = DifficultyWin(manager.d_win, manager)
+        self.difficulty_win = DifficultyWin(manager.d_win, manager, self.context)
 
     def render(self):
         for i in range(2):

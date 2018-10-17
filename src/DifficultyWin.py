@@ -5,10 +5,11 @@ from VerificationsWin import VerificationsWin
 
 class DifficultyWin(SuperWin):
 
-    def __init__(self, win, manager):
+    def __init__(self, win, manager, context):
         self.win = win
         self.manager = manager
-        self.logic = manager.logic
+        self.context = context
+        self.logic = self.context.logic
         self.menu_str_list = ["very easy".center(11, ' '), "easy".ljust(9, ' ').center(11, ' '),
                               "normal".ljust(9, ' ').center(11, ' '), "hard".ljust(9, ' ').center(11, ' '),
                               "insane".ljust(9, ' ').center(11, ' '), "back".ljust(9, ' ').center(11, ' ')]
@@ -43,7 +44,6 @@ class DifficultyWin(SuperWin):
             if self.logic.first or self.logic.win or self.logic.loose:
                 self.manager.restart()
             else:
-
                 self.manager.push_win_stack(self.manager.v_win, self.verifications_win)
         else:
             self.back()

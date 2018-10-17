@@ -5,16 +5,17 @@ from SuperWin import SuperWin
 
 class WindowManager:
 
-    def __init__(self, game_setuper):
+    def __init__(self, game_setuper, context):
         self.game_setuper = game_setuper
-        self.logic = self.game_setuper.logic
+        self.context = context
+        self.logic = self.context.logic
         self.m_win = game_setuper.m_win
         self.s_win = game_setuper.s_win
         self.p_win = game_setuper.p_win
         self.o_win = game_setuper.o_win
         self.d_win = game_setuper.d_win
         self.v_win = game_setuper.v_win
-        self.mine_win = MineWindow(self.m_win, self.logic, self.game_setuper.small, self)
+        self.mine_win = MineWindow(self.m_win, self.context, self)
         self.win_stack = []
         self.active_win = None
         self.active_win_obj = None
@@ -51,8 +52,8 @@ class WindowManager:
     def restart(self):
         self.m_win.clear()
         self.s_win.clear()
-        self.logic = self.game_setuper.create_logic()
-        self.mine_win = MineWindow(self.m_win, self.logic, self.game_setuper.small, self)
+        self.game_setuper.create_new_game()
+        self.mine_win = MineWindow(self.m_win, self.context, self)
         self.game_setup()
 
     def push_win_stack(self, win, win_obj):

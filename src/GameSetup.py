@@ -4,6 +4,7 @@ import os
 
 from WindowManager import WindowManager
 from MineLogic import MinefieldLogic
+from Context import Context
 
 
 class GameSetup:
@@ -75,11 +76,14 @@ class GameSetup:
         # sets the padding for the "mines left: ..." in the status window
         self.max_mine_digit = len(str(int(((self.x_size // 2 + 1) * self.y_size - 9) * self.difficulty)))
 
-        self.create_wins()
-        self.create_logic()
+        self.create_new_game()
+        self.update_context()
+
+    def update_context(self):
+        self.context = Context(self.logic, (self.y_size, self.x_size), self.difficulty, self.difficulty_map, self.small)
 
     def create_manager(self):
-        return WindowManager(self)
+        return WindowManager(self, self.context)
 
     def create_wins(self):
         self.m_win = curses.newwin(self.y_size, self.x_size, self.y_pos, self.x_pos)
@@ -89,9 +93,10 @@ class GameSetup:
         self.d_win = curses.newwin(8, 15, self.y_pos, self.x_pos)
         self.v_win = curses.newwin(6, 14, (self.y_size // 2) - 4, (self.x_size // 2) - 6)
 
-    def create_logic(self):
-        self.logic = MinefieldLogic(self.y_size, self.x_size, self.difficulty, self.max_mine_digit)
-        return self.logic
+    def create_new_game(self):
+        self.create_wins()
+        self.logic = MinefieldLogic(self.y_size, self.x_size, self.difficulty_map[self.difficulty], self.max_mine_digit)
+        self.update_context()
 
     def curses_setup(self):
         curses.noecho()
