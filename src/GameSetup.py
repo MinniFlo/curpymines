@@ -42,22 +42,22 @@ class GameSetup:
                 sys.exit()
 
         # sets the new x value
-        if self.args.x_axis is not None:
-            self.x_size = self.args.x_axis * 2 + 3
+        if self.args.xaxis is not None:
+            self.x_size = self.args.xaxis * 2 + 3
             if self.x_size > full_x:
                 curses.endwin()
                 os.system('echo terminal ist to small for the given x-value!')
                 sys.exit()
 
         # sets the new y value
-        if self.args.y_axis is not None:
-            self.y_size = self.args.y_axis + 2
+        if self.args.yaxis is not None:
+            self.y_size = self.args.yaxis + 2
             if self.y_size + 1 > full_y:
                 curses.endwin()
                 os.system('echo terminal ist to small for the given y-value!')
                 sys.exit()
             if self.x_size < 37:
-                self.y_size = self.args.y_axis + 3
+                self.y_size = self.args.yaxis + 3
                 if self.y_size + 1 > full_y:
                     curses.endwin()
                     os.system('echo terminal ist to small for the given y-value!')
