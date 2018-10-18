@@ -19,6 +19,7 @@ class GameSetup:
         self.difficulty_map = {1: 0.11, 2: 0.14, 3: 0.17, 4: 0.20, 5: 0.23}
         self.max_mine_digit = 2
         self.small = False
+        self.fullscreen = False
         self.m_win = curses.newwin(self.y_size, self.x_size, self.y_pos, self.x_pos)
         self.s_win = curses.newwin(2, self.x_size, self.y_size, self.x_pos)
         self.p_win = curses.newwin(6, 13, self.y_pos, self.x_pos)
@@ -26,7 +27,8 @@ class GameSetup:
         self.d_win = curses.newwin(8, 13, self.y_pos, self.x_pos)
         self.v_win = curses.newwin(6, 14, (self.y_size // 2) - 4, (self.x_size // 2) - 6)
         self.logic = MinefieldLogic(self.y_size, self.x_size, self.difficulty_map[self.difficulty], self.max_mine_digit)
-        self.context = Context(self.logic, (self.y_size, self.x_size), self.difficulty, self.difficulty_map, self.small)
+        self.context = Context(self.logic, (self.y_size, self.x_size), self.difficulty, self.difficulty_map,
+                               self.fullscreen, self.small)
 
     def args_stuff(self):
         full_y, full_x = self.scr.getmaxyx()
@@ -38,6 +40,7 @@ class GameSetup:
                 self.x_size = full_x
             else:
                 self.x_size = full_x - 1
+            self.fullscreen = True
             if full_y < 6 or full_x < 21:
                 curses.endwin()
                 os.system('echo terminal is to small')
@@ -50,6 +53,7 @@ class GameSetup:
                 curses.endwin()
                 os.system('echo terminal ist to small for the given x-value!')
                 sys.exit()
+
 
         # sets the new y value
         if self.args.yaxis is not None:
@@ -82,7 +86,8 @@ class GameSetup:
         self.update_context()
 
     def update_context(self):
-        self.context.update(self.logic, (self.y_size, self.x_size), self.difficulty, self.difficulty_map, self.small)
+        self.context.update(self.logic, (self.y_size, self.x_size), self.difficulty, self.difficulty_map,
+                            self.fullscreen, self.small)
 
     def create_manager(self):
         return WindowManager(self, self.context)
