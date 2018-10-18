@@ -31,7 +31,7 @@ class DifficultyWin(SuperWin):
                             curses.ACS_ULCORNER, curses.ACS_TTEE, curses.ACS_LTEE, curses.ACS_LRCORNER)
 
     def difficulty_change(self):
-        return self.manager.game_setuper.difficulty_map[self.menu_index + 1]
+        return self.menu_index + 1
 
     def back(self):
         self.manager.pop_win_stack()
