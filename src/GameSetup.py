@@ -79,7 +79,7 @@ class GameSetup:
             self.y_size -= 1
 
         # sets the padding for the "mines left: ..." in the status window
-        self.max_mine_digit = len(str(int(((self.x_size // 2 + 1) * self.y_size - 9) *
+        self.max_mine_digit = len(str(int((((self.x_size // 2 + 1) * self.y_size) - 9) *
                                           self.difficulty_map[self.difficulty])))
 
         self.create_new_game()

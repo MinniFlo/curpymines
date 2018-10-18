@@ -21,7 +21,7 @@ class DifficultyWin(SuperWin):
         for i in range(6):
             color_atr = curses.color_pair(0)
             if self.difficulty - 1 == i:
-                color_atr = curses.color_pair(6)
+                color_atr = curses.color_pair(5)
             if i == self.menu_index:
                 self.win.addstr(i + 1, 2, self.menu_str_list[i], curses.A_REVERSE | color_atr)
             else:

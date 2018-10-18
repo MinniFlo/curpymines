@@ -23,8 +23,8 @@ if __name__ == '__main__':
     shorter_esc_delay()
 
     parser = argparse.ArgumentParser(prog='tool',
-                                     formatter_class=lambda prog: argparse.HelpFormatter(prog,max_help_position=50))
-    parser.add_argument("-y", "--yaxis", type=int, help="size of y_axis from 6 to 204", metavar="[6-204]",
+                                     formatter_class=lambda prog: argparse.HelpFormatter(prog, max_help_position=50))
+    parser.add_argument("-y", "--yaxis", type=int, help="size of y_axis", metavar="[7-204]",
                         choices=range(7, 205))
     parser.add_argument("-x", "--xaxis", type=int, help="size of x_axis", metavar="[10-477]", choices=range(10, 478))
     parser.add_argument("-f", "--full_screen", action="store_true", help="uses full height/width of terminal")
