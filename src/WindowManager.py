@@ -51,7 +51,7 @@ class WindowManager:
     def restart(self):
         self.m_win.clear()
         self.s_win.clear()
-        self.game_setuper.create_new_game()
+        self.game_setuper.initial_setup()
         self.mine_win = MineWindow(self.m_win, self.context, self)
         self.game_setup()
 

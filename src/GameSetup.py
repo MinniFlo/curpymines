@@ -30,11 +30,13 @@ class GameSetup:
         self.context = Context(self.logic, (self.y_size, self.x_size), self.difficulty, self.difficulty_map,
                                self.fullscreen, self.small)
 
-    def args_stuff(self):
+    def initial_setup(self, fullscreen=None, x_value=None, y_value=None, difficulty=None):
+        if fullscreen is None:
+            fullscreen = self.fullscreen
         full_y, full_x = self.scr.getmaxyx()
 
         # sets the fullscreen
-        if self.args.full_screen:
+        if fullscreen:
             self.y_size = full_y - 1
             if full_x % 2 != 0:
                 self.x_size = full_x
@@ -47,8 +49,8 @@ class GameSetup:
                 sys.exit()
 
         # sets the new x value
-        if self.args.xaxis is not None:
-            self.x_size = self.args.xaxis * 2 + 3
+        if x_value is not None:
+            self.x_size = x_value * 2 + 3
             if self.x_size > full_x:
                 curses.endwin()
                 os.system('echo terminal ist to small for the given x-value!')
@@ -56,22 +58,22 @@ class GameSetup:
 
 
         # sets the new y value
-        if self.args.yaxis is not None:
-            self.y_size = self.args.yaxis + 2
+        if y_value is not None:
+            self.y_size = y_value + 2
             if self.y_size + 1 > full_y:
                 curses.endwin()
                 os.system('echo terminal ist to small for the given y-value!')
                 sys.exit()
             if self.x_size < 37:
-                self.y_size = self.args.yaxis + 3
+                self.y_size = y_value + 3
                 if self.y_size + 1 > full_y:
                     curses.endwin()
                     os.system('echo terminal ist to small for the given y-value!')
                     sys.exit()
 
         # sets the difficulty
-        if self.args.difficulty is not None:
-            self.difficulty = self.args.difficulty
+        if difficulty is not None:
+            self.difficulty = difficulty
 
         # sets the flag for the alternative status window render
         if self.x_size < 37:
@@ -84,6 +86,9 @@ class GameSetup:
 
         self.create_new_game()
         self.update_context()
+
+    def args_stuff(self):
+        self.initial_setup(self.args.full_screen, self.args.xaxis, self.args.yaxis, self.args.difficulty)
 
     def update_context(self):
         self.context.update(self.logic, (self.y_size, self.x_size), self.difficulty, self.difficulty_map,
