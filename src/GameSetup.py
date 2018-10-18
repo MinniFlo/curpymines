@@ -82,7 +82,7 @@ class GameSetup:
         self.update_context()
 
     def update_context(self):
-        self.context = Context(self.logic, (self.y_size, self.x_size), self.difficulty, self.difficulty_map, self.small)
+        self.context.update(self.logic, (self.y_size, self.x_size), self.difficulty, self.difficulty_map, self.small)
 
     def create_manager(self):
         return WindowManager(self, self.context)

@@ -8,7 +8,6 @@ class WindowManager:
     def __init__(self, game_setuper, context):
         self.game_setuper = game_setuper
         self.context = context
-        self.logic = self.context.logic
         self.m_win = game_setuper.m_win
         self.s_win = game_setuper.s_win
         self.p_win = game_setuper.p_win
@@ -27,7 +26,7 @@ class WindowManager:
         
     def game_setup(self):
         self.init_stack()
-        self.logic.build()
+        self.context.logic.build()
         self.mine_win.draw()
 
     def render_all(self):
