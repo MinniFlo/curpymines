@@ -20,7 +20,7 @@ class WindowManager:
         self.active_win_obj = None
         self.input_map = {(119, 107, 259): SuperWin.up_input, (97, 104, 260): SuperWin.left_input,
                           (100, 108, 261): SuperWin.right_input, (115, 106, 258): SuperWin.down_input,
-                          (32, 10): SuperWin.click_input, (101, 102): SuperWin.flag_input,
+                          (32, 10): SuperWin.click_input, (101, 102, 104): SuperWin.flag_input,
                           (114, 111): SuperWin.reset_input, (27, 113, 112): SuperWin.exit_input}
         self.run_game = True
         
