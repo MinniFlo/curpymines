@@ -1,8 +1,0 @@
-- volle Zoomstufe im Fenster
-- main -f -x12
-- difficulty auf insane setzen
--> absturz bei Spielverlust
-
-- main -x12 -y12 
-- difficulty auf insane setzen
--> bei Spielverlust sieht man, dass das Spielfeld eine Zeile zu klein ist
