@@ -1,6 +1,7 @@
-= curpymines
+:imagesdir: ./images
 
-minesweeper written in python(curses)
+
+= curpymines
 
 == How to start
 
@@ -17,5 +18,35 @@ run `python ./minesweeper/src/main.py`
 |set Flag |f |e |h
 |reset Game |r |o |-  
 |===
+
+== Available Flags
+
+`-h, --help` +
+
+* shows the help message
+
+`-f, --full_screen` +
+
+* starts the game in the largest possible size
+
+`-x, --xaxis` +
+
+* takes a number value for the size of the x axis
+* overwrites the x value of -f
+
+`-y, --yaxis` +
+
+* takes a number value for the size of the y axis
+* overwrites the y value of -f
+
+`-d, --difficulty` +
+
+* takes a number value for the difficulty of the game
+
+== Sreenshots
+
+image::minesweeper3.png[align=center]
+image::minesweeper1.png[align=center]
+image::minesweeper2.png[align=center]
 
 
