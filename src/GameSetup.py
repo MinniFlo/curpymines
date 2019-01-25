@@ -30,13 +30,14 @@ class GameSetup:
         self.context = Context(self.logic, (self.y_size, self.x_size), self.difficulty, self.difficulty_map,
                                self.fullscreen, self.small)
 
-    def initial_setup(self, fullscreen=None, x_value=None, y_value=None, difficulty=None):
+    def initial_setup(self, fullscreen=None, x_value=None, y_value=None, difficulty=None, restart=False):
+
         if fullscreen is None:
             fullscreen = self.fullscreen
         full_y, full_x = self.scr.getmaxyx()
 
         # sets the fullscreen
-        if fullscreen:
+        if fullscreen and not restart:
             self.y_size = full_y - 1
             if full_x % 2 != 0:
                 self.x_size = full_x
@@ -75,7 +76,7 @@ class GameSetup:
             self.difficulty = difficulty
 
         # sets the flag for the alternative status window render
-        if self.x_size < 37:
+        if self.x_size < 37 and not restart:
             self.small = True
             self.y_size -= 1
 
@@ -86,7 +87,10 @@ class GameSetup:
         self.create_new_game()
 
     def args_stuff(self):
-        self.initial_setup(self.args.full_screen, self.args.xaxis, self.args.yaxis, self.args.difficulty)
+        self.initial_setup(self.args.full_screen, self.args.xaxis, self.args.yaxis, self.args.difficulty, False)
+
+    def update_game(self):
+        self.initial_setup(fullscreen=self.context.fullscreen, difficulty=self.context.difficulty, restart=True)
 
     def update_context(self):
         self.context.update(self.logic, (self.y_size, self.x_size), self.difficulty, self.difficulty_map,
