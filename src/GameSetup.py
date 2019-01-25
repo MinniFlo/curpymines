@@ -56,7 +56,6 @@ class GameSetup:
                 os.system('echo terminal ist to small for the given x-value!')
                 sys.exit()
 
-
         # sets the new y value
         if y_value is not None:
             self.y_size = y_value + 2
@@ -85,7 +84,6 @@ class GameSetup:
                                           self.difficulty_map[self.difficulty])))
 
         self.create_new_game()
-        self.update_context()
 
     def args_stuff(self):
         self.initial_setup(self.args.full_screen, self.args.xaxis, self.args.yaxis, self.args.difficulty)

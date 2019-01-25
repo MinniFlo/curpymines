@@ -44,7 +44,7 @@ class DifficultyWin(SuperWin):
 
     def click_input(self):
         if self.menu_index <= 4:
-            self.manager.game_setuper.difficulty = self.difficulty_change()
+            self.context.difficulty = self.difficulty_change()
             if self.logic.first or self.logic.win or self.logic.loose:
                 self.manager.restart()
             else:
