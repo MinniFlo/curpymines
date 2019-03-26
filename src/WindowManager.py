@@ -40,13 +40,10 @@ class WindowManager:
         if cur_key == -1:
             time.sleep(0.01)
         for tup in self.input_map.keys():
-            for key in tup:
-                if cur_key == key:
-                    self.input_map[tup](self.active_win_obj)
-                    break
-            else:
-                continue
-            break
+            if cur_key in tup:
+                self.input_map[tup](self.active_win_obj)
+                break
+
 
     def restart(self):
         self.m_win.clear()
