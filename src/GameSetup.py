@@ -23,9 +23,10 @@ class GameSetup:
         self.m_win = curses.newwin(self.y_size, self.x_size, self.y_pos, self.x_pos)
         self.s_win = curses.newwin(2, self.x_size, self.y_size, self.x_pos)
         self.p_win = curses.newwin(6, 13, self.y_pos, self.x_pos)
-        self.o_win = curses.newwin(4, 16, self.y_pos, self.x_pos)
+        self.o_win = curses.newwin(5, 16, self.y_pos, self.x_pos)
         self.d_win = curses.newwin(8, 13, self.y_pos, self.x_pos)
         self.v_win = curses.newwin(6, 14, (self.y_size // 2) - 4, (self.x_size // 2) - 6)
+        self.so_win = curses.newwin(6, 6, self.y_pos, self.x_pos)
         self.logic = MinefieldLogic(self.y_size, self.x_size, self.difficulty_map[self.difficulty], self.max_mine_digit)
         self.context = Context(self.logic, (self.y_size, self.x_size), self.difficulty, self.difficulty_map,
                                self.fullscreen, self.small, (0, 0))
@@ -87,10 +88,11 @@ class GameSetup:
         self.create_new_game()
 
     def args_stuff(self):
-        self.initial_setup(self.args.full_screen, self.args.xaxis, self.args.yaxis, self.args.difficulty, False)
+        self.initial_setup(self.args.full_screen, self.args.width, self.args.height, self.args.difficulty, False)
 
     def update_game(self):
-        self.initial_setup(fullscreen=self.context.fullscreen, difficulty=self.context.difficulty, restart=True)
+        self.initial_setup(fullscreen=self.context.fullscreen, y_value=self.context.y_size, x_value=self.context.x_size,
+                           difficulty=self.context.difficulty, restart=True)
 
     def update_context(self):
         self.context.update(self.logic, (self.y_size, self.x_size), self.difficulty, self.difficulty_map,
@@ -103,9 +105,10 @@ class GameSetup:
         self.m_win = curses.newwin(self.y_size, self.x_size, self.y_pos, self.x_pos)
         self.s_win = curses.newwin(2, self.x_size, self.y_size, self.x_pos)
         self.p_win = curses.newwin(6, 13, self.y_pos, self.x_pos)
-        self.o_win = curses.newwin(4, 16, self.y_pos, self.x_pos)
+        self.o_win = curses.newwin(5, 16, self.y_pos, self.x_pos)
         self.d_win = curses.newwin(8, 15, self.y_pos, self.x_pos)
         self.v_win = curses.newwin(6, 14, (self.y_size // 2) - 4, (self.x_size // 2) - 6)
+        self.so_win = curses.newwin(6, 6, self.y_pos, self.x_pos)
 
     def create_new_game(self):
         self.create_wins()
@@ -121,3 +124,4 @@ class GameSetup:
         self.o_win.keypad(True)
         self.d_win.keypad(True)
         self.v_win.keypad(True)
+        self.so_win.keypad(True)

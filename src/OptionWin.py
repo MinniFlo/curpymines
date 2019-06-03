@@ -1,5 +1,6 @@
 from SuperWin import SuperWin
 from DifficultyWin import DifficultyWin
+from SizeWin import SizeWin
 import curses
 
 
@@ -9,11 +10,13 @@ class OptionWin(SuperWin):
         self.win = win
         self.manager = manager
         self.context = context
-        self.menu_map = {0: self.difficulty, 1: self.back}
-        self.menu_str_list = ["difficulty".center(12, ' '), "back".ljust(10, ' ').center(12, ' ')]
         self.menu_size = 3
+        self.menu_map = {0: self.difficulty, 1: self.size, 2: self.back}
+        self.menu_str_list = ["difficulty".center(12, ' '), "size".ljust(10, ' ').center(12, ' '),
+                              "back".ljust(10, ' ').center(12, ' ')]
         self.menu_index = 0
         self.difficulty_win = DifficultyWin(manager.d_win, manager, self.context)
+        self.size_win = SizeWin(manager.so_win, manager, self.context)
 
     def render(self):
         for i in range(self.menu_size):
@@ -27,6 +30,9 @@ class OptionWin(SuperWin):
 
     def difficulty(self):
         self.manager.push_win_stack(self.manager.d_win, self.difficulty_win)
+
+    def size(self):
+        self.manager.push_win_stack(self.manager.so_win, self.size_win)
 
     def back(self):
         self.manager.pop_win_stack()
