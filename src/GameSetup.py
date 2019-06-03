@@ -28,7 +28,7 @@ class GameSetup:
         self.v_win = curses.newwin(6, 14, (self.y_size // 2) - 4, (self.x_size // 2) - 6)
         self.logic = MinefieldLogic(self.y_size, self.x_size, self.difficulty_map[self.difficulty], self.max_mine_digit)
         self.context = Context(self.logic, (self.y_size, self.x_size), self.difficulty, self.difficulty_map,
-                               self.fullscreen, self.small)
+                               self.fullscreen, self.small, (0, 0))
 
     def initial_setup(self, fullscreen=None, x_value=None, y_value=None, difficulty=None, restart=False):
 
@@ -94,7 +94,7 @@ class GameSetup:
 
     def update_context(self):
         self.context.update(self.logic, (self.y_size, self.x_size), self.difficulty, self.difficulty_map,
-                            self.fullscreen, self.small)
+                            self.fullscreen, self.small, (0, 0))
 
     def create_manager(self):
         return WindowManager(self, self.context)
