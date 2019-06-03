@@ -11,6 +11,7 @@ class PauseWin(SuperWin):
         self.manager = manager
         self.context = context
         self.logic = self.context.logic
+        self.menu_size = 4
         self.menu_map = {0: self.resume, 1: self.restart, 2: self.options, 3: self.exit}
         self.menu_str_list = ["resume".ljust(7, ' ').center(9, ' '), "restart".center(9, ' '), "options".center(9, ' '),
                               "exit".ljust(7, ' ').center(9, ' ')]
@@ -18,7 +19,7 @@ class PauseWin(SuperWin):
         self.option_win = OptionWin(self.manager.o_win, self.manager, self.context)
 
     def render(self):
-        for i in range(4):
+        for i in range(self.menu_size):
             if self.menu_index == i:
                 self.win.addstr(i + 1, 2, self.menu_str_list[i], curses.A_REVERSE)
             else:
@@ -44,10 +45,10 @@ class PauseWin(SuperWin):
         self.manager.run_game = False
 
     def up_input(self):
-        self.menu_index = (self.menu_index - 1) % 4
+        self.menu_index = (self.menu_index - 1) % self.menu_size
 
     def down_input(self):
-        self.menu_index = (self.menu_index + 1) % 4
+        self.menu_index = (self.menu_index + 1) % self.menu_size
 
     def click_input(self):
         self.menu_map[self.menu_index]()

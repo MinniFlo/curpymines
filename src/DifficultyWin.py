@@ -9,6 +9,7 @@ class DifficultyWin(SuperWin):
         self.win = win
         self.manager = manager
         self.context = context
+        self.menu_size = 6
         self.logic = self.context.logic
         self.difficulty = context.difficulty
         self.menu_str_list = ["very easy".center(11, ' '), "easy".ljust(9, ' ').center(11, ' '),
@@ -18,7 +19,7 @@ class DifficultyWin(SuperWin):
         self.verifications_win = VerificationsWin(manager.v_win, manager)
 
     def render(self):
-        for i in range(6):
+        for i in range(self.menu_size):
             color_atr = curses.color_pair(0)
             if self.difficulty - 1 == i:
                 color_atr = curses.color_pair(5)
@@ -37,10 +38,10 @@ class DifficultyWin(SuperWin):
         self.manager.pop_win_stack()
 
     def up_input(self):
-        self.menu_index = (self.menu_index - 1) % 6
+        self.menu_index = (self.menu_index - 1) % self.menu_size
 
     def down_input(self):
-        self.menu_index = (self.menu_index + 1) % 6
+        self.menu_index = (self.menu_index + 1) % self.menu_size
 
     def click_input(self):
         if self.menu_index <= 4:

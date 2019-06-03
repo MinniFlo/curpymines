@@ -44,7 +44,6 @@ class WindowManager:
                 self.input_map[tup](self.active_win_obj)
                 break
 
-
     def restart(self):
         self.m_win.clear()
         self.s_win.clear()
