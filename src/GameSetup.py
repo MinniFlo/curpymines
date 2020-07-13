@@ -1,6 +1,7 @@
 import curses
 import sys
 import os
+import math
 
 from WindowManager import WindowManager
 from MineLogic import MinefieldLogic
@@ -14,6 +15,8 @@ class GameSetup:
         self.args = args
         self.y_size = 15
         self.x_size = 59
+        self.y_value = None
+        self.x_value = None
         self.y_pos, self.x_pos = 0, 0
         self.difficulty = 3
         self.difficulty_map = {1: 0.11, 2: 0.14, 3: 0.17, 4: 0.20, 5: 0.23}
@@ -28,8 +31,8 @@ class GameSetup:
         self.v_win = curses.newwin(6, 14, (self.y_size // 2) - 4, (self.x_size // 2) - 6)
         self.so_win = curses.newwin(6, 6, self.y_pos, self.x_pos)
         self.logic = MinefieldLogic(self.y_size, self.x_size, self.difficulty_map[self.difficulty], self.max_mine_digit)
-        self.context = Context(self.logic, (self.y_size, self.x_size), self.difficulty, self.difficulty_map,
-                               self.fullscreen, self.small, (0, 0))
+        self.context = Context(self.logic, (self.y_value, self.x_value), self.difficulty, self.difficulty_map,
+                               self.fullscreen, self.small, (self.y_size, self.x_size))
 
     def initial_setup(self, fullscreen=None, x_value=None, y_value=None, difficulty=None, restart=False):
 
@@ -50,24 +53,33 @@ class GameSetup:
                 os.system('echo terminal is to small')
                 sys.exit()
 
+
+
         # sets the new x value
         if x_value is not None:
+            self.x_value = x_value
             self.x_size = x_value * 2 + 3
             if self.x_size > full_x:
                 curses.endwin()
                 os.system('echo terminal ist to small for the given x-value!')
                 sys.exit()
 
+
+
         # sets the new y value
         if y_value is not None:
+            self.y_value = y_value
+            # number of minefield rows plus 2 border rows
             self.y_size = y_value + 2
-            if self.y_size + 1 > full_y:
+            # the y_size must allso not be equal the full window size,
+            # because there has to be space for the status menue
+            if self.y_size >= full_y:
                 curses.endwin()
                 os.system('echo terminal ist to small for the given y-value!')
                 sys.exit()
+            # if the terminal is to small to display the status window
             if self.x_size < 37:
-                self.y_size = y_value + 3
-                if self.y_size + 1 > full_y:
+                if self.y_size >= full_y:
                     curses.endwin()
                     os.system('echo terminal ist to small for the given y-value!')
                     sys.exit()
@@ -82,21 +94,23 @@ class GameSetup:
             self.y_size -= 1
 
         # sets the padding for the "mines left: ..." in the status window
-        self.max_mine_digit = len(str(int((((self.x_size // 2 + 1) * self.y_size) - 9) *
-                                          self.difficulty_map[self.difficulty])))
+        self.max_mine_digit = int(math.log10((((self.x_size // 2 + 1) * self.y_size) - 9) *
+                                             self.difficulty_map[self.difficulty])) + 1
 
         self.create_new_game()
+
+
 
     def args_stuff(self):
         self.initial_setup(self.args.full_screen, self.args.width, self.args.height, self.args.difficulty, False)
 
     def update_game(self):
-        self.initial_setup(fullscreen=self.context.fullscreen, y_value=self.context.y_size, x_value=self.context.x_size,
-                           difficulty=self.context.difficulty, restart=True)
+        self.initial_setup(fullscreen=self.context.fullscreen, y_value=self.context.y_value,
+                           x_value=self.context.x_value, difficulty=self.context.difficulty, restart=True)
 
     def update_context(self):
         self.context.update(self.logic, (self.y_size, self.x_size), self.difficulty, self.difficulty_map,
-                            self.fullscreen, self.small, (0, 0))
+                            self.fullscreen, self.small, (self.y_value, self.x_value))
 
     def create_manager(self):
         return WindowManager(self, self.context)
@@ -114,6 +128,7 @@ class GameSetup:
         self.create_wins()
         self.logic = MinefieldLogic(self.y_size, self.x_size, self.difficulty_map[self.difficulty], self.max_mine_digit)
         self.update_context()
+
 
     def curses_setup(self):
         curses.noecho()
