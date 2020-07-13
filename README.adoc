@@ -45,8 +45,8 @@ run `python ./minesweeper/src/main.py`
 
 == Sreenshots
 
-image::minesweeper3.png[align=center]
 image::minesweeper1.png[align=center]
+image::minesweeper3.png[align=center]
 image::minesweeper2.png[align=center]
 
 
