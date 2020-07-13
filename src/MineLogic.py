@@ -109,7 +109,7 @@ class MinefieldLogic:
             self.render_list.add(cur_field)
             self.win_list.add(cur_field)
         else:
-            adjacent_list = self.adjacent_fields(y, x)
+            adjacent_list = self.neighbors(y, x)
             cur_field.set_open(True)
             self.render_list.add(cur_field)
             self.win_list.add(cur_field)
@@ -135,7 +135,7 @@ class MinefieldLogic:
         cur_field = self.field_matrix[y][x_index]
         if cur_field.get_number() != 0:
             if self.count_flags(y, x) == cur_field.get_number():
-                work_list = self.adjacent_fields(y, x)
+                work_list = self.neighbors(y, x)
                 for i in set(work_list):
                     i_field = self.tuple_in_matrix(i)
                     if i_field.get_flag() or i_field.get_open():
@@ -150,7 +150,7 @@ class MinefieldLogic:
                         self.loose = True
 
     # The function returns a list of all tuples of fields that surround a specified field
-    def adjacent_fields(self, y, x):
+    def neighbors(self, y, x):
         adjacent_list = {(y, x+2), (y, x-2), (y+1, x), (y+1, x+2), (y+1, x-2), (y-1, x), (y-1, x+2), (y-1, x-2)}
         return {x for x in adjacent_list if self.in_range(x)}
 
@@ -162,7 +162,7 @@ class MinefieldLogic:
 
     # Counts the mines around on field
     def count_mines(self, y, x):
-        adj_list = self.adjacent_fields(y, x)
+        adj_list = self.neighbors(y, x)
         mine_count = 0
         for i in adj_list:
             i_field = self.tuple_in_matrix(i)
@@ -171,7 +171,7 @@ class MinefieldLogic:
         return mine_count
 
     def count_flags(self, y, x):
-        adj_list = self.adjacent_fields(y, x)
+        adj_list = self.neighbors(y, x)
         flags = 0
         for i in adj_list:
             i_field = self.tuple_in_matrix(i)

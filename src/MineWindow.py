@@ -35,23 +35,36 @@ class MineWindow(SuperWin):
         if self.logic.loose:
             self.end_game()
         else:
-            for cur_field in self.logic.render_list:
-                cur_y, cur_x = cur_field.get_foordinate()
-                if not (cur_y, cur_x) == (self.curs_y, self.curs_x):
-                    style = curses.A_NORMAL
-                else:
-                    style = curses.A_REVERSE
-                if cur_field.get_open():
-                    if cur_field.get_number() == 0:
-                        self.scr.addstr(cur_y, cur_x, ' ', style)
+            # for cur_field in self.logic.render_list:
+            for liste in self.logic.field_matrix:
+                for cur_field in liste:
+                    cur_y, cur_x = cur_field.get_foordinate()
+                    if (cur_y, cur_x) in self.logic.rim_list:
+                        continue
+                    if not (cur_y, cur_x) == (self.curs_y, self.curs_x):
+                        style = curses.A_NORMAL
                     else:
-                        self.scr.addstr(cur_y, cur_x, str(cur_field.get_number()),
-                                        curses.color_pair(cur_field.get_number()) | style)
-                else:
-                    if cur_field.get_flag():
-                        self.scr.addstr(cur_y, cur_x, self.flag_field, curses.color_pair(6) | style)
+                        style = curses.A_REVERSE
+                    if cur_field.get_open():
+                        if cur_field.get_number() == 0:
+                            self.scr.addstr(cur_y, cur_x, ' ', style)
+                        else:
+                            if self.is_relevant_number((cur_y, cur_x)):
+                                self.scr.addstr(cur_y, cur_x, str(cur_field.get_number()),
+                                                curses.color_pair(cur_field.get_number()) | style)
+                            else:
+                                self.scr.addstr(cur_y, cur_x, str(cur_field.get_number()),
+                                                curses.color_pair(12) | style)
                     else:
-                        self.scr.addstr(cur_y, cur_x, self.closed_field, style)
+                        if cur_field.get_flag():
+                            self.scr.addstr(cur_y, cur_x, self.flag_field, curses.color_pair(6) | style)
+
+                        else:
+                            if self.is_relevant((cur_y, cur_x)):
+                                self.scr.addstr(cur_y, cur_x, self.closed_field, style)
+                            else:
+                                self.scr.addstr(cur_y, cur_x, self.closed_field, curses.color_pair(12) | style)
+
             self.scr.box()
             self.logic.render_list.clear()
             self.logic.check_win()
@@ -105,7 +118,22 @@ class MineWindow(SuperWin):
                     else:
                         self.scr.addstr(cur_y, cur_x, self.closed_field)
         self.scr.box()
-        self.scr.move(self.curs_y, self.curs_x)
+
+    def is_relevant(self, tup):
+        y, x = tup
+        for field_tup in self.logic.neighbors(y, x):
+            if self.logic.tuple_in_matrix(field_tup).get_open():
+                return True
+        return False
+
+    def is_relevant_number(self, tup):
+        y, x = tup
+        for field_tup in self.logic.neighbors(y, x):
+            field = self.logic.tuple_in_matrix(field_tup)
+            if (not field.get_open()) and (not field.get_flag()):
+                return True
+        return False
+
 
     def x_start(self):
         x_start = int(self.max_x * 0.36)
@@ -118,7 +146,7 @@ class MineWindow(SuperWin):
         self.status.render()
 
     def update_index(self):
-        self.x_index = int(self.curs_x / 2)
+        self.x_index = self.curs_x // 2
         
     def pre_input_action(self):
         self.update_index()
