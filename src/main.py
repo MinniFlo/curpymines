@@ -8,7 +8,7 @@ from GameSetup import GameSetup
 
 def main(args, stdscr):
     setuper = GameSetup(stdscr, args)
-    setuper.args_stuff()
+    setuper.process_args()
     setuper.curses_setup()
     window_manager = setuper.create_manager()
     window_manager.game_setup()

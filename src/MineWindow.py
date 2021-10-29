@@ -134,7 +134,6 @@ class MineWindow(SuperWin):
                 return True
         return False
 
-
     def x_start(self):
         x_start = int(self.max_x * 0.36)
         if x_start % 2 != 0:

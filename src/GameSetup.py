@@ -34,10 +34,14 @@ class GameSetup:
         self.context = Context(self.logic, (self.y_value, self.x_value), self.difficulty, self.difficulty_map,
                                self.fullscreen, self.small, (self.y_size, self.x_size))
 
-    def initial_setup(self, fullscreen=None, x_value=None, y_value=None, difficulty=None, restart=False):
+    # todo: could potentially be decorator function
+    def game_setup(self, fullscreen=None, y_value=None, x_value=None, difficulty=None, restart=False):
 
+        # set fullscreen flag
         if fullscreen is None:
             fullscreen = self.fullscreen
+
+        # get available space of terminal window
         full_y, full_x = self.scr.getmaxyx()
 
         # sets the fullscreen
@@ -53,8 +57,6 @@ class GameSetup:
                 os.system('echo terminal is to small')
                 sys.exit()
 
-
-
         # sets the new x value
         if x_value is not None:
             self.x_value = x_value
@@ -64,15 +66,15 @@ class GameSetup:
                 os.system('echo terminal ist to small for the given x-value!')
                 sys.exit()
 
-
-
         # sets the new y value
+        # todo: dr. rework is needed
         if y_value is not None:
             self.y_value = y_value
             # number of minefield rows plus 2 border rows
             self.y_size = y_value + 2
             # the y_size must allso not be equal the full window size,
             # because there has to be space for the status menue
+            # todo: wtf -------------------------
             if self.y_size >= full_y:
                 curses.endwin()
                 os.system('echo terminal ist to small for the given y-value!')
@@ -83,6 +85,7 @@ class GameSetup:
                     curses.endwin()
                     os.system('echo terminal ist to small for the given y-value!')
                     sys.exit()
+            # todo: wtf -------------------------
 
         # sets the difficulty
         if difficulty is not None:
@@ -99,14 +102,13 @@ class GameSetup:
 
         self.create_new_game()
 
-
-
-    def args_stuff(self):
-        self.initial_setup(self.args.full_screen, self.args.width, self.args.height, self.args.difficulty, False)
+    # todo: do not work with args but with the data of the context
+    def process_args(self):
+        self.game_setup(fullscreen=self.args.full_screen, y_value=self.args.height, x_value=self.args.width,
+                        difficulty=self.args.difficulty, restart=False)
 
     def update_game(self):
-        self.initial_setup(fullscreen=self.context.fullscreen, y_value=self.context.y_value,
-                           x_value=self.context.x_value, difficulty=self.context.difficulty, restart=True)
+        self.game_setup(fullscreen=self.context.fullscreen, difficulty=self.context.difficulty, restart=True)
 
     def update_context(self):
         self.context.update(self.logic, (self.y_size, self.x_size), self.difficulty, self.difficulty_map,
@@ -128,7 +130,6 @@ class GameSetup:
         self.create_wins()
         self.logic = MinefieldLogic(self.y_size, self.x_size, self.difficulty_map[self.difficulty], self.max_mine_digit)
         self.update_context()
-
 
     def curses_setup(self):
         curses.noecho()
