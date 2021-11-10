@@ -7,7 +7,7 @@ from WindowManager import WindowManager
 from MineLogic import MinefieldLogic
 from Context import Context
 
-
+# todo: maby complete rework ...
 class GameSetup:
 
     def __init__(self, scr, args):
@@ -81,6 +81,8 @@ class GameSetup:
                 sys.exit()
             # if the terminal is to small to display the status window
             if self.x_size < 37:
+                # todo: why 2 and not 1 ... alles kaputt ey
+                self.y_size += 2
                 if self.y_size >= full_y:
                     curses.endwin()
                     os.system('echo terminal ist to small for the given y-value!')
@@ -94,7 +96,6 @@ class GameSetup:
         # sets the flag for the alternative status window render
         if self.x_size < 37 and not restart:
             self.small = True
-            self.y_size -= 1
 
         # sets the padding for the "mines left: ..." in the status window
         self.max_mine_digit = int(math.log10((((self.x_size // 2 + 1) * self.y_size) - 9) *
