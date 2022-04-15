@@ -38,8 +38,9 @@ class MineWindow(SuperWin):
             # for cur_field in self.logic.render_list:
             for liste in self.logic.field_matrix:
                 for cur_field in liste:
-                    cur_y, cur_x = cur_field.get_foordinate()
-                    if (cur_y, cur_x) in self.logic.rim_list:
+                    logic_coordinates = cur_field.get_coordinates()
+                    cur_y, cur_x = cur_field.get_render_coordinates()
+                    if logic_coordinates in self.logic.rim_list:
                         continue
                     if not (cur_y, cur_x) == (self.curs_y, self.curs_x):
                         style = curses.A_NORMAL
@@ -49,7 +50,7 @@ class MineWindow(SuperWin):
                         if cur_field.get_number() == 0:
                             self.scr.addstr(cur_y, cur_x, ' ', style)
                         else:
-                            if self.is_relevant_number((cur_y, cur_x)):
+                            if self.is_relevant_number(logic_coordinates):
                                 self.scr.addstr(cur_y, cur_x, str(cur_field.get_number()),
                                                 curses.color_pair(cur_field.get_number()) | style)
                             else:
@@ -60,7 +61,7 @@ class MineWindow(SuperWin):
                             self.scr.addstr(cur_y, cur_x, self.flag_field, curses.color_pair(6) | style)
 
                         else:
-                            if self.is_relevant((cur_y, cur_x)):
+                            if self.is_relevant(logic_coordinates):
                                 self.scr.addstr(cur_y, cur_x, self.closed_field, style)
                             else:
                                 self.scr.addstr(cur_y, cur_x, self.closed_field, curses.color_pair(12) | style)
@@ -78,8 +79,8 @@ class MineWindow(SuperWin):
     def end_game(self):
         for y in self.logic.field_matrix:
             for x in y:
-                cur_y, cur_x = x.get_foordinate()
-                if (cur_y, cur_x) in self.logic.rim_list:
+                cur_y, cur_x = x.get_render_coordinates()
+                if x.get_coordinates() in self.logic.rim_list:
                     continue
                 if x.get_number() == 0:
                     self.scr.addstr(cur_y, cur_x, ' ')
@@ -89,10 +90,10 @@ class MineWindow(SuperWin):
                     else:
                         self.scr.addstr(cur_y, cur_x, self.flag_field, curses.color_pair(11))
                 elif x.get_number() == 9:
-                        self.scr.addstr(cur_y, cur_x, self.closed_field, curses.color_pair(10))
+                    self.scr.addstr(cur_y, cur_x, self.closed_field, curses.color_pair(10))
                 else:
                     self.scr.addstr(cur_y, cur_x, str(x.get_number()), curses.color_pair(x.get_number()))
-        curs_field = self.logic.tuple_in_matrix((self.curs_y, self.curs_x))
+        curs_field = self.logic.tuple_in_matrix((self.curs_y, self.x_index))
         if curs_field.get_mine():
             self.scr.addstr(self.curs_y, self.curs_x, self.explode_field, curses.color_pair(9))
         else:
@@ -103,8 +104,8 @@ class MineWindow(SuperWin):
     def reset_render(self):
         for y in self.logic.field_matrix:
             for x in y:
-                cur_y, cur_x = x.get_foordinate()
-                if (cur_y, cur_x) in self.logic.rim_list:
+                cur_y, cur_x = x.get_render_coordinates()
+                if x.get_coordinates() in self.logic.rim_list:
                     continue
                 if x.get_open():
                     if x.get_number() == 0:
@@ -189,13 +190,13 @@ class MineWindow(SuperWin):
         if not (self.logic.loose or self.logic.win):
             self.pre_input_action()
             if self.logic.first:
-                self.logic.distribute_mines(self.curs_y, self.curs_x)
-                self.logic.click_field(self.curs_y, self.curs_x)
+                self.logic.distribute_mines(self.curs_y, self.x_index)
+                self.logic.click_field(self.curs_y, self.x_index)
             else:
                 if not self.logic.field_matrix[self.curs_y][self.x_index].get_open():
-                    self.logic.click_field(self.curs_y, self.curs_x)
+                    self.logic.click_field(self.curs_y, self.x_index)
                 else:
-                    self.logic.quality_of_life_click(self.curs_y, self.curs_x)
+                    self.logic.quality_of_life_click(self.curs_y, self.x_index)
 
     def flag_input(self):
         if not (self.logic.loose or self.logic.win):

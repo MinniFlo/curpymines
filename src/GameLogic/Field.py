@@ -3,7 +3,9 @@
 class Field:
 
     def __init__(self, y, x):
-        self.foordinate = (y, x)
+        self.y_pos = y
+        self.x_pos = x
+        self.render_x_pos = x * 2
         self.mine = False
         self.open = False
         self.flag = False
@@ -18,8 +20,11 @@ class Field:
     def get_number(self):
         return self.number
 
-    def get_foordinate(self):
-        return self.foordinate
+    def get_coordinates(self):
+        return self.y_pos, self.x_pos
+
+    def get_render_coordinates(self):
+        return self.y_pos, self.render_x_pos
 
     def get_flag(self):
         return self.flag

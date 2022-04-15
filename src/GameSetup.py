@@ -1,10 +1,9 @@
 import curses
 import sys
 import os
-import math
 
 from WindowManager import WindowManager
-from src.GameLogic.GameLogic import GameLogic
+from GameLogic.GameLogic import GameLogic
 from Context import Context
 
 # todo: maby complete rework ...
@@ -20,7 +19,6 @@ class GameSetup:
         self.y_pos, self.x_pos = 0, 0
         self.difficulty = 3
         self.difficulty_map = {1: 0.11, 2: 0.14, 3: 0.17, 4: 0.20, 5: 0.23}
-        self.max_mine_digit = 2
         self.small = False
         self.fullscreen = False
         self.m_win = curses.newwin(self.y_size, self.x_size, self.y_pos, self.x_pos)
@@ -30,7 +28,7 @@ class GameSetup:
         self.d_win = curses.newwin(8, 13, self.y_pos, self.x_pos)
         self.v_win = curses.newwin(6, 14, (self.y_size // 2) - 4, (self.x_size // 2) - 6)
         self.so_win = curses.newwin(6, 6, self.y_pos, self.x_pos)
-        self.logic = GameLogic(self.y_size, self.x_size, self.difficulty_map[self.difficulty], self.max_mine_digit)
+        self.logic = GameLogic(self.y_size, self.x_size, self.difficulty_map[self.difficulty])
         self.context = Context(self.logic, (self.y_value, self.x_value), self.difficulty, self.difficulty_map,
                                self.fullscreen, self.small, (self.y_size, self.x_size))
 
@@ -97,10 +95,6 @@ class GameSetup:
         if self.x_size < 37 and not restart:
             self.small = True
 
-        # sets the padding for the "mines left: ..." in the status window
-        self.max_mine_digit = int(math.log10((((self.x_size // 2 + 1) * self.y_size) - 9) *
-                                             self.difficulty_map[self.difficulty])) + 1
-
         self.create_new_game()
 
     # todo: do not work with args but with the data of the context
@@ -129,7 +123,7 @@ class GameSetup:
 
     def create_new_game(self):
         self.create_wins()
-        self.logic = MinefieldLogic(self.y_size, self.x_size, self.difficulty_map[self.difficulty], self.max_mine_digit)
+        self.logic = GameLogic(self.y_size, self.x_size, self.difficulty_map[self.difficulty])
         self.update_context()
 
     def curses_setup(self):
