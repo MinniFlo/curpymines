@@ -5,7 +5,7 @@ import time
 from Fields import Field
 
 
-class MinefieldLogic:
+class GameLogic:
 
     def __init__(self, max_y, max_x, difficulty, max_mine_digit):
         self.max_y = max_y
@@ -33,18 +33,33 @@ class MinefieldLogic:
         self.max_mine_digit = max_mine_digit
 
     # The function witch fills the field_matrix with field-objects
-    def build(self):
+    # setup >>>>>
+    def setup(self):
         self.loose = False
+        self._create_game_grit()
+
+    def _create_game_grit(self):
         for y in range(self.max_y):
-            x_column = []
-            self.field_matrix.append(x_column)
-            for x in range(self.x_fields):
-                field = Field(y, x * 2)
-                x_column.append(field)
-                cur_y, cur_x = field.get_foordinate()
-                if cur_y == 0 or cur_y == (self.max_y - 1) or cur_x == 0 or cur_x == (self.max_x - 1):
-                    cur_tuple = (cur_y, cur_x)
-                    self.rim_list.add(cur_tuple)
+            self.field_matrix.append([])
+            self._fill_matrix_columns_and_rim_set(y)
+
+    def _fill_matrix_columns_and_rim_set(self, y):
+        for x in range(self.x_fields):
+            offset_x = x * 2
+            self._fill_field_matrix(y, offset_x)
+            self._fill_rim_list(y, offset_x)
+
+    def _fill_field_matrix(self, y, x):
+        field = Field(y, x)
+        self.field_matrix[y].append(field)
+
+    def _fill_rim_list(self, y, x):
+        if self._tuple_is_boarder(y, x):
+            self.rim_list.add((y, x))
+
+    def _tuple_is_boarder(self, y, x):
+        return y == 0 or y == (self.max_y - 1) or x == 0 or x == (self.max_x - 1)
+    # <<<<< setup
 
     def distribute_mines(self, st_y, st_x):
         self.start_time = time.time()
@@ -155,8 +170,8 @@ class MinefieldLogic:
         return {x for x in adjacent_list if self.in_range(x)}
 
     # Maps a tuple of y and x to a field object from field_matrix
-    def tuple_in_matrix(self, tupple):
-        y, x = tupple
+    def tuple_in_matrix(self, tup):
+        y, x = tup
         x = x // 2
         return self.field_matrix[y][x]
 
