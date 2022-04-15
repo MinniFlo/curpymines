@@ -1,8 +1,7 @@
 import random
 import time
 
-
-from Fields import Field
+from src.Fields import Field
 
 
 class GameLogic:

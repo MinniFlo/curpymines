@@ -27,7 +27,7 @@ class WindowManager:
         
     def game_setup(self):
         self.init_stack()
-        self.context.logic.build()
+        self.context.logic.setup()
         self.mine_win.draw()
 
     def render_all(self):

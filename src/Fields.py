@@ -9,7 +9,6 @@ class Field:
         self.flag = False
         self.number = 0
 
-
     def get_mine(self):
         return self.mine
 

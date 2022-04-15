@@ -4,7 +4,7 @@ import os
 import math
 
 from WindowManager import WindowManager
-from MineLogic import MinefieldLogic
+from src.GameLogic.GameLogic import GameLogic
 from Context import Context
 
 # todo: maby complete rework ...
@@ -30,7 +30,7 @@ class GameSetup:
         self.d_win = curses.newwin(8, 13, self.y_pos, self.x_pos)
         self.v_win = curses.newwin(6, 14, (self.y_size // 2) - 4, (self.x_size // 2) - 6)
         self.so_win = curses.newwin(6, 6, self.y_pos, self.x_pos)
-        self.logic = MinefieldLogic(self.y_size, self.x_size, self.difficulty_map[self.difficulty], self.max_mine_digit)
+        self.logic = GameLogic(self.y_size, self.x_size, self.difficulty_map[self.difficulty], self.max_mine_digit)
         self.context = Context(self.logic, (self.y_value, self.x_value), self.difficulty, self.difficulty_map,
                                self.fullscreen, self.small, (self.y_size, self.x_size))
 
