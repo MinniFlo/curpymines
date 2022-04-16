@@ -6,7 +6,7 @@ from WindowManager import WindowManager
 from GameLogic.GameLogic import GameLogic
 from Context import Context
 
-# todo: maby complete rework ...
+
 class GameSetup:
 
     def __init__(self, scr, args):
@@ -28,11 +28,10 @@ class GameSetup:
         self.d_win = curses.newwin(8, 13, self.y_pos, self.x_pos)
         self.v_win = curses.newwin(6, 14, (self.y_size // 2) - 4, (self.x_size // 2) - 6)
         self.so_win = curses.newwin(6, 6, self.y_pos, self.x_pos)
-        self.logic = GameLogic(self.y_size, self.x_size, self.difficulty_map[self.difficulty])
+        self.logic = GameLogic(self.y_size, self._calculate_x_size_for_logic(), self.difficulty_map[self.difficulty])
         self.context = Context(self.logic, (self.y_value, self.x_value), self.difficulty, self.difficulty_map,
                                self.fullscreen, self.small, (self.y_size, self.x_size))
 
-    # todo: could potentially be decorator function
     def game_setup(self, fullscreen=None, y_value=None, x_value=None, difficulty=None, restart=False):
 
         # set fullscreen flag
@@ -65,7 +64,6 @@ class GameSetup:
                 sys.exit()
 
         # sets the new y value
-        # todo: dr. rework is needed
         if y_value is not None:
             self.y_value = y_value
             # number of minefield rows plus 2 border rows
@@ -123,7 +121,7 @@ class GameSetup:
 
     def create_new_game(self):
         self.create_wins()
-        self.logic = GameLogic(self.y_size, self.x_size, self.difficulty_map[self.difficulty])
+        self.logic = GameLogic(self.y_size, self._calculate_x_size_for_logic(), self.difficulty_map[self.difficulty])
         self.update_context()
 
     def curses_setup(self):
@@ -136,3 +134,6 @@ class GameSetup:
         self.d_win.keypad(True)
         self.v_win.keypad(True)
         self.so_win.keypad(True)
+
+    def _calculate_x_size_for_logic(self):
+        return self.x_size // 2 + 1

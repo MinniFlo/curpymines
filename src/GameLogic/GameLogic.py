@@ -2,30 +2,38 @@ import random
 import time
 
 from GameLogic.Field import Field
+from GameLogic.GameGrid import GameGrid
 
 
 class GameLogic:
 
-    def __init__(self, max_y, max_x, difficulty):
-        self.max_y = max_y
-        self.max_x = max_x
-        self.x_fields = self.max_x // 2 + 1
-        self.field_amount = self.x_fields * max_y
-        self.mine_percent = difficulty
-        self.mine_count = int((self.field_amount - 9) * self.mine_percent)
-        self.mine_digit_len = len("{}".format(self.mine_count))
-        self.rim_list = set([])
+    def __init__(self, y_size, x_size, difficulty):
+        self.game_grid = GameGrid(y_size, x_size)
+        self.y_size = y_size
+        self.x_size = x_size
+
+        self.rim_list = set()
         self.field_matrix = []
+
+        self.field_amount = y_size * x_size
+        self.mine_count = int((self.field_amount - 9) * difficulty)
+        self.mine_count_digit_len = len("{}".format(self.mine_count))
+        self.remaining_mines = self.mine_count
+
         self.previous_matrix = []
-        self.next_fields = set([])
-        self.render_list = set([])
-        self.win_list = set()
+
+        self.next_fields = set()
+        self.render_list = set()
+        self.open_fields = set()
+
+        # gamestate
         self.first = True
         self.loose = False
         self.win = False
         self.cheat = False
         self.pause = False
-        self.flag_count = self.mine_count
+
+        # status Windowstuff
         self.start_time = 0
         self.sum_time = 0
         self.current_time_str = ""
@@ -38,12 +46,12 @@ class GameLogic:
         self._create_game_grit()
 
     def _create_game_grit(self):
-        for y in range(self.max_y):
+        for y in range(self.y_size):
             self.field_matrix.append([])
             self._fill_matrix_columns_and_rim_set(y)
 
     def _fill_matrix_columns_and_rim_set(self, y):
-        for x in range(self.x_fields):
+        for x in range(self.x_size):
             self._fill_field_matrix(y, x)
             self._fill_rim_list(y, x)
 
@@ -56,7 +64,7 @@ class GameLogic:
             self.rim_list.add((y, x))
 
     def _tuple_is_boarder(self, y, x):
-        return y == 0 or y == (self.max_y - 1) or x == 0 or x == (self.x_fields - 1)
+        return y == 0 or y == (self.y_size - 1) or x == 0 or x == (self.x_size - 1)
     # <<<<< setup
 
     def distribute_mines(self, st_y, st_x):
@@ -117,15 +125,11 @@ class GameLogic:
     # Checks the fields around the field that is called in click_field and opens the field
     def check_field(self, y, x):
         cur_field = self.field_matrix[y][x]
-        if cur_field.get_number() != 0:
-            cur_field.set_open(True)
-            self.render_list.add(cur_field)
-            self.win_list.add(cur_field)
-        else:
+        cur_field.set_open(True)
+        self.render_list.add(cur_field)
+        self.open_fields.add((y, x))
+        if cur_field.get_number() == 0:
             adjacent_list = self.neighbors(y, x)
-            cur_field.set_open(True)
-            self.render_list.add(cur_field)
-            self.win_list.add(cur_field)
             for i in adjacent_list:
                 i_field = self.tuple_in_matrix(i)
                 if not i_field.get_open():
@@ -195,17 +199,17 @@ class GameLogic:
         if not cur_field.get_open():
             if not cur_field.get_flag():
                 cur_field.set_flag(True)
-                self.flag_count -= 1
+                self.remaining_mines -= 1
             else:
                 cur_field.set_flag(False)
-                self.flag_count += 1
+                self.remaining_mines += 1
             self.render_list.add(cur_field)
 
     def format_flag_num(self):
-        return "{}".format(str(self.flag_count).rjust(self.mine_digit_len, "0"))
+        return "{}".format(str(self.remaining_mines).rjust(self.mine_count_digit_len, "0"))
 
     def check_win(self):
-        if (self.field_amount - len(self.rim_list) - self.mine_count) == len(self.win_list):
+        if (self.field_amount - len(self.rim_list) - self.mine_count) == len(self.open_fields):
             self.win = True
 
     def calc_time(self):
