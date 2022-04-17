@@ -34,25 +34,26 @@ class GameLogic:
 
     # Is called on click of a field
     def click_field(self, y, x):
-        if not self.game_grid.grid[y][x].get_flag():
-            if not self.game_grid.grid[y][x].get_mine():
-                self.check_field(y, x)
+        field = self.game_grid.get_field_with_coordinates((y, x))
+        if not field.get_flag():
+            if not field.get_mine():
+                self.check_field(field)
                 self.check_next_fields()
             else:
                 self.loose = True
 
     # Checks the fields around the field that is called in click_field and opens the field
-    def check_field(self, y, x):
-        cur_field = self.game_grid.grid[y][x]
-        cur_field.set_open(True)
-        self.render_list.add(cur_field)
+    def check_field(self, field):
+        y, x = field.get_coordinates()
+        field.set_open(True)
+        self.render_list.add(field)
         self.open_fields.add((y, x))
-        if cur_field.get_number() == 0:
-            adjacent_list = self.game_grid.neighbors_of_coordinates(y, x)
-            for i in adjacent_list:
-                i_field = self.game_grid.get_field_with_coordinates(i)
-                if not i_field.get_open():
-                    self.next_fields.add(i_field)
+        if field.get_number() == 0:
+            neighbors = self.game_grid.neighbors_of_coordinates(y, x)
+            for tup in neighbors:
+                tup_field = self.game_grid.get_field_with_coordinates(tup)
+                if not tup_field.get_open():
+                    self.next_fields.add(tup_field)
 
     def check_next_fields(self):
         while self.next_fields:
@@ -63,23 +64,19 @@ class GameLogic:
             self.next_fields = self.next_fields - none_matching_fields
             if self.next_fields:
                 i_field = self.next_fields.pop()
-                y_i, x_i = i_field.get_coordinates()
-                self.check_field(y_i, x_i)
+                self.check_field(i_field)
 
     def quality_of_life_click(self, y, x):
         cur_field = self.game_grid.grid[y][x]
         if cur_field.get_number() != 0:
             if self.count_flags(y, x) == cur_field.get_number():
-                work_list = self.game_grid.neighbors_of_coordinates(y, x)
-                for i in set(work_list):
-                    i_field = self.game_grid.get_field_with_coordinates(i)
-                    if i_field.get_flag() or i_field.get_open():
-                        work_list.remove(i)
-                for i in work_list:
-                    cur_y, cur_x = i
-                    j_field = self.game_grid.get_field_with_coordinates(i)
-                    if not j_field.get_mine():
-                        self.check_field(cur_y, cur_x)
+                neighbors = self.game_grid.neighbors_of_coordinates(y, x)
+                for t in neighbors:
+                    t_field = self.game_grid.get_field_with_coordinates(t)
+                    if t_field.get_flag() or t_field.get_open():
+                        continue
+                    if not t_field.get_mine():
+                        self.check_field(t_field)
                         self.check_next_fields()
                     else:
                         self.loose = True
@@ -87,16 +84,6 @@ class GameLogic:
     def add_field_to_render_list(self, coordinates):
         field = self.game_grid.get_field_with_coordinates(coordinates)
         self.render_list.add(field)
-
-    # The function returns a list of all tuples of fields that surround a specified field
-    # def neighbors(self, y, x):
-    #     adjacent_list = {(y, x+1), (y, x-1), (y+1, x), (y+1, x+1), (y+1, x-1), (y-1, x), (y-1, x+1), (y-1, x-1)}
-    #     return {x for x in adjacent_list if x not in self.rim_list}
-    # 
-    # 
-    # def get_field_with_coordinates(self, coordinates):
-    #     y, x = coordinates
-    #     return self.game_grid.grid[y][x]
 
     def count_flags(self, y, x):
         adj_list = self.game_grid.neighbors_of_coordinates(y, x)
