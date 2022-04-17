@@ -15,9 +15,9 @@ class MineWindow(SuperWin):
         self.status = StatusWindow(self.manager.s_win, self.context)
         self.pause_win = PauseWin(self.manager.p_win, self.manager, self.context)
         self.max_y, self.max_x = self.scr.getmaxyx()
-        self.curs_y, self.curs_x = (self.max_y // 2 - 1, 2)
+        self.cursor_y, self.cursor_x = (self.max_y // 2 - 1, 2)
         self.color = Colors()
-        self.x_index = self.curs_x // 2
+        self.x_index = self.cursor_x // 2
         self.closed_field = '*'
         self.flag_field = '?'
         self.explode_field = 'x'
@@ -26,45 +26,45 @@ class MineWindow(SuperWin):
         for y in range(self.max_y):
             for x in range(int(self.max_x/2)):
                 self.scr.addstr(y, x*2, self.closed_field)
-        self.curs_x = self.x_start()
+        self.cursor_x = self.x_start()
         self.scr.box()
-        self.scr.addstr(self.curs_y, self.curs_x, self.closed_field, curses.A_REVERSE)
-        self.logic.render_list.add(self.logic.field_matrix[self.curs_y][self.x_index])
+        self.scr.addstr(self.cursor_y, self.cursor_x, self.closed_field, curses.A_REVERSE)
+        self.logic.add_field_to_render_list((self.cursor_y, self.x_index))
 
     def render_mine_win(self):
         if self.logic.loose:
             self.end_game()
         else:
-            # for cur_field in self.logic.render_list:
-            for liste in self.logic.field_matrix:
-                for cur_field in liste:
-                    logic_coordinates = cur_field.get_coordinates()
-                    cur_y, cur_x = cur_field.get_render_coordinates()
-                    if logic_coordinates in self.logic.rim_list:
+            # for field in self.logic.render_list:
+            for row in self.logic.game_grid.grid:
+                for field in row:
+                    logic_coordinates = field.get_coordinates()
+                    y_pos, x_pos = field.get_render_coordinates()
+                    if logic_coordinates in self.logic.game_grid.boarder:
                         continue
-                    if not (cur_y, cur_x) == (self.curs_y, self.curs_x):
+                    if not (y_pos, x_pos) == (self.cursor_y, self.cursor_x):
                         style = curses.A_NORMAL
                     else:
                         style = curses.A_REVERSE
-                    if cur_field.get_open():
-                        if cur_field.get_number() == 0:
-                            self.scr.addstr(cur_y, cur_x, ' ', style)
+                    if field.get_open():
+                        if field.get_number() == 0:
+                            self.scr.addstr(y_pos, x_pos, ' ', style)
                         else:
                             if self.is_relevant_number(logic_coordinates):
-                                self.scr.addstr(cur_y, cur_x, str(cur_field.get_number()),
-                                                curses.color_pair(cur_field.get_number()) | style)
+                                self.scr.addstr(y_pos, x_pos, str(field.get_number()),
+                                                curses.color_pair(field.get_number()) | style)
                             else:
-                                self.scr.addstr(cur_y, cur_x, str(cur_field.get_number()),
+                                self.scr.addstr(y_pos, x_pos, str(field.get_number()),
                                                 curses.color_pair(12) | style)
                     else:
-                        if cur_field.get_flag():
-                            self.scr.addstr(cur_y, cur_x, self.flag_field, curses.color_pair(6) | style)
+                        if field.get_flag():
+                            self.scr.addstr(y_pos, x_pos, self.flag_field, curses.color_pair(6) | style)
 
                         else:
                             if self.is_relevant(logic_coordinates):
-                                self.scr.addstr(cur_y, cur_x, self.closed_field, style)
+                                self.scr.addstr(y_pos, x_pos, self.closed_field, style)
                             else:
-                                self.scr.addstr(cur_y, cur_x, self.closed_field, curses.color_pair(12) | style)
+                                self.scr.addstr(y_pos, x_pos, self.closed_field, curses.color_pair(12) | style)
 
             self.scr.box()
             self.logic.render_list.clear()
@@ -77,60 +77,60 @@ class MineWindow(SuperWin):
                     self.scr.addstr(0, int(self.max_x/2 - 6), ' cheater >.> ')
 
     def end_game(self):
-        for y in self.logic.field_matrix:
+        for y in self.logic.game_grid.grid:
             for x in y:
-                cur_y, cur_x = x.get_render_coordinates()
-                if x.get_coordinates() in self.logic.rim_list:
+                y_pos, x_pos = x.get_render_coordinates()
+                if x.get_coordinates() in self.logic.game_grid.boarder:
                     continue
                 if x.get_number() == 0:
-                    self.scr.addstr(cur_y, cur_x, ' ')
+                    self.scr.addstr(y_pos, x_pos, ' ')
                 elif x.get_flag():
                     if x.get_mine():
-                        self.scr.addstr(cur_y, cur_x, self.flag_field, curses.color_pair(6))
+                        self.scr.addstr(y_pos, x_pos, self.flag_field, curses.color_pair(6))
                     else:
-                        self.scr.addstr(cur_y, cur_x, self.flag_field, curses.color_pair(11))
+                        self.scr.addstr(y_pos, x_pos, self.flag_field, curses.color_pair(11))
                 elif x.get_number() == 9:
-                    self.scr.addstr(cur_y, cur_x, self.closed_field, curses.color_pair(10))
+                    self.scr.addstr(y_pos, x_pos, self.closed_field, curses.color_pair(10))
                 else:
-                    self.scr.addstr(cur_y, cur_x, str(x.get_number()), curses.color_pair(x.get_number()))
-        curs_field = self.logic.tuple_in_matrix((self.curs_y, self.x_index))
+                    self.scr.addstr(y_pos, x_pos, str(x.get_number()), curses.color_pair(x.get_number()))
+        curs_field = self.logic.game_grid.get_field_with_coordinates((self.cursor_y, self.x_index))
         if curs_field.get_mine():
-            self.scr.addstr(self.curs_y, self.curs_x, self.explode_field, curses.color_pair(9))
+            self.scr.addstr(self.cursor_y, self.cursor_x, self.explode_field, curses.color_pair(9))
         else:
-            self.scr.addstr(self.curs_y, self.curs_x, str(curs_field.get_number()), curses.color_pair(10))
+            self.scr.addstr(self.cursor_y, self.cursor_x, str(curs_field.get_number()), curses.color_pair(10))
         self.scr.refresh()
         self.scr.box()
 
     def reset_render(self):
-        for y in self.logic.field_matrix:
-            for x in y:
-                cur_y, cur_x = x.get_render_coordinates()
-                if x.get_coordinates() in self.logic.rim_list:
+        for row in self.logic.game_grid.grid:
+            for field in row:
+                y_pos, x_pos = field.get_render_coordinates()
+                if field.get_coordinates() in self.logic.game_grid.boarder:
                     continue
-                if x.get_open():
-                    if x.get_number() == 0:
-                        self.scr.addstr(cur_y, cur_x, ' ')
+                if field.get_open():
+                    if field.get_number() == 0:
+                        self.scr.addstr(y_pos, x_pos, ' ')
                     else:
-                        self.scr.addstr(cur_y, cur_x, str(x.get_number()),
-                                        curses.color_pair(x.get_number()))
+                        self.scr.addstr(y_pos, x_pos, str(field.get_number()),
+                                        curses.color_pair(field.get_number()))
                 else:
-                    if x.get_flag():
-                        self.scr.addstr(cur_y, cur_x, self.flag_field, curses.color_pair(6))
+                    if field.get_flag():
+                        self.scr.addstr(y_pos, x_pos, self.flag_field, curses.color_pair(6))
                     else:
-                        self.scr.addstr(cur_y, cur_x, self.closed_field)
+                        self.scr.addstr(y_pos, x_pos, self.closed_field)
         self.scr.box()
 
     def is_relevant(self, tup):
         y, x = tup
-        for field_tup in self.logic.neighbors(y, x):
-            if self.logic.tuple_in_matrix(field_tup).get_open():
+        for field_tup in self.logic.game_grid.neighbors_of_coordinates(y, x):
+            if self.logic.game_grid.get_field_with_coordinates(field_tup).get_open():
                 return True
         return False
 
     def is_relevant_number(self, tup):
         y, x = tup
-        for field_tup in self.logic.neighbors(y, x):
-            field = self.logic.tuple_in_matrix(field_tup)
+        for field_tup in self.logic.game_grid.neighbors_of_coordinates(y, x):
+            field = self.logic.game_grid.get_field_with_coordinates(field_tup)
             if (not field.get_open()) and (not field.get_flag()):
                 return True
         return False
@@ -146,70 +146,72 @@ class MineWindow(SuperWin):
         self.status.render()
 
     def update_index(self):
-        self.x_index = self.curs_x // 2
+        self.x_index = self.cursor_x // 2
         
     def pre_input_action(self):
         self.update_index()
-        self.logic.render_list.add(self.logic.field_matrix[self.curs_y][self.x_index])
+        self.logic.add_field_to_render_list((self.cursor_y, self.x_index))
         if not self.logic.loose:
-            self.logic.previous_matrix = self.logic.field_matrix
+            self.logic.game_grid.update_previous_game_state()
             
     def after_input_action(self):
-        after_index = int(self.curs_x/2)
-        self.logic.render_list.add(self.logic.field_matrix[self.curs_y][after_index])
+        self.update_index()
+        self.logic.add_field_to_render_list((self.cursor_y, self.x_index))
 
     def up_input(self):
         if not (self.logic.loose or self.logic.win):
             self.pre_input_action()
-            if self.curs_y > 1:
-                self.curs_y -= 1
+            if self.cursor_y > 1:
+                self.cursor_y -= 1
             self.after_input_action()
 
     def left_input(self):
         if not (self.logic.loose or self.logic.win):
             self.pre_input_action()
-            if self.curs_x > 2:
-                self.curs_x -= 2
+            if self.cursor_x > 2:
+                self.cursor_x -= 2
             self.pre_input_action()
 
     def right_input(self):
         if not (self.logic.loose or self.logic.win):
             self.pre_input_action()
-            if self.curs_x < self.max_x - 3:
-                self.curs_x += 2
+            if self.cursor_x < self.max_x - 3:
+                self.cursor_x += 2
             self.pre_input_action()
 
     def down_input(self):
         if not (self.logic.loose or self.logic.win):
             self.pre_input_action()
-            if self.curs_y < self.max_y - 2:
-                self.curs_y += 1
+            if self.cursor_y < self.max_y - 2:
+                self.cursor_y += 1
             self.pre_input_action()
 
     def click_input(self):
         if not (self.logic.loose or self.logic.win):
             self.pre_input_action()
             if self.logic.first:
-                self.logic.distribute_mines(self.curs_y, self.x_index)
-                self.logic.click_field(self.curs_y, self.x_index)
+                self.logic.start_clock()
+                self.logic.game_grid.set_mines_data(self.cursor_y, self.x_index)
+                self.logic.click_field(self.cursor_y, self.x_index)
+                self.logic.first = False
             else:
-                if not self.logic.field_matrix[self.curs_y][self.x_index].get_open():
-                    self.logic.click_field(self.curs_y, self.x_index)
+                if not self.logic.game_grid.grid[self.cursor_y][self.x_index].get_open():
+                    self.logic.click_field(self.cursor_y, self.x_index)
                 else:
-                    self.logic.quality_of_life_click(self.curs_y, self.x_index)
+                    self.logic.quality_of_life_click(self.cursor_y, self.x_index)
 
     def flag_input(self):
         if not (self.logic.loose or self.logic.win):
             self.pre_input_action()
             if not self.logic.loose:
-                self.logic.flag_field(self.curs_y, self.x_index)
+                self.logic.flag_field(self.cursor_y, self.x_index)
 
     def reset_input(self):
         self.pre_input_action()
         if self.logic.loose:
             self.logic.loose = False
             self.logic.cheat = True
-            self.logic.field_matrix = self.logic.previous_matrix
+            self.logic.game_grid.set_grid_to_previous_state()
             self.reset_render()
             self.logic.cheat_count += 1
 

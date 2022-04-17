@@ -18,7 +18,6 @@ class GameSetup:
         self.x_value = None
         self.y_pos, self.x_pos = 0, 0
         self.difficulty = 3
-        self.difficulty_map = {1: 0.11, 2: 0.14, 3: 0.17, 4: 0.20, 5: 0.23}
         self.small = False
         self.fullscreen = False
         self.m_win = curses.newwin(self.y_size, self.x_size, self.y_pos, self.x_pos)
@@ -28,8 +27,8 @@ class GameSetup:
         self.d_win = curses.newwin(8, 13, self.y_pos, self.x_pos)
         self.v_win = curses.newwin(6, 14, (self.y_size // 2) - 4, (self.x_size // 2) - 6)
         self.so_win = curses.newwin(6, 6, self.y_pos, self.x_pos)
-        self.logic = GameLogic(self.y_size, self._calculate_x_size_for_logic(), self.difficulty_map[self.difficulty])
-        self.context = Context(self.logic, (self.y_value, self.x_value), self.difficulty, self.difficulty_map,
+        self.logic = GameLogic(self.y_size, self._calculate_x_size_for_logic(), self.difficulty)
+        self.context = Context(self.logic, (self.y_value, self.x_value), self.difficulty,
                                self.fullscreen, self.small, (self.y_size, self.x_size))
 
     def game_setup(self, fullscreen=None, y_value=None, x_value=None, difficulty=None, restart=False):
@@ -68,8 +67,8 @@ class GameSetup:
             self.y_value = y_value
             # number of minefield rows plus 2 border rows
             self.y_size = y_value + 2
-            # the y_size must allso not be equal the full window size,
-            # because there has to be space for the status menue
+            # the y_size must also not be equal the full window size,
+            # because there has to be space for the status menu
             # todo: wtf -------------------------
             if self.y_size >= full_y:
                 curses.endwin()
@@ -77,7 +76,7 @@ class GameSetup:
                 sys.exit()
             # if the terminal is to small to display the status window
             if self.x_size < 37:
-                # todo: why 2 and not 1 ... alles kaputt ey
+                # todo: why 2 and not 1
                 self.y_size += 2
                 if self.y_size >= full_y:
                     curses.endwin()
@@ -104,7 +103,7 @@ class GameSetup:
         self.game_setup(fullscreen=self.context.fullscreen, difficulty=self.context.difficulty, restart=True)
 
     def update_context(self):
-        self.context.update(self.logic, (self.y_size, self.x_size), self.difficulty, self.difficulty_map,
+        self.context.update(self.logic, (self.y_size, self.x_size), self.difficulty,
                             self.fullscreen, self.small, (self.y_value, self.x_value))
 
     def create_manager(self):
@@ -121,7 +120,7 @@ class GameSetup:
 
     def create_new_game(self):
         self.create_wins()
-        self.logic = GameLogic(self.y_size, self._calculate_x_size_for_logic(), self.difficulty_map[self.difficulty])
+        self.logic = GameLogic(self.y_size, self._calculate_x_size_for_logic(), self.difficulty)
         self.update_context()
 
     def curses_setup(self):

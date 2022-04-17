@@ -1,26 +1,19 @@
 import random
 import time
 
-from GameLogic.Field import Field
 from GameLogic.GameGrid import GameGrid
 
 
 class GameLogic:
 
     def __init__(self, y_size, x_size, difficulty):
-        self.game_grid = GameGrid(y_size, x_size)
-        self.y_size = y_size
-        self.x_size = x_size
+        self.difficulty_map = {1: 0.14, 2: 0.17, 3: 0.20, 4: 0.23, 5: 0.26}
+        percentage_of_mines = self.difficulty_map[difficulty]
 
-        self.rim_list = set()
-        self.field_matrix = []
+        self.game_grid = GameGrid(y_size, x_size, percentage_of_mines)
 
-        self.field_amount = y_size * x_size
-        self.mine_count = int((self.field_amount - 9) * difficulty)
-        self.mine_count_digit_len = len("{}".format(self.mine_count))
-        self.remaining_mines = self.mine_count
-
-        self.previous_matrix = []
+        self.mine_count_digit_len = len("{}".format(self.game_grid.mine_count))
+        self.remaining_mines = self.game_grid.mine_count
 
         self.next_fields = set()
         self.render_list = set()
@@ -39,84 +32,10 @@ class GameLogic:
         self.current_time_str = ""
         self.cheat_count = 0
 
-    # The function witch fills the field_matrix with field-objects
-    # setup >>>>>
-    def setup(self):
-        self.loose = False
-        self._create_game_grit()
-
-    def _create_game_grit(self):
-        for y in range(self.y_size):
-            self.field_matrix.append([])
-            self._fill_matrix_columns_and_rim_set(y)
-
-    def _fill_matrix_columns_and_rim_set(self, y):
-        for x in range(self.x_size):
-            self._fill_field_matrix(y, x)
-            self._fill_rim_list(y, x)
-
-    def _fill_field_matrix(self, y, x):
-        field = Field(y, x)
-        self.field_matrix[y].append(field)
-
-    def _fill_rim_list(self, y, x):
-        if self._tuple_is_boarder(y, x):
-            self.rim_list.add((y, x))
-
-    def _tuple_is_boarder(self, y, x):
-        return y == 0 or y == (self.y_size - 1) or x == 0 or x == (self.x_size - 1)
-    # <<<<< setup
-
-    def distribute_mines(self, st_y, st_x):
-        self.start_time = time.time()
-        mine_list = self.mine_list(st_y, st_x)
-        # sets mines
-        for y in self.field_matrix:
-            for x in y:
-                cur_tuple = x.get_coordinates()
-                if mine_list and cur_tuple in mine_list:
-                    x.set_mine(True)
-        # sets numbers
-        for y in self.field_matrix:
-            for x in y:
-                if x.get_coordinates() in self.rim_list:
-                    continue
-                elif x.get_mine():
-                    x.set_number(9)
-                else:
-                    cur_y, cur_x = x.get_coordinates()
-                    mine_count = self.count_mines(cur_y, cur_x)
-                    x.set_number(mine_count)
-        self.first = False
-
-    # The function witch sets the position of the mines
-    def mine_list(self, st_y, st_x):
-        calc_list = set([])
-        for y in self.field_matrix:
-            for x in y:
-                cur_tuple = x.get_coordinates()
-                calc_list.add(cur_tuple)
-        no_mines = self.no_mines(st_y, st_x)
-        help_mine_list = calc_list - no_mines
-        help_mine_list = list(help_mine_list)
-        mine_list = set([])
-        for i in range(self.mine_count):
-            rand = random.choice(help_mine_list)
-            mine_list.add(rand)
-            help_mine_list.remove(rand)
-        return mine_list
-
-    # The function witch calculates the rim of the field and the 9 fields where the start is
-    def no_mines(self, st_y, st_x):
-        start_fields = {(st_y, st_x), (st_y + 1, st_x), (st_y - 1, st_x), (st_y, st_x + 1), (st_y, st_x - 1),
-                        (st_y + 1, st_x + 1), (st_y + 1, st_x - 1), (st_y - 1, st_x + 1), (st_y - 1, st_x - 1)}
-        no_mines = self.rim_list | start_fields
-        return no_mines
-
     # Is called on click of a field
     def click_field(self, y, x):
-        if not self.field_matrix[y][x].get_flag():
-            if not self.field_matrix[y][x].get_mine():
+        if not self.game_grid.grid[y][x].get_flag():
+            if not self.game_grid.grid[y][x].get_mine():
                 self.check_field(y, x)
                 self.check_next_fields()
             else:
@@ -124,14 +43,14 @@ class GameLogic:
 
     # Checks the fields around the field that is called in click_field and opens the field
     def check_field(self, y, x):
-        cur_field = self.field_matrix[y][x]
+        cur_field = self.game_grid.grid[y][x]
         cur_field.set_open(True)
         self.render_list.add(cur_field)
         self.open_fields.add((y, x))
         if cur_field.get_number() == 0:
-            adjacent_list = self.neighbors(y, x)
+            adjacent_list = self.game_grid.neighbors_of_coordinates(y, x)
             for i in adjacent_list:
-                i_field = self.tuple_in_matrix(i)
+                i_field = self.game_grid.get_field_with_coordinates(i)
                 if not i_field.get_open():
                     self.next_fields.add(i_field)
 
@@ -139,7 +58,7 @@ class GameLogic:
         while self.next_fields:
             none_matching_fields = set([])
             for i in self.next_fields:
-                if i.get_open() or i.get_coordinates() in self.rim_list:
+                if i.get_open() or i.get_coordinates() in self.game_grid.boarder:
                     none_matching_fields.add(i)
             self.next_fields = self.next_fields - none_matching_fields
             if self.next_fields:
@@ -148,54 +67,48 @@ class GameLogic:
                 self.check_field(y_i, x_i)
 
     def quality_of_life_click(self, y, x):
-        cur_field = self.field_matrix[y][x]
+        cur_field = self.game_grid.grid[y][x]
         if cur_field.get_number() != 0:
             if self.count_flags(y, x) == cur_field.get_number():
-                work_list = self.neighbors(y, x)
+                work_list = self.game_grid.neighbors_of_coordinates(y, x)
                 for i in set(work_list):
-                    i_field = self.tuple_in_matrix(i)
+                    i_field = self.game_grid.get_field_with_coordinates(i)
                     if i_field.get_flag() or i_field.get_open():
                         work_list.remove(i)
                 for i in work_list:
                     cur_y, cur_x = i
-                    j_field = self.tuple_in_matrix(i)
+                    j_field = self.game_grid.get_field_with_coordinates(i)
                     if not j_field.get_mine():
                         self.check_field(cur_y, cur_x)
                         self.check_next_fields()
                     else:
                         self.loose = True
 
+    def add_field_to_render_list(self, coordinates):
+        field = self.game_grid.get_field_with_coordinates(coordinates)
+        self.render_list.add(field)
+
     # The function returns a list of all tuples of fields that surround a specified field
-    def neighbors(self, y, x):
-        adjacent_list = {(y, x+1), (y, x-1), (y+1, x), (y+1, x+1), (y+1, x-1), (y-1, x), (y-1, x+1), (y-1, x-1)}
-        return {x for x in adjacent_list if x not in self.rim_list}
-
-    # Maps a tuple of y and x to a field object from field_matrix
-    def tuple_in_matrix(self, tup):
-        y, x = tup
-        return self.field_matrix[y][x]
-
-    # Counts the mines around on field
-    def count_mines(self, y, x):
-        adj_list = self.neighbors(y, x)
-        mine_count = 0
-        for i in adj_list:
-            i_field = self.tuple_in_matrix(i)
-            if i_field.get_mine():
-                mine_count += 1
-        return mine_count
+    # def neighbors(self, y, x):
+    #     adjacent_list = {(y, x+1), (y, x-1), (y+1, x), (y+1, x+1), (y+1, x-1), (y-1, x), (y-1, x+1), (y-1, x-1)}
+    #     return {x for x in adjacent_list if x not in self.rim_list}
+    # 
+    # 
+    # def get_field_with_coordinates(self, coordinates):
+    #     y, x = coordinates
+    #     return self.game_grid.grid[y][x]
 
     def count_flags(self, y, x):
-        adj_list = self.neighbors(y, x)
+        adj_list = self.game_grid.neighbors_of_coordinates(y, x)
         flags = 0
         for i in adj_list:
-            i_field = self.tuple_in_matrix(i)
+            i_field = self.game_grid.get_field_with_coordinates(i)
             if i_field.get_flag():
                 flags += 1
         return flags
 
     def flag_field(self, y, x):
-        cur_field = self.field_matrix[y][x]
+        cur_field = self.game_grid.grid[y][x]
         if not cur_field.get_open():
             if not cur_field.get_flag():
                 cur_field.set_flag(True)
@@ -209,8 +122,11 @@ class GameLogic:
         return "{}".format(str(self.remaining_mines).rjust(self.mine_count_digit_len, "0"))
 
     def check_win(self):
-        if (self.field_amount - len(self.rim_list) - self.mine_count) == len(self.open_fields):
+        if (self.game_grid.field_amount - self.game_grid.mine_count) == len(self.open_fields):
             self.win = True
+
+    def start_clock(self):
+        self.start_time = time.time()
 
     def calc_time(self):
         cur_time = time.time()
@@ -224,6 +140,8 @@ class GameLogic:
         return self.current_time_str
 
     def format_cheat_num(self):
-        if self.cheat_count < 100:
+        if self.cheat_count < 10:
             return "{}".format(str(self.cheat_count).rjust(2, "0"))
-        return "> 9000"
+        elif self.cheat_count >= 1000:
+            return "too much"
+        return "{} <.<\"".format(str(self.cheat_count).rjust(2, "0"))
