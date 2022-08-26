@@ -43,7 +43,7 @@ class GameLogic:
     def click_open_field(self, y, x):
         cur_field = self.game_grid.grid[y][x]
         if cur_field.get_number() != 0:
-            if self.count_flags(y, x) == cur_field.get_number():
+            if self._flag_count(y, x) == cur_field.get_number():
                 neighbors = self.game_grid.neighbors_of_coordinates(y, x)
                 for t in neighbors:
                     t_field = self.game_grid.get_field_with_coordinates(t)
@@ -54,6 +54,15 @@ class GameLogic:
                         self.check_next_fields()
                     else:
                         self.loose = True
+
+    def _flag_count(self, y, x):
+        adj_list = self.game_grid.neighbors_of_coordinates(y, x)
+        flags = 0
+        for i in adj_list:
+            i_field = self.game_grid.get_field_with_coordinates(i)
+            if i_field.get_flag():
+                flags += 1
+        return flags
 
     # Checks the fields around the field that is called in click_field and opens the field
     def check_field(self, field):
@@ -96,15 +105,6 @@ class GameLogic:
         for tup in neighbors:
             tup_field = self.game_grid.get_field_with_coordinates(tup)
             self.render_list.add(tup_field)
-
-    def count_flags(self, y, x):
-        adj_list = self.game_grid.neighbors_of_coordinates(y, x)
-        flags = 0
-        for i in adj_list:
-            i_field = self.game_grid.get_field_with_coordinates(i)
-            if i_field.get_flag():
-                flags += 1
-        return flags
 
     def check_win(self):
         if (self.game_grid.field_amount - self.game_grid.mine_count) == len(self.open_fields):
