@@ -74,7 +74,6 @@ class GameGrid:
         mine_count = self._count_mines_around_field(field)
         field.set_number(mine_count)
 
-    # Counts the mines around on field
     def _count_mines_around_field(self, field):
         y, x = field.get_coordinates()
         neighbors = self.neighbors_of_coordinates(y, x)

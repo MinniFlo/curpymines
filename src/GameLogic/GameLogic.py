@@ -1,4 +1,3 @@
-import random
 import time
 
 from GameLogic.GameGrid import GameGrid
@@ -19,14 +18,14 @@ class GameLogic:
         self.render_list = set()
         self.open_fields = set()
 
-        # gamestate
+        # game state
         self.first = True
         self.loose = False
         self.win = False
         self.cheat = False
         self.pause = False
 
-        # status Windowstuff
+        # status Window stuff
         self.start_time = 0
         self.sum_time = 0
         self.current_time_str = ""

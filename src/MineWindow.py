@@ -207,8 +207,8 @@ class MineWindow(SuperWin):
                 self.logic.flag_field(self.cursor_y, self.x_index)
 
     def reset_input(self):
-        self.pre_input_action()
         if self.logic.loose:
+            self.pre_input_action()
             self.logic.loose = False
             self.logic.cheat = True
             self.logic.game_grid.set_grid_to_previous_state()
