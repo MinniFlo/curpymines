@@ -25,7 +25,7 @@ class MineWindow(SuperWin):
     def draw(self):
         for y in range(self.max_y):
             for x in range(int(self.max_x/2)):
-                self.scr.addstr(y, x*2, self.closed_field)
+                self.scr.addstr(y, x*2, self.closed_field, curses.color_pair(12))
         self.cursor_x = self.x_start()
         self.scr.box()
         self.scr.addstr(self.cursor_y, self.cursor_x, self.closed_field, curses.A_REVERSE)
@@ -35,36 +35,34 @@ class MineWindow(SuperWin):
         if self.logic.loose:
             self.end_game()
         else:
-            # for field in self.logic.render_list:
-            for row in self.logic.game_grid.grid:
-                for field in row:
-                    logic_coordinates = field.get_coordinates()
-                    y_pos, x_pos = field.get_render_coordinates()
-                    if logic_coordinates in self.logic.game_grid.boarder:
-                        continue
-                    if not (y_pos, x_pos) == (self.cursor_y, self.cursor_x):
-                        style = curses.A_NORMAL
+            for field in self.logic.render_list:
+                logic_coordinates = field.get_coordinates()
+                y_pos, x_pos = field.get_render_coordinates()
+                if logic_coordinates in self.logic.game_grid.boarder:
+                    continue
+                if not (y_pos, x_pos) == (self.cursor_y, self.cursor_x):
+                    style = curses.A_NORMAL
+                else:
+                    style = curses.A_REVERSE
+                if field.get_open():
+                    if field.get_number() == 0:
+                        self.scr.addstr(y_pos, x_pos, ' ', style)
                     else:
-                        style = curses.A_REVERSE
-                    if field.get_open():
-                        if field.get_number() == 0:
-                            self.scr.addstr(y_pos, x_pos, ' ', style)
+                        if self.is_relevant_number(logic_coordinates):
+                            self.scr.addstr(y_pos, x_pos, str(field.get_number()),
+                                            curses.color_pair(field.get_number()) | style)
                         else:
-                            if self.is_relevant_number(logic_coordinates):
-                                self.scr.addstr(y_pos, x_pos, str(field.get_number()),
-                                                curses.color_pair(field.get_number()) | style)
-                            else:
-                                self.scr.addstr(y_pos, x_pos, str(field.get_number()),
-                                                curses.color_pair(12) | style)
-                    else:
-                        if field.get_flag():
-                            self.scr.addstr(y_pos, x_pos, self.flag_field, curses.color_pair(6) | style)
+                            self.scr.addstr(y_pos, x_pos, str(field.get_number()),
+                                            curses.color_pair(12) | style)
+                else:
+                    if field.get_flag():
+                        self.scr.addstr(y_pos, x_pos, self.flag_field, curses.color_pair(6) | style)
 
+                    else:
+                        if self.is_relevant(logic_coordinates):
+                            self.scr.addstr(y_pos, x_pos, self.closed_field, style)
                         else:
-                            if self.is_relevant(logic_coordinates):
-                                self.scr.addstr(y_pos, x_pos, self.closed_field, style)
-                            else:
-                                self.scr.addstr(y_pos, x_pos, self.closed_field, curses.color_pair(12) | style)
+                            self.scr.addstr(y_pos, x_pos, self.closed_field, curses.color_pair(12) | style)
 
             self.scr.box()
             self.logic.render_list.clear()
@@ -193,9 +191,9 @@ class MineWindow(SuperWin):
                 self.logic.first_click(self.cursor_y, self.x_index)
             else:
                 if not self.logic.game_grid.grid[self.cursor_y][self.x_index].get_open():
-                    self.logic.click_field(self.cursor_y, self.x_index)
+                    self.logic.click_closed_field(self.cursor_y, self.x_index)
                 else:
-                    self.logic.quality_of_life_click(self.cursor_y, self.x_index)
+                    self.logic.click_open_field(self.cursor_y, self.x_index)
 
     def flag_input(self):
         if not (self.logic.loose or self.logic.win):

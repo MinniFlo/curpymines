@@ -32,7 +32,7 @@ class GameLogic:
         self.cheat_count = 0
 
     # Is called on click of a field
-    def click_field(self, y, x):
+    def click_closed_field(self, y, x):
         field = self.game_grid.get_field_with_coordinates((y, x))
         if not field.get_flag():
             if not field.get_mine():
@@ -41,31 +41,7 @@ class GameLogic:
             else:
                 self.loose = True
 
-    # Checks the fields around the field that is called in click_field and opens the field
-    def check_field(self, field):
-        y, x = field.get_coordinates()
-        field.set_open(True)
-        self.render_list.add(field)
-        self.open_fields.add((y, x))
-        if field.get_number() == 0:
-            neighbors = self.game_grid.neighbors_of_coordinates(y, x)
-            for tup in neighbors:
-                tup_field = self.game_grid.get_field_with_coordinates(tup)
-                if not tup_field.get_open():
-                    self.next_fields.add(tup_field)
-
-    def check_next_fields(self):
-        while self.next_fields:
-            none_matching_fields = set([])
-            for i in self.next_fields:
-                if i.get_open() or i.get_coordinates() in self.game_grid.boarder:
-                    none_matching_fields.add(i)
-            self.next_fields = self.next_fields - none_matching_fields
-            if self.next_fields:
-                i_field = self.next_fields.pop()
-                self.check_field(i_field)
-
-    def quality_of_life_click(self, y, x):
+    def click_open_field(self, y, x):
         cur_field = self.game_grid.grid[y][x]
         if cur_field.get_number() != 0:
             if self.count_flags(y, x) == cur_field.get_number():
@@ -79,6 +55,28 @@ class GameLogic:
                         self.check_next_fields()
                     else:
                         self.loose = True
+
+    # Checks the fields around the field that is called in click_field and opens the field
+    def check_field(self, field):
+        y, x = field.get_coordinates()
+        field.set_open(True)
+        self.open_fields.add((y, x))
+        self.render_list.add(field)
+        neighbors = self.game_grid.neighbors_of_coordinates(y, x)
+        if field.get_number() == 0:
+            for tup in neighbors:
+                tup_field = self.game_grid.get_field_with_coordinates(tup)
+                if not tup_field.get_open():
+                    self.next_fields.add(tup_field)
+        else:
+            for tup in neighbors:
+                tup_field = self.game_grid.get_field_with_coordinates(tup)
+                self.render_list.add(tup_field)
+
+    def check_next_fields(self):
+        while self.next_fields:
+            i_field = self.next_fields.pop()
+            self.check_field(i_field)
 
     def add_field_to_render_list(self, coordinates):
         field = self.game_grid.get_field_with_coordinates(coordinates)
@@ -107,6 +105,11 @@ class GameLogic:
                 cur_field.set_flag(False)
                 self.remaining_mines += 1
             self.render_list.add(cur_field)
+        # put all neighbor fields in the render_list for the highlight-color-feature
+        neighbors = self.game_grid.neighbors_of_coordinates(y, x)
+        for tup in neighbors:
+            tup_field = self.game_grid.get_field_with_coordinates(tup)
+            self.render_list.add(tup_field)
 
     def format_remaining_mines(self):
         return "{}".format(str(self.remaining_mines).rjust(self.mine_count_digit_len, "0"))
