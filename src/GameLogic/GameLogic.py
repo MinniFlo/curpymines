@@ -93,6 +93,10 @@ class GameLogic:
                 flags += 1
         return flags
 
+    def check_win(self):
+        if (self.game_grid.field_amount - self.game_grid.mine_count) == len(self.open_fields):
+            self.win = True
+
     def flag_field(self, y, x):
         cur_field = self.game_grid.grid[y][x]
         if not cur_field.get_open():
@@ -107,12 +111,11 @@ class GameLogic:
     def format_remaining_mines(self):
         return "{}".format(str(self.remaining_mines).rjust(self.mine_count_digit_len, "0"))
 
-    def check_win(self):
-        if (self.game_grid.field_amount - self.game_grid.mine_count) == len(self.open_fields):
-            self.win = True
-
-    def start_clock(self):
+    def first_click(self, y, x):
         self.start_time = time.time()
+        self.game_grid.set_mines_data(y, x)
+        self.click_closed_field(y, x)
+        self.first = False
 
     def calc_time(self):
         cur_time = time.time()

@@ -190,10 +190,7 @@ class MineWindow(SuperWin):
         if not (self.logic.loose or self.logic.win):
             self.pre_input_action()
             if self.logic.first:
-                self.logic.start_clock()
-                self.logic.game_grid.set_mines_data(self.cursor_y, self.x_index)
-                self.logic.click_field(self.cursor_y, self.x_index)
-                self.logic.first = False
+                self.logic.first_click(self.cursor_y, self.x_index)
             else:
                 if not self.logic.game_grid.grid[self.cursor_y][self.x_index].get_open():
                     self.logic.click_field(self.cursor_y, self.x_index)
