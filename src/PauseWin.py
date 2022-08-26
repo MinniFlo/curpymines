@@ -30,8 +30,8 @@ class PauseWin(SuperWin):
 
     def resume(self):
         self.manager.pop_win_stack()
-        self.logic.start_time = time.time()
-        self.logic.start_time -= self.logic.sum_time
+        self.logic.statusData.start_time = time.time()
+        self.logic.statusData.start_time -= self.logic.statusData.sum_time
         self.logic.sum_time = 0
         self.logic.pause = False
 

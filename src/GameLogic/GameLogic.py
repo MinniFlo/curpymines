@@ -1,6 +1,7 @@
 import time
 
 from GameLogic.GameGrid import GameGrid
+from GameLogic.StatusData import StatusData
 
 
 class GameLogic:
@@ -10,9 +11,7 @@ class GameLogic:
         percentage_of_mines = self.difficulty_map[difficulty]
 
         self.game_grid = GameGrid(y_size, x_size, percentage_of_mines)
-
-        self.mine_count_digit_len = len("{}".format(self.game_grid.mine_count))
-        self.remaining_mines = self.game_grid.mine_count
+        self.statusData = StatusData(self.game_grid.mine_count)
 
         self.next_fields = set()
         self.render_list = set()
@@ -25,11 +24,11 @@ class GameLogic:
         self.cheat = False
         self.pause = False
 
-        # status Window stuff
-        self.start_time = 0
-        self.sum_time = 0
-        self.current_time_str = ""
-        self.cheat_count = 0
+    def first_click(self, y, x):
+        self.statusData.start_time = time.time()
+        self.game_grid.set_mines_data(y, x)
+        self.click_closed_field(y, x)
+        self.first = False
 
     # Is called on click of a field
     def click_closed_field(self, y, x):
@@ -82,6 +81,22 @@ class GameLogic:
         field = self.game_grid.get_field_with_coordinates(coordinates)
         self.render_list.add(field)
 
+    def flag_field(self, y, x):
+        cur_field = self.game_grid.grid[y][x]
+        if not cur_field.get_open():
+            if not cur_field.get_flag():
+                cur_field.set_flag(True)
+                self.statusData.remaining_mines -= 1
+            else:
+                cur_field.set_flag(False)
+                self.statusData.remaining_mines += 1
+            self.render_list.add(cur_field)
+        # put all neighbor fields in the render_list for the highlight-color-feature
+        neighbors = self.game_grid.neighbors_of_coordinates(y, x)
+        for tup in neighbors:
+            tup_field = self.game_grid.get_field_with_coordinates(tup)
+            self.render_list.add(tup_field)
+
     def count_flags(self, y, x):
         adj_list = self.game_grid.neighbors_of_coordinates(y, x)
         flags = 0
@@ -94,46 +109,3 @@ class GameLogic:
     def check_win(self):
         if (self.game_grid.field_amount - self.game_grid.mine_count) == len(self.open_fields):
             self.win = True
-
-    def flag_field(self, y, x):
-        cur_field = self.game_grid.grid[y][x]
-        if not cur_field.get_open():
-            if not cur_field.get_flag():
-                cur_field.set_flag(True)
-                self.remaining_mines -= 1
-            else:
-                cur_field.set_flag(False)
-                self.remaining_mines += 1
-            self.render_list.add(cur_field)
-        # put all neighbor fields in the render_list for the highlight-color-feature
-        neighbors = self.game_grid.neighbors_of_coordinates(y, x)
-        for tup in neighbors:
-            tup_field = self.game_grid.get_field_with_coordinates(tup)
-            self.render_list.add(tup_field)
-
-    def format_remaining_mines(self):
-        return "{}".format(str(self.remaining_mines).rjust(self.mine_count_digit_len, "0"))
-
-    def first_click(self, y, x):
-        self.start_time = time.time()
-        self.game_grid.set_mines_data(y, x)
-        self.click_closed_field(y, x)
-        self.first = False
-
-    def calc_time(self):
-        cur_time = time.time()
-        sum_time = int(cur_time - self.start_time)
-        self.sum_time = sum_time
-        minutes = sum_time // 60
-        seconds = sum_time % 60
-        minutes = "{}".format(str(minutes).rjust(2, "0"))
-        seconds = "{}".format(str(seconds).rjust(2, "0"))
-        self.current_time_str = "{}:{}".format(minutes, seconds)
-        return self.current_time_str
-
-    def format_cheat_num(self):
-        if self.cheat_count < 10:
-            return "{}".format(str(self.cheat_count).rjust(2, "0"))
-        elif self.cheat_count >= 1000:
-            return "too much"
-        return "{} <.<\"".format(str(self.cheat_count).rjust(2, "0"))

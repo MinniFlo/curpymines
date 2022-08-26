@@ -208,7 +208,7 @@ class MineWindow(SuperWin):
             self.logic.cheat = True
             self.logic.game_grid.set_grid_to_previous_state()
             self.reset_render()
-            self.logic.cheat_count += 1
+            self.logic.statusData.cheat_count += 1
 
     def exit_input(self):
         self.logic.pause = True
