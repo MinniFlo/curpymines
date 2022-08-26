@@ -10,7 +10,7 @@ class StatusWindow:
 
     def render(self):
         if not self.logic.pause:
-            self.scr.addstr(0, 2, 'Mines left: {}'.format(self.logic.format_flag_num()))
+            self.scr.addstr(0, 2, 'Mines left: {}'.format(self.logic.format_remaining_mines()))
 
             if not self.small:
                 if self.logic.cheat:

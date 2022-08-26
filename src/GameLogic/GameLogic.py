@@ -105,7 +105,7 @@ class GameLogic:
                 self.remaining_mines += 1
             self.render_list.add(cur_field)
 
-    def format_flag_num(self):
+    def format_remaining_mines(self):
         return "{}".format(str(self.remaining_mines).rjust(self.mine_count_digit_len, "0"))
 
     def check_win(self):
