@@ -86,7 +86,7 @@ class MineWindow(SuperWin):
                     if x.get_mine():
                         self.scr.addstr(y_pos, x_pos, self.flag_field, curses.color_pair(6))
                     else:
-                        self.scr.addstr(y_pos, x_pos, self.flag_field, curses.color_pair(11))
+                        self.scr.addstr(y_pos, x_pos, self.flag_field, curses.color_pair(9))
                 elif x.get_number() == 9:
                     self.scr.addstr(y_pos, x_pos, self.closed_field, curses.color_pair(10))
                 else:
@@ -95,7 +95,7 @@ class MineWindow(SuperWin):
         if curs_field.get_mine():
             self.scr.addstr(self.cursor_y, self.cursor_x, self.explode_field, curses.color_pair(9))
         else:
-            self.scr.addstr(self.cursor_y, self.cursor_x, str(curs_field.get_number()), curses.color_pair(10))
+            self.scr.addstr(self.cursor_y, self.cursor_x, str(curs_field.get_number()), curses.color_pair(9))
         self.scr.refresh()
         self.scr.box()
 
