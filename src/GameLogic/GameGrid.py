@@ -16,7 +16,7 @@ class GameGrid:
         self.field_amount = (y_size * x_size) - len(self.boarder)
         self.mine_count = int((self.field_amount - 9) * percentage_of_mines)
 
-        self.previous_grid = []
+        self.last_grid = []
 
     def build_grid(self):
         for y in range(self.y_size):
@@ -35,11 +35,11 @@ class GameGrid:
         y, x = coordinates
         return self.grid[y][x]
 
-    def update_previous_game_state(self):
-        self.previous_grid = self.grid
+    def update_last_grid(self):
+        self.last_grid = self.grid
 
-    def set_grid_to_previous_state(self):
-        self.grid = self.previous_grid
+    def reset_to_last_grid(self):
+        self.grid = self.last_grid
 
     def _fill_grid_columns_and_boarder_set(self, y):
         for x in range(self.x_size):

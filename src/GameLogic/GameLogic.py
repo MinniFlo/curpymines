@@ -15,6 +15,7 @@ class GameLogic:
 
         self.next_fields = set()
         self.render_list = set()
+        # self.last_render_list = set()
         self.open_fields = set()
 
         # game state
@@ -109,3 +110,11 @@ class GameLogic:
     def check_win(self):
         if (self.game_grid.field_amount - self.game_grid.mine_count) == len(self.open_fields):
             self.win = True
+
+    def update_last_game_state(self):
+        self.game_grid.update_last_grid()
+        # self.last_render_list = self.render_list
+
+    def reset_to_last_game_state(self):
+        self.game_grid.reset_to_last_grid()
+        #  self.render_list = self.last_render_list

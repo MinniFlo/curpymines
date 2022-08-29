@@ -65,7 +65,6 @@ class MineWindow(SuperWin):
                             self.scr.addstr(y_pos, x_pos, self.closed_field, curses.color_pair(12) | style)
 
             self.scr.box()
-            self.logic.render_list.clear()
             self.logic.check_win()
 
             if self.logic.win:
@@ -73,6 +72,8 @@ class MineWindow(SuperWin):
                     self.scr.addstr(0, int(self.max_x/2 - 4), ' win ^.^ ')
                 else:
                     self.scr.addstr(0, int(self.max_x/2 - 6), ' cheater >.> ')
+            
+            self.logic.render_list.clear()
 
     def end_game(self):
         for y in self.logic.game_grid.grid:
@@ -145,48 +146,42 @@ class MineWindow(SuperWin):
 
     def update_index(self):
         self.x_index = self.cursor_x // 2
-        
-    def pre_input_action(self):
-        self.update_index()
-        self.logic.add_field_to_render_list((self.cursor_y, self.x_index))
-        if not self.logic.loose:
-            self.logic.game_grid.update_previous_game_state()
             
-    def after_input_action(self):
+    def add_current_courser_pos_to_render(self):
         self.update_index()
         self.logic.add_field_to_render_list((self.cursor_y, self.x_index))
 
     def up_input(self):
         if not (self.logic.loose or self.logic.win):
-            self.pre_input_action()
+            self.add_current_courser_pos_to_render()
             if self.cursor_y > 1:
                 self.cursor_y -= 1
-            self.after_input_action()
+            self.add_current_courser_pos_to_render()
 
     def left_input(self):
         if not (self.logic.loose or self.logic.win):
-            self.pre_input_action()
+            self.add_current_courser_pos_to_render()
             if self.cursor_x > 2:
                 self.cursor_x -= 2
-            self.pre_input_action()
+            self.add_current_courser_pos_to_render()
 
     def right_input(self):
         if not (self.logic.loose or self.logic.win):
-            self.pre_input_action()
+            self.add_current_courser_pos_to_render()
             if self.cursor_x < self.max_x - 3:
                 self.cursor_x += 2
-            self.pre_input_action()
+            self.add_current_courser_pos_to_render()
 
     def down_input(self):
         if not (self.logic.loose or self.logic.win):
-            self.pre_input_action()
+            self.add_current_courser_pos_to_render()
             if self.cursor_y < self.max_y - 2:
                 self.cursor_y += 1
-            self.pre_input_action()
+            self.add_current_courser_pos_to_render()
 
     def click_input(self):
         if not (self.logic.loose or self.logic.win):
-            self.pre_input_action()
+            self.logic.update_last_game_state()
             if self.logic.first:
                 self.logic.first_click(self.cursor_y, self.x_index)
             else:
@@ -197,18 +192,17 @@ class MineWindow(SuperWin):
 
     def flag_input(self):
         if not (self.logic.loose or self.logic.win):
-            self.pre_input_action()
             if not self.logic.loose:
                 self.logic.flag_field(self.cursor_y, self.x_index)
 
     def reset_input(self):
         if self.logic.loose:
-            self.pre_input_action()
             self.logic.loose = False
             self.logic.cheat = True
-            self.logic.game_grid.set_grid_to_previous_state()
+            self.logic.reset_to_last_game_state()
             self.reset_render()
             self.logic.statusData.cheat_count += 1
+            self.add_current_courser_pos_to_render()
 
     def exit_input(self):
         self.logic.pause = True
