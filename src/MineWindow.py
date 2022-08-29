@@ -27,8 +27,9 @@ class MineWindow(SuperWin):
             for x in range(int(self.max_x/2)):
                 self.scr.addstr(y, x*2, self.closed_field, curses.color_pair(12))
         self.cursor_x = self.x_start()
+        self.update_index()
         self.scr.box()
-        self.scr.addstr(self.cursor_y, self.cursor_x, self.closed_field, curses.A_REVERSE)
+        self.scr.addstr(self.cursor_y, self.cursor_x, self.closed_field, curses.color_pair(12) | curses.A_REVERSE)
         self.logic.add_field_to_render_list((self.cursor_y, self.x_index))
 
     def render_mine_win(self):
@@ -48,7 +49,8 @@ class MineWindow(SuperWin):
                     if field.get_number() == 0:
                         self.scr.addstr(y_pos, x_pos, ' ', style)
                     else:
-                        if self.is_relevant_number(logic_coordinates):
+                        field.set_relevant(self.logic.game_grid.is_relevant_open_field(logic_coordinates))
+                        if field.get_relevant():
                             self.scr.addstr(y_pos, x_pos, str(field.get_number()),
                                             curses.color_pair(field.get_number()) | style)
                         else:
@@ -59,7 +61,8 @@ class MineWindow(SuperWin):
                         self.scr.addstr(y_pos, x_pos, self.flag_field, curses.color_pair(6) | style)
 
                     else:
-                        if self.is_relevant(logic_coordinates):
+                        field.set_relevant(self.logic.game_grid.is_relevant_closed_field(logic_coordinates))
+                        if field.get_relevant():
                             self.scr.addstr(y_pos, x_pos, self.closed_field, style)
                         else:
                             self.scr.addstr(y_pos, x_pos, self.closed_field, curses.color_pair(12) | style)
@@ -110,29 +113,21 @@ class MineWindow(SuperWin):
                     if field.get_number() == 0:
                         self.scr.addstr(y_pos, x_pos, ' ')
                     else:
-                        self.scr.addstr(y_pos, x_pos, str(field.get_number()),
-                                        curses.color_pair(field.get_number()))
+                        if field.get_relevant():
+                            self.scr.addstr(y_pos, x_pos, str(field.get_number()),
+                                            curses.color_pair(field.get_number()))
+                        else:
+                            self.scr.addstr(y_pos, x_pos, str(field.get_number()),
+                                            curses.color_pair(12))
                 else:
                     if field.get_flag():
                         self.scr.addstr(y_pos, x_pos, self.flag_field, curses.color_pair(6))
                     else:
-                        self.scr.addstr(y_pos, x_pos, self.closed_field)
+                        if field.get_relevant():
+                            self.scr.addstr(y_pos, x_pos, self.closed_field)
+                        else:
+                            self.scr.addstr(y_pos, x_pos, self.closed_field, curses.color_pair(12))
         self.scr.box()
-
-    def is_relevant(self, tup):
-        y, x = tup
-        for field_tup in self.logic.game_grid.neighbors_of_coordinates(y, x):
-            if self.logic.game_grid.get_field_with_coordinates(field_tup).get_open():
-                return True
-        return False
-
-    def is_relevant_number(self, tup):
-        y, x = tup
-        for field_tup in self.logic.game_grid.neighbors_of_coordinates(y, x):
-            field = self.logic.game_grid.get_field_with_coordinates(field_tup)
-            if (not field.get_open()) and (not field.get_flag()):
-                return True
-        return False
 
     def x_start(self):
         x_start = int(self.max_x * 0.36)

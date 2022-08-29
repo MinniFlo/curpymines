@@ -9,6 +9,8 @@ class Field:
         self.mine = False
         self.open = False
         self.flag = False
+        # is used to highlight Fields, that are relevant for further solving
+        self.relevant = False
         self.number = 0
 
     def get_mine(self):
@@ -29,6 +31,9 @@ class Field:
     def get_flag(self):
         return self.flag
 
+    def get_relevant(self):
+        return self.relevant
+
     def set_open(self, state_open):
         self.open = state_open
 
@@ -40,6 +45,9 @@ class Field:
 
     def set_flag(self, is_marked):
         self.flag = is_marked
+
+    def set_relevant(self, is_relevant):
+        self.relevant = is_relevant
 
 
 

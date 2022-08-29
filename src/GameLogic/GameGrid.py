@@ -41,6 +41,21 @@ class GameGrid:
     def reset_to_last_grid(self):
         self.grid = self.last_grid
 
+    def is_relevant_closed_field(self, tup):
+        y, x = tup
+        for field_tup in self.neighbors_of_coordinates(y, x):
+            if self.get_field_with_coordinates(field_tup).get_open():
+                return True
+        return False
+
+    def is_relevant_open_field(self, tup):
+        y, x = tup
+        for field_tup in self.neighbors_of_coordinates(y, x):
+            field = self.get_field_with_coordinates(field_tup)
+            if (not field.get_open()) and (not field.get_flag()):
+                return True
+        return False
+
     def _fill_grid_columns_and_boarder_set(self, y):
         for x in range(self.x_size):
             self._fill_grid_with_fields(y, x)
