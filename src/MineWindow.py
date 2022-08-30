@@ -173,7 +173,7 @@ class MineWindow(SuperWin):
                     self.logic.click_open_field(self.cursor_y, self.x_index)
 
     def flag_input(self):
-        if not (self.logic.loose or self.logic.win):
+        if not (self.logic.loose or self.logic.win or self.logic.first):
             self.logic.flag_field(self.cursor_y, self.x_index)
 
     def reset_input(self):
