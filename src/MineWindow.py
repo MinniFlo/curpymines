@@ -96,24 +96,8 @@ class MineWindow(SuperWin):
                 y_pos, x_pos = field.get_render_coordinates()
                 if field.get_coordinates() in self.logic.game_grid.boarder:
                     continue
-                if field.get_open():
-                    if field.get_number() == 0:
-                        self.scr.addstr(y_pos, x_pos, ' ')
-                    else:
-                        if field.get_relevant():
-                            self.scr.addstr(y_pos, x_pos, str(field.get_number()),
-                                            curses.color_pair(field.get_number()))
-                        else:
-                            self.scr.addstr(y_pos, x_pos, str(field.get_number()),
-                                            curses.color_pair(12))
-                else:
-                    if field.get_flag():
-                        self.scr.addstr(y_pos, x_pos, self.flag_field, curses.color_pair(11))
-                    else:
-                        if field.get_relevant():
-                            self.scr.addstr(y_pos, x_pos, self.closed_field)
-                        else:
-                            self.scr.addstr(y_pos, x_pos, self.closed_field, curses.color_pair(12))
+                self.scr.addstr(y_pos, x_pos, field.get_current_symbol(),
+                                curses.color_pair(field.get_current_color_id()))
         self.scr.box()
 
     def x_start(self):
