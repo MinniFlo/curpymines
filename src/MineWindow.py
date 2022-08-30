@@ -45,37 +45,23 @@ class MineWindow(SuperWin):
                     style = curses.A_NORMAL
                 else:
                     style = curses.A_REVERSE
+
                 if field.get_open():
-                    if field.get_number() == 0:
-                        self.scr.addstr(y_pos, x_pos, ' ', style)
-                    else:
-                        field.set_relevant(self.logic.game_grid.is_relevant_open_field(logic_coordinates))
-                        if field.get_relevant():
-                            self.scr.addstr(y_pos, x_pos, str(field.get_number()),
-                                            curses.color_pair(field.get_number()) | style)
-                        else:
-                            self.scr.addstr(y_pos, x_pos, str(field.get_number()),
-                                            curses.color_pair(12) | style)
+                    field.set_relevant(self.logic.game_grid.is_relevant_open_field(logic_coordinates))
                 else:
-                    if field.get_flag():
-                        self.scr.addstr(y_pos, x_pos, self.flag_field, curses.color_pair(6) | style)
+                    field.set_relevant(self.logic.game_grid.is_relevant_closed_field(logic_coordinates))
 
-                    else:
-                        field.set_relevant(self.logic.game_grid.is_relevant_closed_field(logic_coordinates))
-                        if field.get_relevant():
-                            self.scr.addstr(y_pos, x_pos, self.closed_field, style)
-                        else:
-                            self.scr.addstr(y_pos, x_pos, self.closed_field, curses.color_pair(12) | style)
-
+                self.scr.addstr(y_pos, x_pos, field.get_current_symbol(),
+                                curses.color_pair(field.get_current_color_id()) | style)
             self.scr.box()
-            self.logic.check_win()
 
+            self.logic.check_win()
             if self.logic.win:
                 if not self.logic.cheat:
-                    self.scr.addstr(0, int(self.max_x/2 - 4), ' win ^.^ ')
+                    self.scr.addstr(0, int(self.max_x / 2 - 4), ' win ^.^ ')
                 else:
-                    self.scr.addstr(0, int(self.max_x/2 - 6), ' cheater >.> ')
-            
+                    self.scr.addstr(0, int(self.max_x / 2 - 6), ' cheater >.> ')
+
             self.logic.render_list.clear()
 
     def end_game(self):

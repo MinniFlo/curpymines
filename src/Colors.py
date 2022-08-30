@@ -12,6 +12,7 @@ class Colors:
 
 
         # number colors
+        curses.init_pair(0, curses.COLOR_WHITE, -1)
         curses.init_pair(1, curses.COLOR_BLUE, -1)
         curses.init_pair(2, curses.COLOR_GREEN, -1)
         curses.init_pair(3, curses.COLOR_RED, -1)
@@ -24,7 +25,7 @@ class Colors:
         curses.init_pair(8, curses.COLOR_WHITE, -1)
 
         # error colors
-        curses.init_pair(9, curses.COLOR_BLACK, 10)
+        curses.init_pair(9, -1, 10)
         curses.init_pair(10, 10, -1)
 
         # not relevant fields
