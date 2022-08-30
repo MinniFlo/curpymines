@@ -173,8 +173,7 @@ class MineWindow(SuperWin):
 
     def flag_input(self):
         if not (self.logic.loose or self.logic.win):
-            if not self.logic.loose:
-                self.logic.flag_field(self.cursor_y, self.x_index)
+            self.logic.flag_field(self.cursor_y, self.x_index)
 
     def reset_input(self):
         if self.logic.loose:
