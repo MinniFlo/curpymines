@@ -34,7 +34,7 @@ class MineWindow(SuperWin):
 
     def render_mine_win(self):
         if self.logic.loose:
-            self.end_game()
+            self.render_loose()
         else:
             self.render_fields_from_render_list()
             self.logic.check_win()
@@ -65,28 +65,39 @@ class MineWindow(SuperWin):
         self.scr.box()
         self.logic.render_list.clear()
 
-    def end_game(self):
-        for y in self.logic.game_grid.grid:
-            for x in y:
-                y_pos, x_pos = x.get_render_coordinates()
-                if x.get_coordinates() in self.logic.game_grid.boarder:
+    def render_loose(self):
+        for row in self.logic.game_grid.grid:
+            for field in row:
+                y_pos, x_pos = field.get_render_coordinates()
+                if field.get_coordinates() in self.logic.game_grid.boarder:
                     continue
-                if x.get_number() == 0:
-                    self.scr.addstr(y_pos, x_pos, ' ')
-                elif x.get_flag():
-                    if x.get_mine():
+                # colors all flags
+                if field.get_flag():
+                    # correct flag
+                    if field.get_mine():
                         self.scr.addstr(y_pos, x_pos, self.flag_field, curses.color_pair(11))
+                    # incorrect flag
                     else:
                         self.scr.addstr(y_pos, x_pos, self.flag_field, curses.color_pair(9))
-                elif x.get_number() == 9:
+                    continue
+                # color empty fields
+                if field.get_number() == 0:
+                    self.scr.addstr(y_pos, x_pos, ' ')
+                # colors all closed mines
+                elif field.get_number() == 9:
                     self.scr.addstr(y_pos, x_pos, self.closed_field, curses.color_pair(10))
+                # color all fields with numbers on
                 else:
-                    self.scr.addstr(y_pos, x_pos, str(x.get_number()), curses.color_pair(x.get_number()))
+                    field_num = field.get_number()
+                    self.scr.addstr(y_pos, x_pos, str(field_num), curses.color_pair(field_num))
+        # colors cursor position
         curs_field = self.logic.game_grid.get_field_with_coordinates((self.cursor_y, self.x_index))
+        # on mine
         if curs_field.get_mine():
             self.scr.addstr(self.cursor_y, self.cursor_x, self.explode_field, curses.color_pair(9))
         else:
             self.scr.addstr(self.cursor_y, self.cursor_x, str(curs_field.get_number()), curses.color_pair(9))
+
         self.scr.refresh()
         self.scr.box()
 
