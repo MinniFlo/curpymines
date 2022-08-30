@@ -36,25 +36,7 @@ class MineWindow(SuperWin):
         if self.logic.loose:
             self.end_game()
         else:
-            for field in self.logic.render_list:
-                logic_coordinates = field.get_coordinates()
-                y_pos, x_pos = field.get_render_coordinates()
-                if logic_coordinates in self.logic.game_grid.boarder:
-                    continue
-                if not (y_pos, x_pos) == (self.cursor_y, self.cursor_x):
-                    style = curses.A_NORMAL
-                else:
-                    style = curses.A_REVERSE
-
-                if field.get_open():
-                    field.set_relevant(self.logic.game_grid.is_relevant_open_field(logic_coordinates))
-                else:
-                    field.set_relevant(self.logic.game_grid.is_relevant_closed_field(logic_coordinates))
-
-                self.scr.addstr(y_pos, x_pos, field.get_current_symbol(),
-                                curses.color_pair(field.get_current_color_id()) | style)
-            self.scr.box()
-
+            self.render_fields_from_render_list()
             self.logic.check_win()
             if self.logic.win:
                 if not self.logic.cheat:
@@ -62,7 +44,26 @@ class MineWindow(SuperWin):
                 else:
                     self.scr.addstr(0, int(self.max_x / 2 - 6), ' cheater >.> ')
 
-            self.logic.render_list.clear()
+    def render_fields_from_render_list(self):
+        for field in self.logic.render_list:
+            logic_coordinates = field.get_coordinates()
+            y_pos, x_pos = field.get_render_coordinates()
+            if logic_coordinates in self.logic.game_grid.boarder:
+                continue
+            if not (y_pos, x_pos) == (self.cursor_y, self.cursor_x):
+                style = curses.A_NORMAL
+            else:
+                style = curses.A_REVERSE
+
+            if field.get_open():
+                field.set_relevant(self.logic.game_grid.is_relevant_open_field(logic_coordinates))
+            else:
+                field.set_relevant(self.logic.game_grid.is_relevant_closed_field(logic_coordinates))
+
+            self.scr.addstr(y_pos, x_pos, field.get_current_symbol(),
+                            curses.color_pair(field.get_current_color_id()) | style)
+        self.scr.box()
+        self.logic.render_list.clear()
 
     def end_game(self):
         for y in self.logic.game_grid.grid:
