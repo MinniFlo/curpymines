@@ -55,7 +55,7 @@ class Field:
         self.flag = is_flagged
         if is_flagged:
             self.current_symbol = '?'
-            self.current_color_id = 6
+            self.current_color_id = 11
             self.relevant = True
         else:
             self.current_symbol = '*'

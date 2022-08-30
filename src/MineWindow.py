@@ -74,7 +74,7 @@ class MineWindow(SuperWin):
                     self.scr.addstr(y_pos, x_pos, ' ')
                 elif x.get_flag():
                     if x.get_mine():
-                        self.scr.addstr(y_pos, x_pos, self.flag_field, curses.color_pair(6))
+                        self.scr.addstr(y_pos, x_pos, self.flag_field, curses.color_pair(11))
                     else:
                         self.scr.addstr(y_pos, x_pos, self.flag_field, curses.color_pair(9))
                 elif x.get_number() == 9:
@@ -107,7 +107,7 @@ class MineWindow(SuperWin):
                                             curses.color_pair(12))
                 else:
                     if field.get_flag():
-                        self.scr.addstr(y_pos, x_pos, self.flag_field, curses.color_pair(6))
+                        self.scr.addstr(y_pos, x_pos, self.flag_field, curses.color_pair(11))
                     else:
                         if field.get_relevant():
                             self.scr.addstr(y_pos, x_pos, self.closed_field)
