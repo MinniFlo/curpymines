@@ -33,9 +33,6 @@ class Field:
     def get_flag(self):
         return self.flag
 
-    def get_relevant(self):
-        return self.relevant
-
     def set_open(self, is_open):
         self.open = is_open
         if is_open:
