@@ -7,6 +7,3 @@ curpymines/.idea/*
 venv/*
 __pycache__/*
 *.pyc
-test.py
-xd.txt
-snake/*
