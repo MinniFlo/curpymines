@@ -110,7 +110,7 @@ class GameLogic:
         return neighbors
 
     def check_win(self):
-        if (self.game_grid.field_amount - self.game_grid.mine_count) == len(self.open_fields):
+        if (self.game_grid.field_count - self.game_grid.mine_count) == len(self.open_fields):
             self.win = True
 
     def update_last_game_state(self):

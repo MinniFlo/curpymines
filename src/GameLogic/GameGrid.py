@@ -13,8 +13,8 @@ class GameGrid:
 
         self.build_grid()
 
-        self.field_amount = (y_size * x_size) - len(self.boarder)
-        self.mine_count = int((self.field_amount - 9) * percentage_of_mines)
+        self.field_count = (y_size * x_size) - len(self.boarder)
+        self.mine_count = int((self.field_count - 9) * percentage_of_mines)
 
         self.last_grid = []
 
