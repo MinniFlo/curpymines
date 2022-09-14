@@ -1,6 +1,5 @@
 import time
 from grid_n_fields import Grid, FieldContext as FC
-# from GameLogic.GameGrid import GameGrid
 from GameLogic.StatusData import StatusData
 
 

@@ -22,6 +22,7 @@ class MineWindow(SuperWin):
         self.closed_field = '*'
         self.flag_field = '?'
         self.explode_field = 'x'
+        self.loose_was_rendered = False
 
     def draw(self):
         for y in range(self.max_y):
@@ -34,8 +35,9 @@ class MineWindow(SuperWin):
         self.logic.render_list.add((self.cursor_y, self.x_index))
 
     def render_mine_win(self):
-        if self.logic.loose:
+        if self.logic.loose and not self.loose_was_rendered:
             self.render_loose()
+            self.loose_was_rendered = True
         else:
             self.render_fields_from_render_list()
             self.logic.check_win()
@@ -67,31 +69,35 @@ class MineWindow(SuperWin):
         self.logic.render_list.clear()
 
     def render_loose(self):
-        for y in range(self.logic.game_grid.y_size):
-            for x in range(self.logic.game_grid.x_size):
-                if (y, x) in self.logic.game_grid.boarder:
+        # for y in range(self.logic.game_grid.y_size):
+        #     for x in range(self.logic.game_grid.x_size):
+        #         if (y, x) in self.logic.game_grid.boarder:
+        #             continue
+        #         with FC(self.logic.game_grid, (y, x)) as field:
+        for row in self.logic.game_grid.grid:
+            for field in row:
+                if field.coordinates in self.logic.game_grid.boarder:
                     continue
-                with FC(self.logic.game_grid, (y, x)) as field:
-                    y_pos, x_pos = field.render_coordinates
-                    # colors all flags
-                    if field.is_flag:
-                        # correct flag
-                        if field.is_mine:
-                            self.scr.addstr(y_pos, x_pos, self.flag_field, curses.color_pair(11))
-                        # incorrect flag
-                        else:
-                            self.scr.addstr(y_pos, x_pos, self.flag_field, curses.color_pair(9))
-                        continue
-                    # color empty fields
-                    if field.number == 0:
-                        self.scr.addstr(y_pos, x_pos, ' ')
-                    # colors all closed mines
-                    elif field.number == 9:
-                        self.scr.addstr(y_pos, x_pos, self.closed_field, curses.color_pair(10))
-                    # color all fields with numbers on
+                y_pos, x_pos = field.render_coordinates
+                # colors all flags
+                if field.is_flag:
+                    # correct flag
+                    if field.is_mine:
+                        self.scr.addstr(y_pos, x_pos, self.flag_field, curses.color_pair(11))
+                    # incorrect flag
                     else:
-                        field_num = field.number
-                        self.scr.addstr(y_pos, x_pos, str(field_num), curses.color_pair(field_num))
+                        self.scr.addstr(y_pos, x_pos, self.flag_field, curses.color_pair(9))
+                    continue
+                # color empty fields
+                if field.number == 0:
+                    self.scr.addstr(y_pos, x_pos, ' ')
+                # colors all closed mines
+                elif field.number == 9:
+                    self.scr.addstr(y_pos, x_pos, self.closed_field, curses.color_pair(10))
+                # color all fields with numbers on
+                else:
+                    field_num = field.number
+                    self.scr.addstr(y_pos, x_pos, str(field_num), curses.color_pair(field_num))
         # colors cursor position
         with FC(self.logic.game_grid, (self.cursor_y, self.x_index)) as curs_field:
             # on mine
@@ -180,6 +186,7 @@ class MineWindow(SuperWin):
         if self.logic.loose:
             self.logic.loose = False
             self.logic.cheat = True
+            self.loose_was_rendered = False
             self.logic.reset_to_last_game_state()
             self.reset_render()
             self.logic.statusData.cheat_count += 1
