@@ -32,26 +32,27 @@ class GameLogic:
 
     # Is called on click of a field
     def click_closed_field(self, coordinates):
-        with FC(self.game_grid, coordinates) as field:
-            if not field.is_flag:
-                self._check_field_for_mine_and_open_it(field)
+        field = self.game_grid.get_field(coordinates)
+        if not field.is_flag:
+            self._check_field_for_mine_and_open_it(coordinates)
 
     def click_open_field(self, coordinates):
-        with FC(self.game_grid, coordinates) as field:
-            if field.number != 0:
-                if self._flag_count(coordinates) == field.number:
-                    self._open_closed_neighbors(coordinates)
+        field = self.game_grid.get_field(coordinates)
+        if field.number != 0:
+            if self._flag_count(coordinates) == field.number:
+                self._open_closed_neighbors(coordinates)
 
     def _open_closed_neighbors(self, coordinates):
         neighbors = self.game_grid.neighbors_of_coordinates(coordinates)
         for t in neighbors:
-            with FC(self.game_grid, t) as field:
-                if not field.is_open and not field.is_flag:
-                    self._check_field_for_mine_and_open_it(field)
+            field = self.game_grid.get_field(t)
+            if not field.is_open and not field.is_flag:
+                self._check_field_for_mine_and_open_it(t)
 
-    def _check_field_for_mine_and_open_it(self, field):
+    def _check_field_for_mine_and_open_it(self, coordinates):
+        field = self.game_grid.get_field(coordinates)
         if not field.is_mine:
-            self._open_field_and_check_neighbors(field)
+            self._open_field_and_check_neighbors(coordinates)
             self._process_fields_to_open()
         else:
             self.loose = True
@@ -60,30 +61,29 @@ class GameLogic:
         neighbors = self.game_grid.neighbors_of_coordinates(coordinates)
         flags = 0
         for t in neighbors:
-            with FC(self.game_grid, t) as field:
-                if field.is_flag:
-                    flags += 1
+            field = self.game_grid.get_field(t)
+            if field.is_flag:
+                flags += 1
         return flags
  
-    def _open_field_and_check_neighbors(self, field):
-        coordinates = field.coordinates
-        field.is_open = True
-        self.open_fields.add(coordinates)
-        neighbors = self._add_field_and_neighbors_to_render_list(coordinates)
-        if field.number == 0:
-            self._add_closed_neighbors_to_fields_to_open(neighbors)
+    def _open_field_and_check_neighbors(self, coordinates):
+        with FC(self.game_grid, coordinates) as field:
+            field.is_open = True
+            self.open_fields.add(coordinates)
+            neighbors = self._add_field_and_neighbors_to_render_list(coordinates)
+            if field.number == 0:
+                self._add_closed_neighbors_to_fields_to_open(neighbors)
 
     def _add_closed_neighbors_to_fields_to_open(self, neighbors):
         for t in neighbors:
-            with FC(self.game_grid, t) as field:
-                if not field.is_open:
-                    self.fields_to_open.add(t)
+            field = self.game_grid.get_field(t)
+            if not field.is_open:
+                self.fields_to_open.add(t)
 
     def _process_fields_to_open(self):
         while self.fields_to_open:
             coordinates = self.fields_to_open.pop()
-            with FC(self.game_grid, coordinates) as field:
-                self._open_field_and_check_neighbors(field)
+            self._open_field_and_check_neighbors(coordinates)
 
     def flag_field(self, coordinates):
         with FC(self.game_grid, coordinates) as field:
