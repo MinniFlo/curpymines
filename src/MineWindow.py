@@ -28,17 +28,21 @@ class MineWindow(SuperWin):
         for y in range(self.max_y):
             for x in range(int(self.max_x/2)):
                 self.scr.addstr(y, x*2, self.closed_field, curses.color_pair(12))
+
         self.cursor_y, self.cursor_x = self.start_coordinates()
         self.update_index()
-        self.scr.box()
         self.scr.addstr(self.cursor_y, self.cursor_x, self.closed_field, curses.color_pair(12) | curses.A_REVERSE)
         self.logic.render_list.add((self.cursor_y, self.x_index))
 
+        self.scr.box()
+
     def render_mine_win(self):
         if self.logic.loose and not self.loose_was_rendered:
+            # todo: time it!
             self.render_loose()
             self.loose_was_rendered = True
         else:
+            # todo: time it!
             self.render_fields_from_render_list()
             self.logic.check_win()
             if self.logic.win:
@@ -162,16 +166,20 @@ class MineWindow(SuperWin):
             self.logic.update_last_game_state()
             cursor_coordinates = (self.cursor_y, self.x_index)
             if self.logic.first:
+                # todo: time it!
                 self.logic.first_click(cursor_coordinates)
             else:
                 field = self.logic.game_grid.get_field((self.cursor_y, self.x_index))
                 if not field.is_open:
+                    # todo: time it!
                     self.logic.click_closed_field(cursor_coordinates)
                 else:
+                    # todo: time it!
                     self.logic.click_open_field(cursor_coordinates)
 
     def flag_input(self):
         if not (self.logic.loose or self.logic.win or self.logic.first):
+            # todo: time it!
             self.logic.flag_field((self.cursor_y, self.x_index))
 
     def reset_input(self):
@@ -179,8 +187,10 @@ class MineWindow(SuperWin):
             self.logic.loose = False
             self.logic.cheat = True
             self.loose_was_rendered = False
+            # todo: time it!
             self.logic.reset_to_last_game_state()
             self.reset_render()
+            # todo: --------
             self.logic.statusData.cheat_count += 1
             self.add_current_courser_pos_to_render()
 
