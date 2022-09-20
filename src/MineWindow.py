@@ -38,11 +38,9 @@ class MineWindow(SuperWin):
 
     def render_mine_win(self):
         if self.logic.loose and not self.loose_was_rendered:
-            # todo: time it!
             self.render_loose()
             self.loose_was_rendered = True
         else:
-            # todo: time it!
             self.render_fields_from_render_list()
             self.logic.check_win()
             if self.logic.win:
@@ -166,20 +164,16 @@ class MineWindow(SuperWin):
             self.logic.update_last_game_state()
             cursor_coordinates = (self.cursor_y, self.x_index)
             if self.logic.first:
-                # todo: time it!
                 self.logic.first_click(cursor_coordinates)
             else:
                 field = self.logic.game_grid.get_field((self.cursor_y, self.x_index))
                 if not field.is_open:
-                    # todo: time it!
                     self.logic.click_closed_field(cursor_coordinates)
                 else:
-                    # todo: time it!
                     self.logic.click_open_field(cursor_coordinates)
 
     def flag_input(self):
         if not (self.logic.loose or self.logic.win or self.logic.first):
-            # todo: time it!
             self.logic.flag_field((self.cursor_y, self.x_index))
 
     def reset_input(self):
