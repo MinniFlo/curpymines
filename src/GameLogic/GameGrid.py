@@ -73,8 +73,9 @@ class GameGrid:
         return y == 0 or y == (self.y_size - 1) or x == 0 or x == (self.x_size - 1)
 
     def _set_mines(self, start_y, start_x):
-        mine_list = self._get_mine_positions_list(start_y, start_x)
-        self._set_mine_value_in_corresponding_fields(mine_list)
+        possible_mine_positions = self._get_possible_mine_positions(start_y, start_x)
+        mine_position = self._get_random_mine_positions(possible_mine_positions)
+        self._set_mine_value_in_corresponding_fields(mine_position)
 
     def _set_numbers(self):
         for row in self.grid:
@@ -110,12 +111,6 @@ class GameGrid:
                     field.set_mine(True)
                     field.set_number(9)
 
-    # The function witch sets the position of the mines
-    def _get_mine_positions_list(self, start_y, start_x):
-        possible_mine_positions = self._get_possible_mine_positions(start_y, start_x)
-        mine_position = self._get_random_mine_positions(possible_mine_positions)
-        return mine_position
-
     def _get_possible_mine_positions(self, start_y, start_x):
         grid_fields = self._get_grid_coordinates_without_boarder()
         start_fields = self._get_start_space_coordinates(start_y, start_x)
@@ -137,11 +132,8 @@ class GameGrid:
     def _get_random_mine_positions(self, possible_mine_positions):
         mine_positions = set([])
         for _ in range(self.mine_count):
-            self._randomly_choose_mines(possible_mine_positions, mine_positions)
+            choice = random.choice(possible_mine_positions)
+            mine_positions.add(choice)
+            possible_mine_positions.remove(choice)
         return mine_positions
 
-    @staticmethod
-    def _randomly_choose_mines(possible_mine_positions, mine_positions):
-        choice = random.choice(possible_mine_positions)
-        mine_positions.add(choice)
-        possible_mine_positions.remove(choice)
